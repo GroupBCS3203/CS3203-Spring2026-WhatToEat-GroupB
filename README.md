@@ -44,6 +44,11 @@ WhatToEat is still in the early programming phase, so there exists no working pr
 	- Helps the user be more nutrition conscious
 - **I'm Feeling Lucky**
 	- Adds a button where the user is given a recipe based on their current ingredients, allowing them to explore new recipes they may have never thought of
+## Tools
+- For the frontend, we will use ReactNode
+- AWS will be used to host the web app
+- Mongodb will be used to hold ingredient and recipe information
+- https://docs.recipe-scrapers.com/ will be used to gather recipe information 
 ## Contributing
 For anyone looking to help WhatToEat please use the following steps:
 1. Fork the repository
