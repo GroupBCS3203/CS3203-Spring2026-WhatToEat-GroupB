@@ -73,7 +73,7 @@ function App() {
         </div>
 
         <div id="budget" className="tabcontent" style={{display: "none"}}>
-          <h3>Budget Tracker</h3>
+          <h3>budget Tracker</h3>
           <p>placeholder.</p>
         </div>
     </>
