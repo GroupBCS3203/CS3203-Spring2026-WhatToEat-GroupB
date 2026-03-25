@@ -2,12 +2,6 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const results = [];
 //get first line of data from csv file and print it out
-fs.createReadStream('ingredients.csv')
-  .pipe(csv())
-  .on('data', (data) => results.push(data))
-  .on('end', () => {
-    console.log(results[0]);
-  });
 
 
 
