@@ -9,9 +9,11 @@ It is important to note that this README mirrors the progress of WhatToEat, so a
 - [Usage](#usage)
 - [Current Status](#current-status)
 - [Roadmap](#roadmap)
+- [Tools](#tools)
+- [Contributing](#contributing)
 - [Support Contacts](#support-contacts)
-- [License](#License)
-- [Credits](#Credits)
+- [License](#license)
+- [Credits](#credits)
 ## Installation
 While there is currently no way to install WhatToEat in a working manner, it is planned to be a fully-functional web-app
 ## Usage
@@ -47,8 +49,8 @@ WhatToEat is still in the early programming phase, so there exists no working pr
 ## Tools
 - For the frontend, we will use ReactNode
 - AWS will be used to host the web app
-- Mongodb will be used to hold ingredient and recipe information
-- https://docs.recipe-scrapers.com/ will be used to gather recipe information 
+- Mongodb will be used to hold and call both ingredient and recipe information
+- [This public dataset](https://www.kaggle.com/datasets/wilmerarltstrmberg/recipe-dataset-over-2m/data) is what we will use as a source for our recipes
 ## Contributing
 For anyone looking to help WhatToEat please use the following steps:
 1. Fork the repository
