@@ -73,7 +73,7 @@ function App() {
 
 
       <div className="tab">
-          <Tabbutton feature = "ReSpices" />
+          <Tabbutton feature = "Recipes" />
           <Tabbutton feature = "login" />
           <Tabbutton feature = "Planner" />
           <Tabbutton feature = "budget" />
