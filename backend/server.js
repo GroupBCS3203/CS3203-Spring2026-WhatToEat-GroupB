@@ -1,8 +1,7 @@
-const recipeManger = require("./recipeManager.js");
+const recipeManager = require("./recipeManager.js");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const {getOneRecipe} = require("./recipeManager");
 require("dotenv").config();
 
 const app = express();
@@ -15,11 +14,22 @@ mongoose.connect(process.env.MONGO_URI)
     )
     .catch(err => console.log(err));
 
-mongoose.connection.useDb('poop');
-
-app.get("/", (req, res) => {
-    res.send("apple");
+// Top 10 recipes
+app.get("/api/recipes/top", async (req, res) => {
+    res.json(await recipeManager.getTopTenRecipes());
 });
+
+// Get one recipe
+app.get("/api/recipes/one", async (req, res) => {
+    res.json(await recipeManager.getOneRecipe());
+});
+
+/* Ingredient search
+app.get("/api/recipes/search", async (req, res) => {
+    const ingredients = req.query.ingredients;
+    res.json(await recipeManager.findRecipeByIngredient(ingredients));
+});
+ */
 
 
 
@@ -27,4 +37,6 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 
-recipeManger.findRecipeByIngredient("bacon, onion");
+recipeManager.findRecipeByIngredient("bacon, onion");
+
+module.exports = app;

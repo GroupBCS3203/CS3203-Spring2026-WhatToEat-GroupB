@@ -2,7 +2,8 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
+
 
 
 function Button({ onClick, children }) {
@@ -12,7 +13,6 @@ function Button({ onClick, children }) {
     </button>
   );
 }
-
 
 function Tabbutton({ feature }) {
 
@@ -37,6 +37,27 @@ function Tabbutton({ feature }) {
 
 function App() {
 
+  const [recipes, setRecipes] = useState([]);
+
+  useEffect(() => {
+    fetch("localhost:5000/api/recipes/top")
+        .then(res => res.json())
+        .then(data => setRecipes(data))
+        .catch(err => console.error(err));
+  }, []);
+
+  function getTopTen() {
+    fetch(`http://localhost:5000/api/recipes/top`)
+        .then(res => res.json())
+        .then(data => setRecipes(data));
+  }
+
+  function searchByIngredient(ingredient) {
+    fetch(`http://localhost:5000/api/recipes/search?ingredient=${ingredient}`)
+        .then(res => res.json())
+        .then(data => setRecipes(data));
+  }
+
   function openFeature(feature) {
       
        
@@ -59,7 +80,18 @@ function App() {
 
         <div id="recipes" className="tabcontent" style={{display: "block"}}>
           <h3>Recipe Browser</h3>
-          <p>placeholder.</p>
+
+          <Button onClick={() => searchByIngredient("chicken")}>
+            Find Chicken Recipes
+          </Button>
+
+          {recipes.length === 0 ? (
+              <p>Loading...</p>
+          ) : (
+              recipes.map(recipe => (
+                  <p>{recipe.title}</p>
+              ))
+          )}
         </div>
 
         <div id="login" className="tabcontent" style={{display: "none"}}>

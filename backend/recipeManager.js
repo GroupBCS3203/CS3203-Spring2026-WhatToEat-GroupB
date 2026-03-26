@@ -16,11 +16,7 @@ async function getTopTenRecipes()
         { $limit: 10 }
     ]);
 
-    for(let i = 0; i < 10; i++)
-    {
-        console.log(tenRecipes[i].title);
-        console.log(tenRecipes[i].NER[1]);
-    }
+    return tenRecipes;
 }
 
 async function makeIngredientMasterList()
@@ -49,7 +45,7 @@ async function  findRecipeByIngredient(ingredients)
         { $limit: 10 }
     ]);
 
-    console.log(tenRecipes);
+    return tenRecipes;
 }
 
 module.exports = { getOneRecipe, getTopTenRecipes,makeIngredientMasterList,findRecipeByIngredient };
