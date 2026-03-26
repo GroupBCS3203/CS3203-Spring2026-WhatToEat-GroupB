@@ -29,14 +29,15 @@ app.get("/api/recipes/search", async (req, res) => {
     const ingredients = req.query.ingredients;
     res.json(await recipeManager.findRecipeByIngredient(ingredients));
 });
+
  */
 
 
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
-
-recipeManager.findRecipeByIngredient("bacon, onion");
-
+if (process.env.NODE_ENV !== "test") {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+}
 module.exports = app;

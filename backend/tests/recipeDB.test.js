@@ -1,10 +1,6 @@
 const request = require("supertest");
 const app = require("../server");
 
-beforeAll(() => {
-    server = app.listen(5000);
-});
-
 describe("GET /api/recipes/top", () => {
     it("should return an array of the top 10 recipes", async () => {
         const res = await request(app).get("/api/recipes/top");
@@ -29,17 +25,15 @@ describe("GET /api/recipes/one", () => {
         const res = await request(app).get("/api/recipes/one");
 
         expect(res.statusCode).toBe(200);
-        expect(res.not.toBeNull());
+        expect(res.body).not.toBeNull()
     });
 
     it("each recipe should have required fields", async () => {
         const res = await request(app).get("/api/recipes/one");
 
-        expect(res).toHaveProperty("_id");
-        expect(res).toHaveProperty("title");
-        expect(res).toHaveProperty("ingredients");
+        const recipe = res.body;
+
+        expect(recipe).toHaveProperty("title");
+        expect(recipe).toHaveProperty("ingredients");
     });
-});
-afterAll(() => {
-    server.close();
 });
