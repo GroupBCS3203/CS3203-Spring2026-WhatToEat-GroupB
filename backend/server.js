@@ -36,8 +36,8 @@ app.get("/api/recipes/search", async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-if (require.main === module) { // only run server if not required in tests
+if (process.env.NODE_ENV !== "test") {
+    const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 }
-
 module.exports = app;
