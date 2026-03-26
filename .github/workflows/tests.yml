@@ -6,9 +6,13 @@ on:
       - main
       - Matthew-Base-Dev
   pull_request:
+  workflow_dispatch:
 
+env:
+  MONGO_URI: ${{secrets.MONGO_URI }}
 jobs:
-  test:
+  backend_test:
+    name: Backend Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -17,11 +21,29 @@ jobs:
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
-        with:
-          node-version: 20
 
       - name: Install dependencies
+        working-directory: ./backend
         run: npm install
 
       - name: Run tests
+        working-directory: ./backend
+        run: npm test -- --watchAll=false
+  frontend_test:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+
+      - name: Install dependencies
+        working-directory: ./my-react-app
+        run: npm install
+
+      - name: Run tests
+        working-directory: ./my-react-app
         run: npm test -- --watchAll=false
