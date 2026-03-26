@@ -45,4 +45,4 @@ jobs:
 
       - name: Run tests
         working-directory: ./my-react-app
-        run: npm test -- --watchAll=false
+        run: npm test
