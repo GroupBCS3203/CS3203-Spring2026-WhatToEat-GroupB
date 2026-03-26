@@ -1,6 +1,10 @@
 const request = require("supertest");
 const app = require("../server");
 
+beforeAll(() => {
+    server = app.listen(5000);
+});
+
 describe("GET /api/recipes/top", () => {
     it("should return an array of the top 10 recipes", async () => {
         const res = await request(app).get("/api/recipes/top");
@@ -35,4 +39,7 @@ describe("GET /api/recipes/one", () => {
         expect(res).toHaveProperty("title");
         expect(res).toHaveProperty("ingredients");
     });
+});
+afterAll(() => {
+    server.close();
 });
