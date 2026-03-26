@@ -75,12 +75,14 @@ function App() {
       <div className="tab">
           <Tabbutton feature = "recipes" />
           <Tabbutton feature = "login" />
-          <Tabbutton feature = "Planner" />
-          <Tabbutton feature = "Barter" />
+          <Tabbutton feature = "planner" />
+          <Tabbutton feature = "budget" />
         </div>
 
-        <div id="recipes" className="tabcontent" style={{display: "block"}}>
-          <h3>Recipe Browser</h3>
+        <div id="recipes" className="tabcontent" style={{ color:'#ffffff', display: "block"}}>
+          <h3 style={{ color:'#ffffff' }}>
+            Recipe Browser
+          </h3>
 
           <Button onClick={() => getTopTen()}>
             Get 10 Recipes
@@ -95,18 +97,24 @@ function App() {
           )}
         </div>
 
-        <div id="login" className="tabcontent" style={{display: "none"}}>
-          <h3>Login</h3>
+        <div id="login" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
+          <h3 style={{ color:'#ffffff' }}>
+            Logic
+          </h3>
           <p>placeholder.</p>
         </div>
 
-        <div id="planner" className="tabcontent" style={{display: "none"}}>
-          <h3>Meal Planner</h3>
+        <div id="planner" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
+          <h3 style={{ color:'#ffffff' }}>
+            Meal Planner
+          </h3>
           <p>placeholder.</p>
         </div>
 
-        <div id="budget" className="tabcontent" style={{display: "none"}}>
-          <h3>budget Tracker</h3>
+        <div id="budget" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
+          <h3 style={{ color:'#ffffff' }}>
+            Budget Tracker
+          </h3>
           <p>placeholder.</p>
         </div>
     </>
