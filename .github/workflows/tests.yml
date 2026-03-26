@@ -7,9 +7,8 @@ on:
       - Matthew-Base-Dev
   pull_request:
   workflow_dispatch:
-
 env:
-  MONGO_URI: ${{secrets.MONGO_URI }}
+  MONGO_URI: ${{ secrets.MONGO_URI }}
 jobs:
   backend_test:
     name: Backend Tests
