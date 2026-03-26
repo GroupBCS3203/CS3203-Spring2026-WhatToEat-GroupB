@@ -27,7 +27,7 @@ jobs:
 
       - name: Run tests
         working-directory: ./backend
-        run: npm test -- --watchAll=false
+        run: npm test
   frontend_test:
     name: Frontend Tests
     runs-on: ubuntu-latest
