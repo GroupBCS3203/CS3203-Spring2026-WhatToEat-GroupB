@@ -54,7 +54,7 @@ function App() {
           <Tabbutton feature = "recipes" />
           <Tabbutton feature = "login" />
           <Tabbutton feature = "Planner" />
-          <Tabbutton feature = "budget" />
+          <Tabbutton feature = "Banter" />
         </div>
 
         <div id="recipes" className="tabcontent" style={{display: "block"}}>
