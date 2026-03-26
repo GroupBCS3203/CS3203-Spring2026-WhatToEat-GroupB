@@ -1,6 +1,16 @@
 const request = require("supertest");
 const app = require("../server");
 
+let server;
+
+beforeAll(() => {
+    server = app.listen(0); // start server on random free port
+});
+
+afterAll(() => {
+    server.close(); // close server so Jest exits
+});
+
 describe("GET /api/recipes/top", () => {
     it("should return an array of the top 10 recipes", async () => {
         const res = await request(app).get("/api/recipes/top");
