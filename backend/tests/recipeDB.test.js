@@ -7,8 +7,8 @@ beforeAll(() => {
     server = app.listen(0); // start server on random free port
 });
 
-afterAll(() => {
-    server.close(); // close server so Jest exits
+afterAll(async () => {
+    await server.close(); // close server so Jest exits
 });
 
 describe("GET /api/recipes/top", () => {
