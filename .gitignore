@@ -1,3 +1,5 @@
 #env
 backend/.env
-.env
+backend/node_modules
+my-react-app/.env
+my-react-app/node_modules
