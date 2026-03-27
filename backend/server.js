@@ -24,13 +24,14 @@ app.get("/api/recipes/one", async (req, res) => {
     res.json(await recipeManager.getOneRecipe());
 });
 
-/* Ingredient search
+//Ingredient search
 app.get("/api/recipes/search", async (req, res) => {
+    console.log(req.query.ingredients);
+
     const ingredients = req.query.ingredients;
+    console.log(ingredients);
     res.json(await recipeManager.findRecipeByIngredient(ingredients));
 });
-
- */
 
 
 

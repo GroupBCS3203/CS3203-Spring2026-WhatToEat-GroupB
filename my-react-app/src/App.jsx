@@ -53,8 +53,8 @@ function App() {
         .then(data => setRecipes(data));
   }
 
-  function searchByIngredient(ingredient) {
-    fetch(`${import.meta.env.VITE_API_URL}/api/recipes/search?ingredient=${ingredient}`)
+  function searchByIngredient(ingredients) {
+    fetch(`${import.meta.env.VITE_API_URL}/api/recipes/search?ingredients=${ingredients}`)
         .then(res => res.json())
         .then(data => setRecipes(data));
   }
@@ -84,7 +84,7 @@ function App() {
             Recipe Browser
           </h3>
 
-          <Button onClick={() => getTopTen()}>
+          <Button onClick={() => searchByIngredient("strawberries, apple")}>
             Get 10 Recipes
           </Button>
 

@@ -10,7 +10,7 @@ async function getOneRecipe()
 async function getTopTenRecipes()
 {
     let tenRecipes = await recipeModel.aggregate([
-        {$match: {NER: { $all: ["onion", "bacon", "salt", "potatoes"] }}},
+        //{$match: {NER: { $all: ["onion", "bacon", "salt", "potatoes"] }}},
         { $group: { _id: "$title", doc: { $first: "$$ROOT" } } },
         { $replaceRoot: { newRoot: "$doc" } },
         { $limit: 10 }
@@ -36,6 +36,7 @@ async function makeIngredientMasterList()
 
 async function  findRecipeByIngredient(ingredients)
 {
+    console.log(ingredients);
     let array = ingredients.split(", ");
     console.log(array);
     let tenRecipes = await recipeModel.aggregate([
