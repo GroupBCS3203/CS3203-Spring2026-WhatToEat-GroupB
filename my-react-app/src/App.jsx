@@ -54,9 +54,27 @@ function App() {
   }
 
   function searchByIngredient(ingredients) {
+
     fetch(`${import.meta.env.VITE_API_URL}/api/recipes/search?ingredients=${ingredients}`)
         .then(res => res.json())
         .then(data => setRecipes(data));
+  }
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleInputChange = (event) => {
+    // Convert input to lowercase for case-insensitive searching
+    setSearchTerm(event.target.value.toLowerCase());
+  };
+
+  function searchRecipes() {
+    if (searchTerm.length > 0) {
+      searchByIngredient(searchTerm);
+    }
+    else
+    {
+      getTopTen();
+    }
   }
 
   function openFeature(feature) {
@@ -69,9 +87,6 @@ function App() {
 
   return (
     <>
-      
-
-
       <div className="tab">
           <Tabbutton feature = "recipes" />
           <Tabbutton feature = "login" />
@@ -83,8 +98,13 @@ function App() {
           <h3 style={{ color:'#ffffff' }}>
             Recipe Browser
           </h3>
-
-          <Button onClick={() => searchByIngredient("strawberries, apple")}>
+          <input
+              type="text"
+              placeholder="Search here..."
+              onChange={handleInputChange} // Attach the onChange event handler
+              value={searchTerm} // Control the input value with state
+          />
+          <Button onClick={() => searchRecipes()}>
             Get 10 Recipes
           </Button>
 
