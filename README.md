@@ -17,7 +17,7 @@ It is important to note that this README mirrors the progress of WhatToEat, so a
 ## Installation
 While there is currently no way to install WhatToEat in a working manner, it is planned to be a fully-functional web-app
 ## Usage
-When finished, WhatToEat will be web-based, public to all, at a domain which will be determined when it is ready to publish. However, as there is also currently no runnable version, usage is minimal
+When finished, WhatToEat will be web-based, public to all, at a domain which will be determined when it is ready to publish. (The current work-in-progress website can be accessed using https://whattoeat-client.onrender.com/)
 ## Current Status
 WhatToEat is still in the early programming phase, so there exists no working product right now. But there are four sprints worth of content planned out for our future development which can be seen in the [Roadmap](#roadmap)
 ## Roadmap
