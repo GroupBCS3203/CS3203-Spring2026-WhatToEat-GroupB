@@ -1,12 +1,12 @@
 # WhatToEat
-WhatToEat is the all-in-one food managing program. At its core, WhatToEat is meant to help anyone seeking to figure out home cooking, no matter if their just learning to live on their own or if their fully-settled and kitchen-experienced.
+[WhatToEat](https://whattoeat-client.onrender.com/) is the all-in-one food managing program. At its core, WhatToEat is meant to help anyone seeking to figure out home cooking, no matter if their just learning to live on their own or if their fully-settled and kitchen-experienced.
 
 It does this by giving users recipes they can cook based on the ingredients they currently have. WhatToEat is planned to also have meal planning capabilities, an AI-driven recommendation system, and nutrition tracker, all working to make figuring out what to eat easy.
 
 It is important to note that this README mirrors the progress of WhatToEat, so anything that is currently a placeholder will be changed when appropriate.
 ## Table of Contents
-- [Installation](#installation)
 - [Usage](#usage)
+- [Local Installation and Testing](#local-installation-and-testing)
 - [Current Status](#current-status)
 - [Roadmap](#roadmap)
 - [Tools](#tools)
@@ -14,12 +14,42 @@ It is important to note that this README mirrors the progress of WhatToEat, so a
 - [Support Contacts](#support-contacts)
 - [License](#license)
 - [Credits](#credits)
-## Installation
-While there is currently no way to install WhatToEat in a working manner, it is planned to be a fully-functional web-app
+
 ## Usage
-When finished, WhatToEat will be web-based, public to all, at a domain which will be determined when it is ready to publish. (The current work-in-progress website can be accessed using https://whattoeat-client.onrender.com/)
+The current, work-in-progress website can be accessed using at [https://whattoeat-client.onrender.com/](https://whattoeat-client.onrender.com/). Please note that if our website only displays "Loading", that means the API is currently booting-up, and will need some time. You can look at [local testing](#local-testing) to see how to check the progress of the API boot-up.
+## Local Installation and Testing
+
+### Local Installation
+To create a local installation of WhatToEat, firstly install [Node.js](https://nodejs.org/en). This is the backbone of our project, and everything requires it.
+
+Next, clone the repository and input the following commands into the terminal:
+
+```shell
+cd my-react-app
+npm install
+npm run build
+```
+This creates the build so the website can be ran locally using `npm run dev`. **Notably**, you cannot use the backend files as it is unsafe to share the URI for our database. If you whish to connect to our database. Create a `.env` file in the `my-react-app` directory, and put the following in it:
+
+```
+VITE_API_URL = "https://whattoeat-api.onrender.com"
+```
+
+This will allow you to connect to the api we are running, and do calls of the recipes. **NOTE**: If the "Get 10 Recipes" button still only produces "Loading", go to [this website](https://whattoeat-api.onrender.com/api/recipes/top). This is effectively what is called when you press that button. If it a Render webpage instead of JSON, that means the API is booting up, and needs some time to boot up. Once that webpage returns JSON data, then the API is live.
+
+### Local Testing
+
+Because our backend testing uses direct database calls, they cannot be run by anyone but a developer. To test the frontend, ensure that your working directory is still `my-react-app` and run the following command:
+
+```shell
+npm test
+```
+This tests to ensure our website can make correct database calls (using mock data to remove the need for the external API to be running) and that these calls are properly displayed.
+
+If you want to see our backend tests, feel free to look at them both in the files at `.\backend\tests\recipeDB.test.js` and in our [Git Hub Actions](https://github.com/GroupBCS3203/CS3203-Spring2026-WhatToEat-GroupB/actions). 
+
 ## Current Status
-WhatToEat is still in the early programming phase, so there exists no working product right now. But there are four sprints worth of content planned out for our future development which can be seen in the [Roadmap](#roadmap)
+WhatToEat is currently around Phase 1 - Phase 2. Our WIP website can be found in [Usage](#usage). There are currently four phases worth of content planned out for our future development which can be seen in the [Roadmap](#roadmap)
 ## Roadmap
 ### Phase 1: Core Project
 - **Ingredient Tracker**
@@ -47,9 +77,9 @@ WhatToEat is still in the early programming phase, so there exists no working pr
 - **I'm Feeling Lucky**
 	- Adds a button where the user is given a recipe based on their current ingredients, allowing them to explore new recipes they may have never thought of
 ## Tools
-- For the frontend, we will use ReactNode
-- AWS will be used to host the web app
-- Mongodb will be used to hold and call both ingredient and recipe information
+- For the frontend, we are using React and Vite
+- Both our website and our API are being hosted with Render
+- MongoDB is being used to hold and call both ingredient and recipe information
 - [This public dataset](https://www.kaggle.com/datasets/wilmerarltstrmberg/recipe-dataset-over-2m/data) is what we will use as a source for our recipes
 ## Contributing
 For anyone looking to help WhatToEat please use the following steps:
