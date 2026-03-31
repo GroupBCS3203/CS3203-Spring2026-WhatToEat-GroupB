@@ -1,3 +1,7 @@
-#env
+#backend
 backend/.env
-.env
+backend/node_modules/
+
+#frontend
+my-react-app/.env
+my-react-app/node_modules/

@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg?url'
 import './App.css'
 import { useRef, useEffect } from "react";
 
@@ -38,8 +36,10 @@ function Tabbutton({ feature }) {
 
 function App() {
 
+  //Allows the transfer of recipe data
   const [recipes, setRecipes] = useState([]);
 
+  //useEffect call of the top recipe API call - Unsure if needed, but im keeping it for now
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/recipes/top`)
         .then(res => res.json())
@@ -47,16 +47,39 @@ function App() {
         .catch(err => console.error(err));
   }, []);
 
+  //Top Ten API call function
   function getTopTen() {
     fetch(`${import.meta.env.VITE_API_URL}/api/recipes/top`)
         .then(res => res.json())
         .then(data => setRecipes(data));
   }
 
-  function searchByIngredient(ingredient) {
-    fetch(`${import.meta.env.VITE_API_URL}/api/recipes/search?ingredient=${ingredient}`)
+  //Search by ingredients API call
+  function searchByIngredient(ingredients) {
+
+    fetch(`${import.meta.env.VITE_API_URL}/api/recipes/search?ingredients=${ingredients}`)
         .then(res => res.json())
         .then(data => setRecipes(data));
+  }
+
+  // keeps the search term updated so it can be used
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Updates the search term to be lower case
+  const handleInputChange = (event) => {
+    // Convert input to lowercase for case-insensitive searching
+    setSearchTerm(event.target.value.toLowerCase());
+  };
+
+  // Checks to see if there is any search term, if not, then it default searches top 10
+  function searchRecipes() {
+    if (searchTerm.length > 0) {
+      searchByIngredient(searchTerm);
+    }
+    else
+    {
+      getTopTen();
+    }
   }
 
   function openFeature(feature) {
@@ -69,9 +92,6 @@ function App() {
 
   return (
     <>
-      
-
-
       <div className="tab">
           <Tabbutton feature = "recipes" />
           <Tabbutton feature = "login" />
@@ -81,10 +101,15 @@ function App() {
 
         <div id="recipes" className="tabcontent" style={{ color:'#ffffff', display: "block"}}>
           <h3 style={{ color:'#ffffff' }}>
-            Recipe Browser?
+            Recipe Browser
           </h3>
-
-          <Button onClick={() => getTopTen()}>
+          <input
+              type="text"
+              placeholder="Search here..."
+              onChange={handleInputChange} // Attach the onChange event handler
+              value={searchTerm} // Control the input value with state
+          />
+          <Button onClick={() => searchRecipes()}>
             Get 10 Recipes
           </Button>
 
