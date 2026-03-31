@@ -37,9 +37,9 @@ const PORT = process.env.PORT || 5000;
 
 
 //Unsure if needed, but it's a relic of testing to make sure it closes correctly - DO NOT DELETE
-/*if (process.env.NODE_ENV !== "test") {
+if (process.env.NODE_ENV !== "test") {
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => console.log(`Server running on ${PORT}`));
-}*/
+}
 //Allows calls of app
 module.exports = app;
