@@ -1,26 +1,25 @@
 const recipeModel = require("./models/RecipeSchema.js");
 const mongoose = require("mongoose");
 
+
+//Gets a single recipe from the database, currently unused, but exists as a model function
 async function getOneRecipe()
 {
     const corn = await recipeModel.findOne();
     return corn;
 }
 
+// Returns a default top-ten recipes,
 async function getTopTenRecipes()
 {
     let tenRecipes = await recipeModel.aggregate([
-        {$match: {NER: { $all: ["onion", "bacon", "salt", "potatoes"] }}},
+        //{$match: {NER: { $all: ["onion", "bacon", "salt", "potatoes"] }}},
         { $group: { _id: "$title", doc: { $first: "$$ROOT" } } },
         { $replaceRoot: { newRoot: "$doc" } },
         { $limit: 10 }
     ]);
 
-    for(let i = 0; i < 10; i++)
-    {
-        console.log(tenRecipes[i].title);
-        console.log(tenRecipes[i].NER[1]);
-    }
+    return tenRecipes;
 }
 
 async function makeIngredientMasterList()
@@ -41,7 +40,6 @@ async function makeIngredientMasterList()
 async function  findRecipeByIngredient(ingredients)
 {
     let array = ingredients.split(", ");
-    console.log(array);
     let tenRecipes = await recipeModel.aggregate([
         {$match: {NER: { $all: array }}},
         { $group: { _id: "$title", doc: { $first: "$$ROOT" } } },
@@ -49,7 +47,7 @@ async function  findRecipeByIngredient(ingredients)
         { $limit: 10 }
     ]);
 
-    console.log(tenRecipes);
+    return tenRecipes;
 }
 
 module.exports = { getOneRecipe, getTopTenRecipes,makeIngredientMasterList,findRecipeByIngredient };

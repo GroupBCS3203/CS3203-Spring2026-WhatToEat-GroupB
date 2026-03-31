@@ -1,4 +1,7 @@
-#env
-.env
-backlog/.env
-frontend/.env
+#backend
+backend/.env
+backend/node_modules/
+
+#frontend
+my-react-app/.env
+my-react-app/node_modules/
