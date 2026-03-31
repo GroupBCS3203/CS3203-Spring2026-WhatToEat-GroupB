@@ -1,6 +1,7 @@
 const request = require("supertest");
 const app = require("../server");
 
+// These test the top 10 call of the recipes and ensures the properties are called correctly
 describe("GET /api/recipes/top", () => {
     it("should return an array of the top 10 recipes", async () => {
         const res = await request(app).get("/api/recipes/top");
@@ -20,6 +21,7 @@ describe("GET /api/recipes/top", () => {
     });
 });
 
+// These test the one call of the recipes and ensures the properties are called correctly
 describe("GET /api/recipes/one", () => {
     it("should return a single recipe", async () => {
         const res = await request(app).get("/api/recipes/one");
