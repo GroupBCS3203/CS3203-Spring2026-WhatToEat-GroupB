@@ -31,6 +31,7 @@ git clone https://github.com/GroupBCS3203/CS3203-Spring2026-WhatToEat-GroupB.git
 Next input the following commands into the terminal, the goal is to set the working directory to be `my-react-app`, install dependencies, and build the frontend:
 
 ```shell
+cd ./CS3203-Spring2026-WhatToEat-GroupB
 cd my-react-app
 npm install
 npm run build
