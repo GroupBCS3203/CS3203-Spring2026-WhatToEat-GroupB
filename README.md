@@ -22,7 +22,13 @@ The current, work-in-progress website can be accessed using at [https://whattoea
 ### Local Installation
 To create a local installation of WhatToEat, firstly install [Node.js](https://nodejs.org/en). This is the backbone of our project, and everything requires it.
 
-Next, clone the repository and input the following commands into the terminal:
+To clone the repo, use the following git command:
+
+```bash
+git clone https://github.com/GroupBCS3203/CS3203-Spring2026-WhatToEat-GroupB.git
+```
+
+Next input the following commands into the terminal, the goal is to set the working directory to be `my-react-app`, install dependencies, and build the frontend:
 
 ```shell
 cd my-react-app
@@ -39,7 +45,7 @@ This will allow you to connect to the api we are running, and do calls of the re
 
 ### Local Testing
 
-Because our backend testing uses direct database calls, they cannot be run by anyone but a developer. To test the frontend, ensure that your working directory is still `my-react-app` and run the following command:
+Because our backend testing uses direct database calls, they cannot be run by anyone but a main developer. To test the frontend, ensure that your working directory is still `my-react-app` and run the following command:
 
 ```shell
 npm test
