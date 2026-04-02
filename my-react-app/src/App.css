@@ -80,9 +80,25 @@
 /* Style the tab content */
 .tabcontent {
   display: none;
-  height: 95%;
-  
+  height: 90%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 6px 12px;
   border: 1px solid #ccc;
   border-top: none;
+  text-align: center;
+}
+
+#shopping-list .shopping-panel {
+  text-align: left;
+  padding: 20px;
+}
+
+#shopping-list .shopping-panel > .shopping-panel-actions {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+#shopping-list .shopping-panel > .shopping-items ul {
+  padding-left: 0;
 }
