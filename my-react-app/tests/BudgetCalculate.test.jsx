@@ -12,7 +12,7 @@ test("accepts valid numeric input and displays correct budget", async () => {
     fireEvent.change(input, { target: { value: "2000" } });
     fireEvent.click(button);
 
-    const result = await screen.findByText("your budget: $300.00");
+    const result = await screen.findByText("Your budget: $300.00");
     
     expect(result).toBeInTheDocument();
 });
