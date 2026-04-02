@@ -34,7 +34,7 @@ function Tabbutton({ feature, onOpen }) {
     </Button>
   );
 }
-
+var numIngredients = 0;
 
 
 function App() {
@@ -112,23 +112,23 @@ function App() {
     });
   }
 
-  function Ingredientrow(){
-        return(
-            <tr><td> {ingredients[0]} </td><td>placeholder</td><td>placeholder</td></tr>
-        );
-}
+
 function addIngredient(){
     var ingredient = document.getElementById("ingredient_input");
     var amount = document.getElementById("amount_input");
     var expiration = document.getElementById("expiration_input");
 
     var info = [ingredient.value, amount.value, expiration.value];
-    setIngredients(info);
+    numIngredients++;
+   
+    setIngredients([...ingredients, { id: {numIngredients}, text: {info} }]);
+
+    
 }
 function removeIngredient(){
 
 }
-var numIngredients = 0;
+
 
   return (
     <>
@@ -226,25 +226,22 @@ var numIngredients = 0;
           <table id= "ingredientTable">
             <tbody>
             <tr>
-                <th>Ingredient</th><th>Amount</th><th>Expiration date</th><th>Add</th><th>Remove</th>
+                <th>Ingredient</th><th>Amount</th><th>Expiration date</th><th>Add</th>
             </tr>
             <tr>
                 <td> <input id = "ingredient_input"
                             type="text"
                             placeholder="Ingredient name"
-                            onChange={handleInputChange}
                             />
                 </td> 
                 <td><input id = "amount_input"
                             type="number"
                             placeholder="Amount of the ingredient"
-                            onChange={handleInputChange} // Attach the onChange event handler
                             />
                 </td> 
                 <td><input id = "expiration_input"
                             type="date"
                             placeholder="Expiration date of the ingredient"
-                            onChange={handleInputChange} // Attach the onChange event handler
                             />
                 </td>
                 <td><Button onClick={() => addIngredient()}>
@@ -254,8 +251,15 @@ var numIngredients = 0;
             </tr>
             {ingredients.length === 0 ? (
                 <tr><td>enter some ingredients</td></tr>
-            ) : (
-                <Ingredientrow key={numIngredients++} /> //creates a row by only updates after that. 
+            ) : (ingredients.map(ingredients => (
+                 <tr key = {ingredients.id}>
+                    <td> {ingredients.text.info[0]} </td>
+                    <td>{ingredients.text.info[1]}</td>
+                    <td>{ingredients.text.info[2]}</td>
+                    <td>remove button placeholder</td>
+                </tr>
+                 
+                ))
             )}
             </tbody>
           </table>
