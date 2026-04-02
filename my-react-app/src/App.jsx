@@ -75,31 +75,28 @@ function App() {
   }
 
   function loadShoppingList() {
-    fetch(`${import.meta.env.VITE_API_URL}/api/recipes/top`)
-      .then(res => res.json())
-      .then(data => {
-        const ingredientSet = new Set();
-        data.forEach(recipe => {
-          if (Array.isArray(recipe.ingredients)) {
-            recipe.ingredients.forEach(ing => {
-              if (ing && typeof ing === 'string') {
-                ingredientSet.add(ing.trim());
-              }
-            });
-          } else if (typeof recipe.ingredients === 'string') {
-            recipe.ingredients.split(',').forEach(ing => {
-              if (ing) ingredientSet.add(ing.trim());
-            });
+    const recipesToUse = recipes.length > 0 ? recipes : [];
+    const ingredientSet = new Set();
+    
+    recipesToUse.forEach(recipe => {
+      if (Array.isArray(recipe.ingredients)) {
+        recipe.ingredients.forEach(ing => {
+          if (ing && typeof ing === 'string') {
+            ingredientSet.add(ing.trim());
           }
         });
+      } else if (typeof recipe.ingredients === 'string') {
+        recipe.ingredients.split(',').forEach(ing => {
+          if (ing) ingredientSet.add(ing.trim());
+        });
+      }
+    });
 
-        const sorted = [...ingredientSet]
-          .filter(Boolean)
-          .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-        setShoppingItems(sorted.map(name => ({ name, checked: false })));
-        setShoppingLoaded(true);
-      })
-      .catch(err => console.error(err));
+    const sorted = [...ingredientSet]
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    setShoppingItems(sorted.map(name => ({ name, checked: false })));
+    setShoppingLoaded(true);
   }
 
   function toggleShoppingItem(index) {
@@ -167,7 +164,7 @@ function App() {
           <div className="shopping-panel">
             <div className="shopping-panel-actions">
               <h3 style={{ color:'#ffffff' }}>Shopping List</h3>
-              <Button onClick={loadShoppingList}>Refresh from Top Recipes</Button>
+              <Button onClick={loadShoppingList}>Generate from Current Recipes</Button>
             </div>
 
             <div className="shopping-items">
