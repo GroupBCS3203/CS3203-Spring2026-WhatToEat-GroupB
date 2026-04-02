@@ -28,7 +28,6 @@ function Tabbutton({ feature, onOpen }) {
       onOpen(feature);
     }
   }
-
   return (
     <Button onClick={handlePlayClick}>
       {feature}
@@ -37,11 +36,13 @@ function Tabbutton({ feature, onOpen }) {
 }
 
 
+
 function App() {
   const [recipes, setRecipes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [shoppingItems, setShoppingItems] = useState([]);
   const [shoppingLoaded, setShoppingLoaded] = useState(false);
+  const [ingredients, setIngredients] = useState([]);
 
   const todayKey = new Date().toISOString().split('T')[0];
   const [plannerEvents, setPlannerEvents] = useState({});
@@ -138,7 +139,11 @@ function App() {
       .then(data => setRecipes(data));
   }
 
-  const handleInputChange = event => {
+
+
+  // Updates the search term to be lower case
+  const handleInputChange = (event) => {
+    // Convert input to lowercase for case-insensitive searching
     setSearchTerm(event.target.value.toLowerCase());
   };
 
@@ -182,6 +187,25 @@ function App() {
       return next;
     });
   }
+
+  function Ingredientrow(){
+        return(
+            <tr><td> {ingredients[0]} </td><td>placeholder</td><td>placeholder</td></tr>
+        );
+}
+function addIngredient(){
+    var ingredient = document.getElementById("ingredient_input");
+    var amount = document.getElementById("amount_input");
+    var expiration = document.getElementById("expiration_input");
+
+    var info = [ingredient.value, amount.value, expiration.value];
+    setIngredients(info);
+}
+function removeIngredient(){
+
+}
+var numIngredients = 0;
+
   return (
     <>
       <div className="tab">
@@ -190,6 +214,7 @@ function App() {
           <Tabbutton feature = "planner" />
           <Tabbutton feature = "budget" />
           <Tabbutton feature = "shopping-list" onOpen={loadShoppingList} />
+          <Tabbutton feature = "ingredients" /> 
         </div>
 
         <div id="recipes" className="tabcontent" style={{ color:'#ffffff', display: "block"}}>
@@ -217,7 +242,7 @@ function App() {
 
         <div id="login" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
           <h3 style={{ color:'#ffffff' }}>
-            Logic
+            Login
           </h3>
           <p>placeholder.</p>
         </div>
@@ -325,7 +350,7 @@ function App() {
           </h3>
           <p>placeholder.</p>
         </div>
-
+ 
         <div id="shopping-list" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
           <div className="shopping-panel">
             <div className="shopping-panel-actions">
@@ -358,6 +383,49 @@ function App() {
               )}
             </div>
           </div>
+        </div>
+
+        <div id="ingredients" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
+          <h3 style={{ color:'#ffffff' }}>
+            Ingredient Tracker
+          </h3>
+          <table id= "ingredientTable">
+            <tbody>
+            <tr>
+                <th>Ingredient</th><th>Amount</th><th>Expiration date</th><th>Add</th><th>Remove</th>
+            </tr>
+            <tr>
+                <td> <input id = "ingredient_input"
+                            type="text"
+                            placeholder="Ingredient name"
+                            onChange={handleInputChange}
+                            />
+                </td> 
+                <td><input id = "amount_input"
+                            type="number"
+                            placeholder="Amount of the ingredient"
+                            onChange={handleInputChange} // Attach the onChange event handler
+                            />
+                </td> 
+                <td><input id = "expiration_input"
+                            type="date"
+                            placeholder="Expiration date of the ingredient"
+                            onChange={handleInputChange} // Attach the onChange event handler
+                            />
+                </td>
+                <td><Button onClick={() => addIngredient()}>
+                        Add to ingredient list
+                    </Button>
+                </td>
+            </tr>
+            {ingredients.length === 0 ? (
+                <tr><td>enter some ingredients</td></tr>
+            ) : (
+                <Ingredientrow key={numIngredients++} /> //creates a row by only updates after that. 
+            )}
+            </tbody>
+          </table>
+          
         </div>
     </>
   )
