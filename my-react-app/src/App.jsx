@@ -43,6 +43,8 @@ function App() {
   const [shoppingItems, setShoppingItems] = useState([]);
   const [shoppingLoaded, setShoppingLoaded] = useState(false);
   const [ingredients, setIngredients] = useState([]);
+  const [income, setIncome] = useState('');
+  const [budget, setBudget] = useState(null);
 
   const todayKey = new Date().toISOString().split('T')[0];
   const [plannerEvents, setPlannerEvents] = useState({});
@@ -205,6 +207,16 @@ function removeIngredient(){
 
 }
 
+function calculateBudget(income) {
+  return income * 0.15; 
+}
+
+function handleCalculate(){
+  const numericIncome = parseFloat(income);
+  if (!isNaN(numericIncome) && numericIncome > 0) {
+    setBudget(calculateBudget(numericIncome));
+  }
+}
 
   return (
     <>
@@ -348,7 +360,18 @@ function removeIngredient(){
           <h3 style={{ color:'#ffffff' }}>
             Budget Tracker
           </h3>
-          <p>placeholder.</p>
+          <input
+            type="number"
+            placeholder="Enter monthly income"
+            value={income}
+            onChange={(e) => setIncome(e.target.value)}
+          />
+          <Button onClick={handleCalculate}>
+            Calculate Budget
+          </Button>
+          {budget !== null && (
+            <p>Your budget: ${budget.toFixed(2)} </p>
+          )}
         </div>
  
         <div id="shopping-list" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
