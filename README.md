@@ -45,12 +45,23 @@ This will allow you to connect to the api we are running, and do calls of the re
 
 ### Local Testing
 
-Because our backend testing uses direct database calls, they cannot be run by anyone but a main developer. To test the frontend, ensure that your working directory is still `my-react-app` and run the following command:
+Because our backend testing uses direct database calls, they cannot be run by anyone but a main developer. 
+
+To test the full frontend, ensure that your working directory is still `my-react-app` and run the following command:
 
 ```shell
 npm test
 ```
-This tests to ensure our website can make correct database calls (using mock data to remove the need for the external API to be running) and that these calls are properly displayed.
+If you instead want to run individual test files use the following command in the same wd:
+
+```shell
+npx vitest <test file> 
+```
+An example of this is:
+
+```shell
+npx vitest RecipeFetch.test.jsx
+```
 
 If you want to see our backend tests, feel free to look at them both in the files at `.\backend\tests\recipeDB.test.js` and in our [Git Hub Actions](https://github.com/GroupBCS3203/CS3203-Spring2026-WhatToEat-GroupB/actions). 
 
