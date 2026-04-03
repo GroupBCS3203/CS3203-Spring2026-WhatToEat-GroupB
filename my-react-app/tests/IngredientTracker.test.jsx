@@ -9,4 +9,9 @@ test("renders Ingredient Tracker tab", () => {
   // Check if the Ingredient Tracker tab exists
   const tabElement = screen.getByText("Ingredient Tracker");
   expect(tabElement).toBeInTheDocument();
+
+  //chech if adding an ingredient adds it to the list
+  addIngredient();
+  const ingredient_row = screen.getByText("remove button placeholder");
+  expect(ingredient_row).toBeInTheDocument();
 });
