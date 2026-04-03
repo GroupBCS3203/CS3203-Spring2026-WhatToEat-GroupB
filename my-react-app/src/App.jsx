@@ -646,7 +646,7 @@ function handleCalculate(){
           </table>
           
         </div>
-      <div id="diet-filter" className="tabcontent" style={{ color:'#ffffff', display: "block"}}>
+      <div id="diet-filter" className="tabcontent" style={{ color:'#ffffff', display: "none"}}>
         <h3 style={{ color:'#ffffff' }}>
           Dietary Restrictions (Currently in testing)
         </h3>
