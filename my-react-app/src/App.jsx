@@ -73,6 +73,8 @@ function App() {
   const [registerError, setRegisterError] = useState(''); // register validation/error message
   const [registerLoading, setRegisterLoading] = useState(false); // register form loading spinner
 
+  const [veganOnly, setVeganOnly] = useState(false);
+
   // Format date as YYYY-MM-DD for planner dates.
   function formatDate(d) {
     return d.toISOString().split('T')[0];
@@ -305,7 +307,8 @@ function handleCalculate(){
           <Tabbutton feature = "planner" />
           <Tabbutton feature = "budget" />
           <Tabbutton feature = "shopping-list" onOpen={loadShoppingList} />
-          <Tabbutton feature = "ingredients" /> 
+          <Tabbutton feature = "ingredients" />
+          <Tabbutton feature = "diet-filter" />
         </div>
 
         <div id="recipes" className="tabcontent" style={{ color:'#ffffff', display: "block"}}>
@@ -643,6 +646,19 @@ function handleCalculate(){
           </table>
           
         </div>
+      <div id="diet-filter" className="tabcontent" style={{ color:'#ffffff', display: "block"}}>
+        <h3 style={{ color:'#ffffff' }}>
+          Dietary Restrictions (Currently in testing)
+        </h3>
+        <label>
+          <input
+              type="checkbox"
+              checked={veganOnly}
+              onChange={(e) => setVeganOnly(e.target.checked)}
+          />
+          Vegan Only
+        </label>
+      </div>
     </>
   )
 
