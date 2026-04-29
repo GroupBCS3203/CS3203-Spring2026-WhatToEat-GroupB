@@ -40,11 +40,15 @@ describe('Shopping List Feature', () => {
       expect(screen.getByText('Recipe 2')).toBeInTheDocument();
     });
 
-    // Switch to shopping list tab (this should trigger loadShoppingList via onOpen)
+    // Switch to shopping list tab
     const shoppingListTab = screen.getByRole('button', { name: /shopping-list/i });
     fireEvent.click(shoppingListTab);
 
-    // The list should be loaded automatically when tab opens
+    // Click generate button to load shopping list
+    const generateButton = screen.getByRole('button', { name: /generate from current recipes/i });
+    fireEvent.click(generateButton);
+
+    // The list should be loaded
     await waitFor(() => {
       expect(screen.getByText('apple')).toBeInTheDocument();
       expect(screen.getByText('banana')).toBeInTheDocument();

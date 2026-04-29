@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import {Ingredients} from './ingredents.jsx'
 import LoginRegister from './LoginRegister.jsx'
+import { ShoppingList } from './ShoppingList.jsx'
 import { MealPlanner } from './MealPlanner.jsx';
 
 export function Button({ onClick, children }) {
@@ -40,8 +41,6 @@ function Tabbutton({ feature, onOpen }) {
 function App() {
   const [recipes, setRecipes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [shoppingItems, setShoppingItems] = useState([]);
-  const [shoppingLoaded, setShoppingLoaded] = useState(false);
   const [income, setIncome] = useState('');
   const [budget, setBudget] = useState(null);
 
@@ -84,39 +83,6 @@ function App() {
     }
   }
 
-  function loadShoppingList() {
-    const recipesToUse = recipes.length > 0 ? recipes : [];
-    const ingredientSet = new Set();
-    
-    recipesToUse.forEach(recipe => {
-      if (Array.isArray(recipe.ingredients)) {
-        recipe.ingredients.forEach(ing => {
-          if (ing && typeof ing === 'string') {
-            ingredientSet.add(ing.trim());
-          }
-        });
-      } else if (typeof recipe.ingredients === 'string') {
-        recipe.ingredients.split(',').forEach(ing => {
-          if (ing) ingredientSet.add(ing.trim());
-        });
-      }
-    });
-
-    const sorted = [...ingredientSet]
-      .filter(Boolean)
-      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-    setShoppingItems(sorted.map(name => ({ name, checked: false })));
-    setShoppingLoaded(true);
-  }
-
-  function toggleShoppingItem(index) {
-    setShoppingItems(prev => {
-      const next = [...prev];
-      next[index] = { ...next[index], checked: !next[index].checked };
-      return next;
-    });
-  }
-
 
 
 function calculateBudget(income) {
@@ -137,7 +103,7 @@ function handleCalculate(){
           <Tabbutton feature = "login" />
           <Tabbutton feature = "planner" />
           <Tabbutton feature = "budget" />
-          <Tabbutton feature = "shopping-list" onOpen={loadShoppingList} />
+          <Tabbutton feature = "shopping-list" />
           <Tabbutton feature = "ingredients" />
           <Tabbutton feature = "diet-filter" />
         </div>
@@ -192,37 +158,7 @@ function handleCalculate(){
         </div>
  
         <div id="shopping-list" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
-          <div className="shopping-panel">
-            <div className="shopping-panel-actions">
-              <h3 style={{ color:'#ffffff' }}>Shopping List</h3>
-              <Button onClick={loadShoppingList}>Generate from Current Recipes</Button>
-            </div>
-
-            <div className="shopping-items">
-              {!shoppingLoaded && <p>Click the button or open this tab to load the shopping list.</p>}
-              {shoppingLoaded && shoppingItems.length === 0 && <p>No ingredients found.</p>}
-
-              {shoppingItems.length > 0 && (
-                <ul style={{ listStyleType: 'none' }}>
-                  {shoppingItems.map((item, index) => (
-                    <li key={`${item.name}-${index}`} style={{ marginBottom: '8px' }}>
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={item.checked}
-                          onChange={() => toggleShoppingItem(index)}
-                          style={{ marginRight: '8px' }}
-                        />
-                        <span style={{ textDecoration: item.checked ? 'line-through' : 'none' }}>
-                          {item.name}
-                        </span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
+          <ShoppingList recipes={recipes} />
         </div>
 
         <div id="ingredients" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
