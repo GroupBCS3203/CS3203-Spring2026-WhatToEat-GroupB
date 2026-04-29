@@ -32,7 +32,7 @@ Next input the following commands into the terminal, the goal is to set the work
 
 ```shell
 cd ./CS3203-Spring2026-WhatToEat-GroupB/my-react-app
-npm install
+npm ci
 npm run build
 ```
 This creates the build so the website can be ran locally using `npm run dev`. **Notably**, you cannot use the backend files as it is unsafe to share the URI for our database. If you whish to connect to our database. Create a `.env` file in the `my-react-app` directory, and put the following in it:
