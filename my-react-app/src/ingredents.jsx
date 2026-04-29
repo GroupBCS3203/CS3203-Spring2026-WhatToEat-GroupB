@@ -3,7 +3,10 @@ import { Button } from './App';
 var numIngredients = 0;
 
 
-function addIngredient(){
+
+
+export function Ingredients(){
+    function addIngredient(){
     var ingredient = document.getElementById("ingredient_input");
     var amount = document.getElementById("amount_input");
     var expiration = document.getElementById("expiration_input");
@@ -12,11 +15,7 @@ function addIngredient(){
     numIngredients++;
    
     setIngredients([...ingredients, { id: {numIngredients}, text: {info} }]);
-
-    
-}
-
-export function Ingredients(){
+    }
     const [ingredients, setIngredients] = useState([]);
 
     return (<div>
