@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import {Ingredients} from './ingredents.jsx'
 
-
-
-
-function Button({ onClick, children }) {
+export function Button({ onClick, children }) {
   return (
     <button className='button' onClick={onClick}>
       {children}
     </button>
   );
 }
+
 
 function Tabbutton({ feature, onOpen }) {
 
@@ -34,7 +33,6 @@ function Tabbutton({ feature, onOpen }) {
     </Button>
   );
 }
-var numIngredients = 0;
 
 
 function App() {
@@ -42,7 +40,6 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [shoppingItems, setShoppingItems] = useState([]);
   const [shoppingLoaded, setShoppingLoaded] = useState(false);
-  const [ingredients, setIngredients] = useState([]);
   const [income, setIncome] = useState('');
   const [budget, setBudget] = useState(null);
 
@@ -276,18 +273,7 @@ function App() {
   }
 
 
-function addIngredient(){
-    var ingredient = document.getElementById("ingredient_input");
-    var amount = document.getElementById("amount_input");
-    var expiration = document.getElementById("expiration_input");
 
-    var info = [ingredient.value, amount.value, expiration.value];
-    numIngredients++;
-   
-    setIngredients([...ingredients, { id: {numIngredients}, text: {info} }]);
-
-    
-}
 function calculateBudget(income) {
   return income * 0.15; 
 }
@@ -601,50 +587,7 @@ function handleCalculate(){
         </div>
 
         <div id="ingredients" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
-          <h3 style={{ color:'#ffffff' }}>
-            Ingredient Tracker
-          </h3>
-          <table id= "ingredientTable">
-            <tbody>
-            <tr>
-                <th>Ingredient</th><th>Amount</th><th>Expiration date</th><th>Add</th>
-            </tr>
-            <tr>
-                <td> <input id = "ingredient_input"
-                            type="text"
-                            placeholder="Ingredient name"
-                            />
-                </td> 
-                <td><input id = "amount_input"
-                            type="number"
-                            placeholder="Amount of the ingredient"
-                            />
-                </td> 
-                <td><input id = "expiration_input"
-                            type="date"
-                            placeholder="Expiration date of the ingredient"
-                            />
-                </td>
-                <td><Button onClick={() => addIngredient()}>
-                        Add to ingredient list
-                    </Button>
-                </td>
-            </tr>
-            {ingredients.length === 0 ? (
-                <tr><td>enter some ingredients</td></tr>
-            ) : (ingredients.map(ingredients => (
-                 <tr key = {ingredients.id}>
-                    <td> {ingredients.text.info[0]} </td>
-                    <td>{ingredients.text.info[1]}</td>
-                    <td>{ingredients.text.info[2]}</td>
-                    <td>remove button placeholder</td>
-                </tr>
-                 
-                ))
-            )}
-            </tbody>
-          </table>
-          
+          <Ingredients></Ingredients>
         </div>
       <div id="diet-filter" className="tabcontent" style={{ color:'#ffffff', display: "none"}}>
         <h3 style={{ color:'#ffffff' }}>
