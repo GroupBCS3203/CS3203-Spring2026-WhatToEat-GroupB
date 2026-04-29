@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
 import {Ingredients} from './ingredents.jsx'
 import LoginRegister from './LoginRegister.jsx'
 import { ShoppingList } from './ShoppingList.jsx'
 import { MealPlanner } from './MealPlanner.jsx';
+import {RecipeFinder} from "./recipeFinder.jsx";
 
 export function Button({ onClick, children }) {
   return (
@@ -39,49 +40,12 @@ function Tabbutton({ feature, onOpen }) {
 
 
 function App() {
-  const [recipes, setRecipes] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [recipes] = useState([]);
   const [income, setIncome] = useState('');
   const [budget, setBudget] = useState(null);
 
   
   const [veganOnly, setVeganOnly] = useState(false);
-
-
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/recipes/top`)
-      .then(res => res.json())
-      .then(data => setRecipes(data))
-      .catch(err => console.error(err));
-  }, []);
-
-  function getTopTen() {
-    fetch(`${import.meta.env.VITE_API_URL}/api/recipes/top`)
-      .then(res => res.json())
-      .then(data => setRecipes(data));
-  }
-
-  function searchByIngredient(ingredients) {
-    fetch(`${import.meta.env.VITE_API_URL}/api/recipes/search?ingredients=${ingredients}`)
-      .then(res => res.json())
-      .then(data => setRecipes(data));
-  }
-
-
-
-  // Updates the search term to be lower case
-  const handleInputChange = (event) => {
-    // Convert input to lowercase for case-insensitive searching
-    setSearchTerm(event.target.value.toLowerCase());
-  };
-
-  function searchRecipes() {
-    if (searchTerm.length > 0) {
-      searchByIngredient(searchTerm);
-    } else {
-      getTopTen();
-    }
-  }
 
 
 
@@ -109,26 +73,7 @@ function handleCalculate(){
         </div>
 
         <div id="recipes" className="tabcontent" style={{ color:'#ffffff', display: "block"}}>
-          <h3 style={{ color:'#ffffff' }}>
-            Recipe Browser
-          </h3>
-          <input
-              type="text"
-              placeholder="Search here..."
-              onChange={handleInputChange} // Attach the onChange event handler
-              value={searchTerm} // Control the input value with state
-          />
-          <Button onClick={() => searchRecipes()}>
-            Get 10 Recipes
-          </Button>
-
-          {recipes.length === 0 ? (
-              <p>Loading...</p>
-          ) : (
-              recipes.map(recipe => (
-                  <p key={recipe._id || recipe.title}>{recipe.title}</p>
-              ))
-          )}
+          <RecipeFinder/>
         </div>
 
         <div id="login" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
@@ -156,7 +101,7 @@ function handleCalculate(){
             <p>Your budget: ${budget.toFixed(2)} </p>
           )}
         </div>
- 
+
         <div id="shopping-list" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
           <ShoppingList recipes={recipes} />
         </div>
