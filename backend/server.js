@@ -1,5 +1,5 @@
 const recipeManager = require("./recipeManager.js");
-//const userManager = require("./userManagement/userManager.js");
+const userManager = require("./userManagement/userManager.js");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -32,9 +32,27 @@ app.get("/api/recipes/search", async (req, res) => {
     res.json(await recipeManager.findRecipeByIngredient(ingredients));
 });
 
+//User api Calls
+
+//Add user
+
+app.get("/api/user/adduser", async (req, res) => {
+    const user = req.query.user;
+    const pass = req.query.pass;
+    res.json(await userManager.addUser(user, pass));
+});
+
+//Login user
+
+app.get("/api/user/login", async (req, res) => {
+    const user = req.query.user;
+    const pass = req.query.pass;
+    res.json(await userManager.login(user, pass));
+});
+
+
 // Just consistently sets the port to 5000 to make testing easy
 const PORT = process.env.PORT || 5000;
-
 
 //Unsure if needed, but it's a relic of testing to make sure it closes correctly - DO NOT DELETE
 if (process.env.NODE_ENV !== "test") {
