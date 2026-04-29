@@ -20,7 +20,7 @@ app.get("/api/recipes/top", async (req, res) => {
     res.json(await recipeManager.getTopTenRecipes());
 });
 
-// One recipes api call
+// One recipe api call
 app.get("/api/recipes/one", async (req, res) => {
     res.json(await recipeManager.getOneRecipe());
 });

@@ -11,8 +11,8 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String
     },
-    pastSearches:{
-        type: [String]
+    userID:{
+        type: String
     }});
 UserSchema.set('collection', 'users');
 module.exports = mongoose.model("User", UserSchema, 'users');
