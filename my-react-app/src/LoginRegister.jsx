@@ -7,7 +7,6 @@ function LoginRegister() {
 
   const [loginUsername, setLoginUsername] = useState('');
   const [UID, settUID] = useState(getUID());
-  const [loginData, setLoginData] = useState(getUID());
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
@@ -25,10 +24,9 @@ function LoginRegister() {
         .then(data => setRegisterError(data));
   }
 
-  function loginUser(username, password) {
-    fetch(`${import.meta.env.VITE_API_URL}/api/user/login?user=${username}&pass=${password}`)
-        .then(res => res.json())
-        .then(data => setLoginData(data));
+  async function loginUser(username, password) {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/login?user=${username}&pass=${password}`);
+    return res.json();
   }
 
 
@@ -43,18 +41,18 @@ function LoginRegister() {
 
     setLoginLoading(true);
     try {
-      await loginUser(loginUsername, loginPassword);
+      const loginData = await loginUser(loginUsername, loginPassword);
 
       if (loginData != 'none')
       {
         setUID(loginData);
-        settUID(getUID())
+        settUID(loginData)
+        setLoginError('');
+        alert('Login successful');
+        return;
       }
 
       setLoginError(loginData);
-
-      // TODO: handle successful login (e.g. store auth token, update user context, redirect)
-      alert(getUID());
     } catch (error) {
       setLoginError(error.message || 'Login failed. Please try again.');
     } finally {
