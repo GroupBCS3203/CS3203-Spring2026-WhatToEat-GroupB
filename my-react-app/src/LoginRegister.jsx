@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {getUID, setUID} from "./UIDManager.jsx";
+import {getUID, setUID} from "./varManager.jsx";
 
 function LoginRegister() {
   // Selects between Login and Register form.

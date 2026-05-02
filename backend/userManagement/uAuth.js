@@ -2,8 +2,9 @@ const userModel = require("../models/UserSchema");
 const crypto = require('crypto');
 require("dotenv").config();
 const ALGORITHM = "aes-256-gcm";
-const KEY = process.env.SECRET_KEY;
-const IV = process.env.IV;
+const salt = 'a-very-unique-secret-salt';
+const KEY = crypto.scryptSync(process.env.SECRET_KEY, salt, 32);
+const IV = crypto.scryptSync(process.env.IV, salt, 16);
 
 function encryptPass(password) {
     const cipher = crypto.createCipheriv(ALGORITHM, KEY, IV);
