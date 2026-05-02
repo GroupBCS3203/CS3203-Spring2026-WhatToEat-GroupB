@@ -59,12 +59,12 @@ export function RecipeFinder()
     let Popup =
         (
             <div style={styles.popup}>
+                <button style={{ backgroundColor: 'red', color: 'white', alignItems: 'flex-end' }} onClick={() => setShowPopup(false)}>
+                    Close Recipe
+                </button>
                 <h1 style={{ color:'#ffffff' }}>
                     {popUpRecipe.title}
                 </h1>
-                <button style={{ backgroundColor: 'red', color: 'white' }}>
-                    Close Recipe
-                </button>
                     <h2 style={{ color:'#ffffff' }}>
                         Ingredients:
                     </h2>
@@ -81,6 +81,9 @@ export function RecipeFinder()
                     <h4>
                         Link: <a href={`https://${popUpRecipe.link.slice(4)}`}> {popUpRecipe.link} </a>
                     </h4>
+                <button style={{ backgroundColor: 'red', color: 'white' }} onClick={() => setShowPopup(false)}>
+                    Close Recipe
+                </button>
             </div>
 
         );
@@ -107,16 +110,13 @@ export function RecipeFinder()
             value={searchTerm} // Control the input value with state
         />
         <Button onClick={() => searchRecipes()}>
-            Get 10 Recipes
+            Find Recipes
         </Button>
 
 
         {showPopup && //This is the popup logic
             Popup
         }
-
-        <button onClick={() => setShowPopup(true)}>Open Popup</button>
-        <button onClick={() => setShowPopup(false)}>Close Popup</button>
 
         {recipes.length === 0 ? (
             <p>Loading...</p>
