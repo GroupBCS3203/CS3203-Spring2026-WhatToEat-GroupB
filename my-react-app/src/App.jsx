@@ -5,6 +5,7 @@ import LoginRegister from './LoginRegister.jsx'
 import { ShoppingList } from './ShoppingList.jsx'
 import { MealPlanner } from './MealPlanner.jsx';
 import {RecipeFinder} from "./recipeFinder.jsx";
+import {DietaryFilter} from "./dietaryFilter.jsx";
 
 export function Button({ onClick, children }) {
   return (
@@ -43,9 +44,6 @@ function App() {
   const [recipes] = useState([]);
   const [income, setIncome] = useState('');
   const [budget, setBudget] = useState(null);
-
-  
-  const [veganOnly, setVeganOnly] = useState(false);
 
 
 
@@ -109,19 +107,11 @@ function handleCalculate(){
         <div id="ingredients" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
           <Ingredients></Ingredients>
         </div>
-      <div id="diet-filter" className="tabcontent" style={{ color:'#ffffff', display: "none"}}>
-        <h3 style={{ color:'#ffffff' }}>
-          Dietary Restrictions (Currently in testing)
-        </h3>
-        <label>
-          <input
-              type="checkbox"
-              checked={veganOnly}
-              onChange={(e) => setVeganOnly(e.target.checked)}
-          />
-          Vegan Only
-        </label>
-      </div>
+
+        <div id="diet-filter" className="tabcontent" style={{color: '#ffffff', display: "none"}}>
+          <DietaryFilter></DietaryFilter>
+        </div>
+
     </>
   )
 
