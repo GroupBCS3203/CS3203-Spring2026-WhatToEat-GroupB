@@ -9,6 +9,8 @@ on:
   workflow_dispatch:
 env:
   MONGO_URI: ${{ secrets.MONGO_URI }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  IV: ${{ secrets.IV }}
 jobs:
   backend_test:
     name: Backend Tests
