@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
 import {Ingredients} from './ingredents.jsx'
 import LoginRegister from './LoginRegister.jsx'
+import { ShoppingList } from './ShoppingList.jsx'
 import { MealPlanner } from './MealPlanner.jsx';
+import {RecipeFinder} from "./recipeFinder.jsx";
+import {DietaryFilter} from "./dietaryFilter.jsx";
 
 export function Button({ onClick, children }) {
   return (
@@ -38,84 +41,9 @@ function Tabbutton({ feature, onOpen }) {
 
 
 function App() {
-  const [recipes, setRecipes] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [shoppingItems, setShoppingItems] = useState([]);
-  const [shoppingLoaded, setShoppingLoaded] = useState(false);
+  const [recipes] = useState([]);
   const [income, setIncome] = useState('');
   const [budget, setBudget] = useState(null);
-
-  
-  const [veganOnly, setVeganOnly] = useState(false);
-
-
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/recipes/top`)
-      .then(res => res.json())
-      .then(data => setRecipes(data))
-      .catch(err => console.error(err));
-  }, []);
-
-  function getTopTen() {
-    fetch(`${import.meta.env.VITE_API_URL}/api/recipes/top`)
-      .then(res => res.json())
-      .then(data => setRecipes(data));
-  }
-
-  function searchByIngredient(ingredients) {
-    fetch(`${import.meta.env.VITE_API_URL}/api/recipes/search?ingredients=${ingredients}`)
-      .then(res => res.json())
-      .then(data => setRecipes(data));
-  }
-
-
-
-  // Updates the search term to be lower case
-  const handleInputChange = (event) => {
-    // Convert input to lowercase for case-insensitive searching
-    setSearchTerm(event.target.value.toLowerCase());
-  };
-
-  function searchRecipes() {
-    if (searchTerm.length > 0) {
-      searchByIngredient(searchTerm);
-    } else {
-      getTopTen();
-    }
-  }
-
-  function loadShoppingList() {
-    const recipesToUse = recipes.length > 0 ? recipes : [];
-    const ingredientSet = new Set();
-    
-    recipesToUse.forEach(recipe => {
-      if (Array.isArray(recipe.ingredients)) {
-        recipe.ingredients.forEach(ing => {
-          if (ing && typeof ing === 'string') {
-            ingredientSet.add(ing.trim());
-          }
-        });
-      } else if (typeof recipe.ingredients === 'string') {
-        recipe.ingredients.split(',').forEach(ing => {
-          if (ing) ingredientSet.add(ing.trim());
-        });
-      }
-    });
-
-    const sorted = [...ingredientSet]
-      .filter(Boolean)
-      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-    setShoppingItems(sorted.map(name => ({ name, checked: false })));
-    setShoppingLoaded(true);
-  }
-
-  function toggleShoppingItem(index) {
-    setShoppingItems(prev => {
-      const next = [...prev];
-      next[index] = { ...next[index], checked: !next[index].checked };
-      return next;
-    });
-  }
 
 
 
@@ -137,32 +65,13 @@ function handleCalculate(){
           <Tabbutton feature = "login" />
           <Tabbutton feature = "planner" />
           <Tabbutton feature = "budget" />
-          <Tabbutton feature = "shopping-list" onOpen={loadShoppingList} />
+          <Tabbutton feature = "shopping-list" />
           <Tabbutton feature = "ingredients" />
           <Tabbutton feature = "diet-filter" />
         </div>
 
         <div id="recipes" className="tabcontent" style={{ color:'#ffffff', display: "block"}}>
-          <h3 style={{ color:'#ffffff' }}>
-            Recipe Browser
-          </h3>
-          <input
-              type="text"
-              placeholder="Search here..."
-              onChange={handleInputChange} // Attach the onChange event handler
-              value={searchTerm} // Control the input value with state
-          />
-          <Button onClick={() => searchRecipes()}>
-            Get 10 Recipes
-          </Button>
-
-          {recipes.length === 0 ? (
-              <p>Loading...</p>
-          ) : (
-              recipes.map(recipe => (
-                  <p key={recipe._id || recipe.title}>{recipe.title}</p>
-              ))
-          )}
+          <RecipeFinder/>
         </div>
 
         <div id="login" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
@@ -190,57 +99,19 @@ function handleCalculate(){
             <p>Your budget: ${budget.toFixed(2)} </p>
           )}
         </div>
- 
+
         <div id="shopping-list" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
-          <div className="shopping-panel">
-            <div className="shopping-panel-actions">
-              <h3 style={{ color:'#ffffff' }}>Shopping List</h3>
-              <Button onClick={loadShoppingList}>Generate from Current Recipes</Button>
-            </div>
-
-            <div className="shopping-items">
-              {!shoppingLoaded && <p>Click the button or open this tab to load the shopping list.</p>}
-              {shoppingLoaded && shoppingItems.length === 0 && <p>No ingredients found.</p>}
-
-              {shoppingItems.length > 0 && (
-                <ul style={{ listStyleType: 'none' }}>
-                  {shoppingItems.map((item, index) => (
-                    <li key={`${item.name}-${index}`} style={{ marginBottom: '8px' }}>
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={item.checked}
-                          onChange={() => toggleShoppingItem(index)}
-                          style={{ marginRight: '8px' }}
-                        />
-                        <span style={{ textDecoration: item.checked ? 'line-through' : 'none' }}>
-                          {item.name}
-                        </span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
+          <ShoppingList recipes={recipes} />
         </div>
 
         <div id="ingredients" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
           <Ingredients></Ingredients>
         </div>
-      <div id="diet-filter" className="tabcontent" style={{ color:'#ffffff', display: "none"}}>
-        <h3 style={{ color:'#ffffff' }}>
-          Dietary Restrictions (Currently in testing)
-        </h3>
-        <label>
-          <input
-              type="checkbox"
-              checked={veganOnly}
-              onChange={(e) => setVeganOnly(e.target.checked)}
-          />
-          Vegan Only
-        </label>
-      </div>
+
+        <div id="diet-filter" className="tabcontent" style={{color: '#ffffff', display: "none"}}>
+          <DietaryFilter></DietaryFilter>
+        </div>
+
     </>
   )
 

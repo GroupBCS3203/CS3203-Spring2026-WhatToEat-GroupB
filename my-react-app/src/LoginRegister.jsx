@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import {getUID, setUID} from "./varManager.jsx";
 
 function LoginRegister() {
   // Selects between Login and Register form.
   const [isLoginMode, setIsLoginMode] = useState(true);
 
   const [loginUsername, setLoginUsername] = useState('');
+  const [UID, settUID] = useState(getUID());
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
@@ -14,6 +16,19 @@ function LoginRegister() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [registerError, setRegisterError] = useState('');
   const [registerLoading, setRegisterLoading] = useState(false);
+
+
+  function registerUser(username, password) {
+    fetch(`${import.meta.env.VITE_API_URL}/api/user/adduser?user=${username}&pass=${password}`)
+        .then(res => res.json())
+        .then(data => setRegisterError(data));
+  }
+
+  async function loginUser(username, password) {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/login?user=${username}&pass=${password}`);
+    return res.json();
+  }
+
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -26,24 +41,18 @@ function LoginRegister() {
 
     setLoginLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: loginUsername, password: loginPassword }),
-      });
+      const loginData = await loginUser(loginUsername, loginPassword);
 
-      const data = await response.json().catch(() => ({}));
-
-      if (response.ok === false) {
-        throw new Error(data.message || 'Invalid username or password');
+      if (loginData != 'none')
+      {
+        setUID(loginData);
+        settUID(loginData)
+        setLoginError('');
+        alert('Login successful');
+        return;
       }
 
-      if (data.token) {
-        localStorage.setItem('authToken', data.token);
-      }
-
-      // TODO: handle successful login (e.g. store auth token, update user context, redirect)
-      alert('Login successful');
+      setLoginError(loginData);
     } catch (error) {
       setLoginError(error.message || 'Login failed. Please try again.');
     } finally {
@@ -51,6 +60,8 @@ function LoginRegister() {
     }
   };
 
+  //This handles registering an account,
+  //Usernames must be unique, passwords are encrypted
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setRegisterError('');
@@ -75,10 +86,9 @@ function LoginRegister() {
       // TODO: implement register API/database call and handle response
       console.log('Register attempt:', { username: registerUsername, password: registerPassword });
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      registerUser(registerUsername, registerPassword);
 
       // TODO: handle successful register (e.g. store auth token, update user context, redirect)
-      alert('Registration successful');
     } catch {
       setRegisterError('Registration failed. Please try again.');
     } finally {

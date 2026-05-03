@@ -1,6 +1,7 @@
 #backend
 backend/.env
 backend/node_modules/
+backend/userManagement/uAuth.js
 
 #frontend
 my-react-app/.env
