@@ -1,21 +1,30 @@
 import { useState, useEffect } from 'react'
 import { Button } from './App';
-var numIngredients = 0;
+
 
 
 
 
 export function Ingredients(){
     function addIngredient(){
-    var ingredient = document.getElementById("ingredient_input");
-    var amount = document.getElementById("amount_input");
-    var expiration = document.getElementById("expiration_input");
+        var ingredient = document.getElementById("ingredient_input");
+        var amount = document.getElementById("amount_input");
+        var expiration = document.getElementById("expiration_input");
 
-    var info = [ingredient.value, amount.value, expiration.value];
-    numIngredients++;
-   
-    setIngredients([...ingredients, { id: {numIngredients}, text: {info} }]);
+        var info = [ingredient.value, amount.value, expiration.value];
+    
+        setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
     }
+
+    function removeIngredient(id){
+    
+        setIngredients(ingredients.filter(ingredients => ingredients.id !== id));
+    }
+
+    function loadIngredients(){
+        console.log(ingredients);
+    }
+
     const [ingredients, setIngredients] = useState([]);
 
     return (<div>
@@ -25,7 +34,7 @@ export function Ingredients(){
           <table id= "ingredientTable">
             <tbody>
             <tr>
-                <th>Ingredient</th><th>Amount</th><th>Expiration date</th><th>Add</th>
+                <th>Ingredient</th><th>Amount</th><th>Expiration date</th><th>Add/Remove</th><th><Button>Save list</Button></th><th><Button onClick={() => loadIngredients()}>Load list</Button></th>
             </tr>
             <tr>
                 <td> <input id = "ingredient_input"
@@ -51,11 +60,11 @@ export function Ingredients(){
             {ingredients.length === 0 ? (
                 <tr><td>enter some ingredients</td></tr>
             ) : (ingredients.map(ingredients => (
-                 <tr key = {ingredients.id}>
+                 <tr key = {ingredients.id} >
                     <td> {ingredients.text.info[0]} </td>
                     <td>{ingredients.text.info[1]}</td>
                     <td>{ingredients.text.info[2]}</td>
-                    <td>remove button placeholder</td>
+                    <td> <Button onClick={() => removeIngredient(ingredients.id)}> remove Ingredient</Button> </td>
                 </tr>
                  
                 ))
