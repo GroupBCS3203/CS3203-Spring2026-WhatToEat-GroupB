@@ -1,23 +1,35 @@
 import { useState } from 'react';
+import { getSavedRecipes, getUserIngredients } from './varManager.jsx';
 
 export function ShoppingList({ recipes }) {
   const [shoppingItems, setShoppingItems] = useState([]);
   const [shoppingLoaded, setShoppingLoaded] = useState(false);
 
   function loadShoppingList() {
-    const recipesToUse = recipes.length > 0 ? recipes : [];
+    const savedRecipes = getSavedRecipes();
+    const userIngredients = getUserIngredients();
+    const userIngredientNames = userIngredients.map(ing => ing.text.info[0].toLowerCase().trim());
+
     const ingredientSet = new Set();
     
-    recipesToUse.forEach(recipe => {
+    savedRecipes.forEach(recipe => {
       if (Array.isArray(recipe.ingredients)) {
         recipe.ingredients.forEach(ing => {
           if (ing && typeof ing === 'string') {
-            ingredientSet.add(ing.trim());
+            const normalizedIng = ing.toLowerCase().trim();
+            if (!userIngredientNames.includes(normalizedIng)) {
+              ingredientSet.add(ing.trim());
+            }
           }
         });
       } else if (typeof recipe.ingredients === 'string') {
         recipe.ingredients.split(',').forEach(ing => {
-          if (ing) ingredientSet.add(ing.trim());
+          if (ing) {
+            const normalizedIng = ing.toLowerCase().trim();
+            if (!userIngredientNames.includes(normalizedIng)) {
+              ingredientSet.add(ing.trim());
+            }
+          }
         });
       }
     });
@@ -41,7 +53,7 @@ export function ShoppingList({ recipes }) {
     <div className="shopping-panel">
       <div className="shopping-panel-actions">
         <h3 style={{ color:'#ffffff' }}>Shopping List</h3>
-        <button className='button' onClick={loadShoppingList}>Generate from Current Recipes</button>
+        <button className='button' onClick={loadShoppingList}>Generate from Saved Recipes</button>
       </div>
 
       <div className="shopping-items">

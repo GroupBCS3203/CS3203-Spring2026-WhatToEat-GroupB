@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {Button} from "./App.jsx";
-import {getUID, setRecipes as setGlobalRecipes} from "./varManager.jsx";
+import {getUID, setRecipes as setGlobalRecipes, addSavedRecipe, getSavedRecipes, removeSavedRecipe, isRecipeSaved} from "./varManager.jsx";
 
 
 
@@ -22,6 +22,8 @@ export function RecipeFinder()
     const [searchTerm, setSearchTerm] = useState('');
     const [showPopup, setShowPopup] = useState(false);
     const [popUpRecipe, setPopUpRecipe] = useState(baseJSON);
+    const [showSaved, setShowSaved] = useState(false);
+    const [popUpSaved, setPopUpSaved] = useState(false);
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_API_URL}/api/recipes/top`)
@@ -54,6 +56,24 @@ export function RecipeFinder()
         } else {
             getTopTen();
         }
+        setShowSaved(false);
+    }
+
+    function viewSavedRecipes() {
+        const saved = getSavedRecipes();
+        setRecipes(saved);
+        setGlobalRecipes(saved);
+        setShowSaved(true);
+    }
+
+    function handleSaveToggle() {
+        if (isRecipeSaved(popUpRecipe)) {
+            removeSavedRecipe(popUpRecipe);
+            setPopUpSaved(false);
+        } else {
+            addSavedRecipe(popUpRecipe);
+            setPopUpSaved(true);
+        }
     }
 
     let Popup =
@@ -61,6 +81,9 @@ export function RecipeFinder()
             <div style={styles.popup}>
                 <button style={{ backgroundColor: 'red', color: 'white', alignItems: 'flex-end' }} onClick={() => setShowPopup(false)}>
                     Close Recipe
+                </button>
+                <button style={{ backgroundColor: popUpSaved ? '#b33' : 'green', color: 'white', marginLeft: '10px' }} onClick={handleSaveToggle}>
+                    {popUpSaved ? 'Remove Saved Recipe' : 'Save Recipe'}
                 </button>
                 <h1 style={{ color:'#ffffff' }}>
                     {popUpRecipe.title}
@@ -90,6 +113,7 @@ export function RecipeFinder()
 
     function setPopup(recipe) {
         setPopUpRecipe(recipe);
+        setPopUpSaved(isRecipeSaved(recipe));
     }
 
     function runPopup(recipe)
@@ -112,6 +136,9 @@ export function RecipeFinder()
         <Button onClick={() => searchRecipes()}>
             Find Recipes
         </Button>
+        <Button onClick={() => viewSavedRecipes()}>
+            View Saved Recipes
+        </Button>
 
 
         {showPopup && //This is the popup logic
@@ -121,14 +148,19 @@ export function RecipeFinder()
         {recipes.length === 0 ? (
             <p>Loading...</p>
         ) : (
-            recipes.map(recipe => (
-                <p key={recipe._id || recipe.title}
-                   style={{ color:'#ffffff', cursor: "pointer" ,  textDecoration: 'underline' }}
-                   onClick={() => runPopup(recipe)}
-                >
-                    {recipe.title}
-                </p>
-            ))
+            <div>
+                <h4 style={{ color:'#ffffff' }}>
+                    {showSaved ? 'Saved Recipes' : 'Search Results'}
+                </h4>
+                {recipes.map(recipe => (
+                    <p key={recipe._id || recipe.title}
+                       style={{ color:'#ffffff', cursor: "pointer" ,  textDecoration: 'underline' }}
+                       onClick={() => runPopup(recipe)}
+                    >
+                        {recipe.title}
+                    </p>
+                ))}
+            </div>
         )}
     </div>
 

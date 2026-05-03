@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Button } from './App';
+import { setUserIngredients, getUserIngredients } from './varManager.jsx';
 var numIngredients = 0;
 
 
 
 
 export function Ingredients(){
+    const [ingredients, setIngredients] = useState(getUserIngredients());
+
     function addIngredient(){
     var ingredient = document.getElementById("ingredient_input");
     var amount = document.getElementById("amount_input");
@@ -14,9 +17,10 @@ export function Ingredients(){
     var info = [ingredient.value, amount.value, expiration.value];
     numIngredients++;
    
-    setIngredients([...ingredients, { id: {numIngredients}, text: {info} }]);
+    const newIngredients = [...ingredients, { id: {numIngredients}, text: {info} }];
+    setIngredients(newIngredients);
+    setUserIngredients(newIngredients);
     }
-    const [ingredients, setIngredients] = useState([]);
 
     return (<div>
             <h3 style={{ color:'#ffffff' }}>
