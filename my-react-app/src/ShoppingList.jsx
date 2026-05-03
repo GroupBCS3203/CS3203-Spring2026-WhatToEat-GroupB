@@ -5,28 +5,43 @@ export function ShoppingList({ recipes }) {
   const [shoppingItems, setShoppingItems] = useState([]);
   const [shoppingLoaded, setShoppingLoaded] = useState(false);
 
+  function normalizeIngredientName(ingredient) {
+    return typeof ingredient === 'string' ? ingredient.toLowerCase().trim() : '';
+  }
+
+  function getTrackedIngredientNames() {
+    return getUserIngredients()
+      .map(ing => ing?.text?.info?.[0])
+      .filter(name => typeof name === 'string' && name.trim())
+      .map(name => name.toLowerCase().trim());
+  }
+
+  function buildShoppingItems(names) {
+    const sorted = [...new Set(names.filter(Boolean).map(name => name.trim()))]
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    return sorted.map(name => ({ name, checked: false }));
+  }
+
   function loadShoppingList() {
     const savedRecipes = getSavedRecipes();
-    const userIngredients = getUserIngredients();
-    const userIngredientNames = userIngredients.map(ing => ing.text.info[0].toLowerCase().trim());
-
+    const userIngredientNames = getTrackedIngredientNames();
     const ingredientSet = new Set();
-    
+
     savedRecipes.forEach(recipe => {
       if (Array.isArray(recipe.ingredients)) {
         recipe.ingredients.forEach(ing => {
           if (ing && typeof ing === 'string') {
-            const normalizedIng = ing.toLowerCase().trim();
-            if (!userIngredientNames.includes(normalizedIng)) {
+            const normalizedIng = normalizeIngredientName(ing);
+            if (normalizedIng && !userIngredientNames.includes(normalizedIng)) {
               ingredientSet.add(ing.trim());
             }
           }
         });
       } else if (typeof recipe.ingredients === 'string') {
         recipe.ingredients.split(',').forEach(ing => {
-          if (ing) {
-            const normalizedIng = ing.toLowerCase().trim();
-            if (!userIngredientNames.includes(normalizedIng)) {
+          if (ing && typeof ing === 'string') {
+            const normalizedIng = normalizeIngredientName(ing);
+            if (normalizedIng && !userIngredientNames.includes(normalizedIng)) {
               ingredientSet.add(ing.trim());
             }
           }
@@ -34,10 +49,17 @@ export function ShoppingList({ recipes }) {
       }
     });
 
-    const sorted = [...ingredientSet]
-      .filter(Boolean)
-      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-    setShoppingItems(sorted.map(name => ({ name, checked: false })));
+    setShoppingItems(buildShoppingItems([...ingredientSet]));
+    setShoppingLoaded(true);
+  }
+
+  function loadShoppingListFromTracker() {
+    const trackedIngredientNames = getUserIngredients()
+      .map(ing => ing?.text?.info?.[0])
+      .filter(name => typeof name === 'string' && name.trim())
+      .map(name => name.trim());
+
+    setShoppingItems(buildShoppingItems(trackedIngredientNames));
     setShoppingLoaded(true);
   }
 
@@ -53,7 +75,10 @@ export function ShoppingList({ recipes }) {
     <div className="shopping-panel">
       <div className="shopping-panel-actions">
         <h3 style={{ color:'#ffffff' }}>Shopping List</h3>
-        <button className='button' onClick={loadShoppingList}>Generate from Saved Recipes</button>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <button className='button' onClick={loadShoppingList}>Generate from Saved Recipes</button>
+          <button className='button' onClick={loadShoppingListFromTracker}>Load from Ingredient Tracker</button>
+        </div>
       </div>
 
       <div className="shopping-items">

@@ -120,6 +120,27 @@ describe('Shopping List Feature', () => {
     });
   });
 
+  it('loads shopping list from saved ingredient tracker items', async () => {
+    setUserIngredients([
+      { id: '1', text: { info: ['banana', '2', '2026-01-01'] } },
+      { id: '2', text: { info: ['Apple', '1', '2026-02-02'] } },
+      { id: '3', text: { info: ['banana', '3', '2026-03-03'] } }
+    ]);
+
+    render(<ShoppingList recipes={[]} />);
+
+    fireEvent.click(screen.getByRole('button', { name: /load from ingredient tracker/i }));
+
+    await waitFor(() => {
+      const listItems = screen.getAllByRole('listitem');
+      expect(listItems).toHaveLength(2);
+      expect(listItems[0]).toHaveTextContent('Apple');
+      expect(listItems[1]).toHaveTextContent('banana');
+      expect(screen.getByText('Apple')).toBeInTheDocument();
+      expect(screen.getByText('banana')).toBeInTheDocument();
+    });
+  });
+
   it('allows toggling shopping list items', async () => {
     saveRecipes([
       { _id: '1', title: 'Recipe 1', ingredients: ['apple', 'banana'] }
