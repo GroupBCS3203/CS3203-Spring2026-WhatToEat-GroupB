@@ -87,10 +87,10 @@ app.post("/api/user/plannedMeals", express.json(), async (req, res) => {
     const events = req.body.events;
     await userManager.savePlannedMeals(UID, events);
     res.json({ success: true });
+});
 
 //THIS IS A TEMPLATE TO SAVE USER DATA, IMPLEMENT THIS IN SUCH A WAY THAT FITS WITH UserDataSchema.js,
-// David Note: consider using app.post(... like in "save planned meals" function above 
-app.get("/api/user/savedata", async (req, res) => {
+app.post("/api/user/savedata", express.json(), async (req, res) => {
     const id = req.query.id;
     const data = req.query.data;
     res.json(await userManager.saveUserData(id));
