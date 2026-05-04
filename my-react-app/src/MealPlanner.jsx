@@ -199,7 +199,6 @@ export function MealPlanner(){
             }
           });
           saveEventsToBackend(nextState);
-          saveEventsToBackend(nextState);
           return nextState;
         });
     }
@@ -355,7 +354,7 @@ export function MealPlanner(){
                 </label>
 
                 <label style={fieldLabelStyle}>
-                  Date
+                  Event Date
                   <input
                     type="date"
                     value={modalEventDate}
