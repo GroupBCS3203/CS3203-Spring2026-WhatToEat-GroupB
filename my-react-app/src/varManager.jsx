@@ -33,7 +33,7 @@ export function getExcludedIngredients() {
     return excludedIngredients;
 }
 
-export function setExcludedIngredients() {
+export function setExcludedIngredients(newExcludedIngredients) {
     excludedIngredients = newExcludedIngredients;
 }
 

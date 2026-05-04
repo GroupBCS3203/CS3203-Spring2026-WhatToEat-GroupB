@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {Button} from "./App.jsx";
-import {getUID, setRecipes as setGlobalRecipes, addSavedRecipe, getSavedRecipes, removeSavedRecipe, isRecipeSaved} from "./varManager.jsx";
+import {getUID, setRecipes as setGlobalRecipes, addSavedRecipe, getSavedRecipes, removeSavedRecipe, isRecipeSaved, getExcludedIngredients} from "./varManager.jsx";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -25,7 +25,7 @@ export function RecipeFinder()
     const [popUpRecipe, setPopUpRecipe] = useState(baseJSON);
     const [showSaved, setShowSaved] = useState(false);
     const [popUpSaved, setPopUpSaved] = useState(false);
-    const [useAI, setUseAI] = useState(true);
+    const [useAI, setUseAI] = useState(false);
 
     useEffect(() => {
         fetch(`${BASE_URL}/api/recipes/top`)
@@ -48,7 +48,7 @@ export function RecipeFinder()
         const excludedIngredients = getExcludedIngredients(); 
         const excludedQuery = excludedIngredients.join(","); // New query without excluded ingredients
         
-        fetch(`${BASE_URL}/api/recipes/search?ingredients=${ingredients}`)
+        fetch(`${BASE_URL}/api/recipes/search?ingredients=${ingredients}&excluded=${excludedQuery}`)
             .then(res => res.json())
             .then(data => {
                 setRecipes(data);

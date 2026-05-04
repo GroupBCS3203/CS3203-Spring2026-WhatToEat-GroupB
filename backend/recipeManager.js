@@ -37,15 +37,11 @@ async function makeIngredientMasterList()
     console.log(masterNER.length);
 }
 
-async function  findRecipeByIngredient(ingredients, excludedIngrediets) {
-{
-    let array = ingredients // If ingredient exist, create array
-    ? ingredients.split(",").map(item => item.trim().toLowerCase()).filter(Boolean) // Remove empty string
-    : [];
+async function  findRecipeByIngredient(ingredients, excludedIngredients) {
 
-  let excludedArray = excludedIngredients
-    ? excludedIngredients.split(",").map(item => item.trim().toLowerCase()).filter(Boolean)
-    : [];
+    let array = ingredients.split(",");
+
+  let excludedArray = excludedIngredients.split(",");
 
     let tenRecipes = await recipeModel.aggregate([
         {$match: {NER: { $all: array, $nin: excludedArray }}},
@@ -98,4 +94,5 @@ async function getAIRecipeRecommendations(ingredients)
     return JSON.parse(cleanedText);
 }
 
-module.exports = { getOneRecipe, getTopTenRecipes,makeIngredientMasterList,findRecipeByIngredient, getAIRecipeRecommendations};
+module.exports = { getOneRecipe, getTopTenRecipes,findRecipeByIngredient, getAIRecipeRecommendations }
+
