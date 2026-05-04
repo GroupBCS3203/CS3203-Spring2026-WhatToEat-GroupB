@@ -37,11 +37,18 @@ async function makeIngredientMasterList()
     console.log(masterNER.length);
 }
 
-async function  findRecipeByIngredient(ingredients)
+async function  findRecipeByIngredient(ingredients, excludedIngrediets) {
 {
-    let array = ingredients.split(", ");
+    let array = ingredients // If ingredient exist, create array
+    ? ingredients.split(",").map(item => item.trim().toLowerCase()).filter(Boolean) // Remove empty string
+    : [];
+
+  let excludedArray = excludedIngredients
+    ? excludedIngredients.split(",").map(item => item.trim().toLowerCase()).filter(Boolean)
+    : [];
+
     let tenRecipes = await recipeModel.aggregate([
-        {$match: {NER: { $all: array }}},
+        {$match: {NER: { $all: array, $nin: excludedArray }}},
         { $group: { _id: "$title", doc: { $first: "$$ROOT" } } },
         { $replaceRoot: { newRoot: "$doc" } },
         { $limit: 10 }
