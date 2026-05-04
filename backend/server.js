@@ -5,9 +5,12 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
+const USE_MOCK_DB = false
 
 app.use(cors());
 app.use(express.json());
+
+console.log("MONGO URI:", process.env.MONGO_URI);
 
 //Connects to the database
 mongoose.connect(process.env.MONGO_URI)
@@ -20,6 +23,7 @@ app.get("/api/recipes/top", async (req, res) => {
     res.json(await recipeManager.getTopTenRecipes());
 });
 
+
 // One recipe api call
 app.get("/api/recipes/one", async (req, res) => {
     res.json(await recipeManager.getOneRecipe());
@@ -27,9 +31,10 @@ app.get("/api/recipes/one", async (req, res) => {
 
 //Ingredient search api call
 app.get("/api/recipes/search", async (req, res) => {
-    const ingredients = req.query.ingredients;
+   const ingredients = req.query.ingredients;
     res.json(await recipeManager.findRecipeByIngredient(ingredients));
 });
+
 
 //User api Calls
 
@@ -56,6 +61,24 @@ app.get("/api/user/login", async (req, res) => {
     res.json(await userManager.login(user, pass));
 });
 
+//AI recipe recommendation api call
+
+app.get("/api/recipes/ai", async (req, res) => {
+
+    try {
+        const ingredients = req.query.ingredients;
+        const recommendations =
+            await recipeManager.getAIRecipeRecommendations(ingredients);
+        res.json({
+            recommendations
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            error: "Failed to generate AI recommendations"
+        });
+    }
+});
 
 // Just consistently sets the port to 5000 to make testing easy
 const PORT = process.env.PORT || 5000;
