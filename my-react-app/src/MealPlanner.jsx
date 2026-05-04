@@ -142,6 +142,18 @@ export function MealPlanner(){
         closeEventModal();
     }
 
+    function deleteAllPastEvents() {
+        setPlannerEvents(prev => {
+          const nextState = {};
+          Object.keys(prev).forEach(dateKey => {
+            if (dateKey >= todayKey) {
+              nextState[dateKey] = prev[dateKey];
+            }
+          });
+          return nextState;
+        });
+    }
+
     function prevMonth() {
         const d = new Date(plannerDate);
         d.setMonth(d.getMonth() - 1);
@@ -203,9 +215,17 @@ export function MealPlanner(){
               <Button onClick={nextMonth}>▶</Button>
             </div>
 
-            <Button onClick={() => openAddEventModal(todayKey)}>
-              Plan Meal
-            </Button>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <Button onClick={() => openAddEventModal(todayKey)}>
+                Plan Meal
+              </Button>
+              <Button
+                onClick={deleteAllPastEvents}
+                style={{ background: '#d32f2f', color: '#fff' }}
+              >
+                Delete All Past
+              </Button>
+            </div>
           </div>
 
           <div className="planner-calendar" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
