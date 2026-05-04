@@ -27,9 +27,15 @@ let savedPlans = [];
 let shoppingList = [];
 let savedFilters = [];
 let userIngredients = [];
+let excludedIngredients = [];
 
+export function getExcludedIngredients() {
+    return excludedIngredients;
+}
 
-
+export function setExcludedIngredients() {
+    excludedIngredients = newExcludedIngredients;
+}
 
 export function getUID()
 {
