@@ -54,7 +54,6 @@ export function Ingredients(){
         }
     }
 
-    const [ingredients, setIngredients] = useState([]);
 
     return (<div>
             <h3 style={{ color:'#ffffff' }}>
