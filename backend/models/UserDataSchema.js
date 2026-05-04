@@ -23,7 +23,11 @@ const DataSchema = new mongoose.Schema({
         date: Date
     },
     ownedIngredients:{
-        type: [String]
+        lineItems: [{
+            ingredientName: String, 
+            amount: Number,
+            experation: Date
+        }]
     },
     shoppingList:{
         lineItems: [{

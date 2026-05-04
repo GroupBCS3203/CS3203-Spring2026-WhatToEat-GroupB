@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react'
 import { Button } from './App';
-
+import {getUID} from "./varManager.jsx";
 
 
 
 
 export function Ingredients(){
+    function getElements(list, index){
+        var output = "";
+        for(let i=0; i<list.length; i++ ){
+            output = output.concat( list[i].text.info[index], ", " );
+        }
+        return output;
+    }
     function addIngredient(){
         var ingredient = document.getElementById("ingredient_input");
         var amount = document.getElementById("amount_input");
@@ -17,12 +24,31 @@ export function Ingredients(){
     }
 
     function removeIngredient(id){
-    
         setIngredients(ingredients.filter(ingredients => ingredients.id !== id));
     }
 
     function loadIngredients(){
-        console.log(ingredients);
+        if(getUID() == "none"){
+            alert("please login to load saved ingredents");
+        }else{
+            var newList; /* placeholder for reading in the global user data getter */
+            setIngredients([]);
+            for(let i = 0; i<newList.length; i++){
+                info = [newList[i][0], newList[i][1], newList[i][2]]
+                setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
+            }
+        }
+    }
+
+    function saveIngredients(){
+        if(getUID() == "none"){
+            alert("please login to save ingredents");
+        }else{
+            const nameList = getElements(ingredients, 0);
+            const amountList =  getElements(ingredients, 1);
+            const dateList =  getElements(ingredients, 2);
+            fetch(`${import.meta.env.VITE_API_URL}/api/user/saveIngredients?userID=${getUID()}&nameList=${nameList}&amountList=${amountList}&dateList=${dateList}`);
+        }
     }
 
     const [ingredients, setIngredients] = useState([]);
@@ -34,7 +60,7 @@ export function Ingredients(){
           <table id= "ingredientTable">
             <tbody>
             <tr>
-                <th>Ingredient</th><th>Amount</th><th>Expiration date</th><th>Add/Remove</th><th><Button>Save list</Button></th><th><Button onClick={() => loadIngredients()}>Load list</Button></th>
+                <th>Ingredient</th><th>Amount</th><th>Expiration date</th><th>Add/Remove</th><th><Button onClick={()=> saveIngredients()}>Save list</Button></th><th><Button onClick={() => loadIngredients()}>Load list</Button></th>
             </tr>
             <tr>
                 <td> <input id = "ingredient_input"

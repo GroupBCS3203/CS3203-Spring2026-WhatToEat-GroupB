@@ -33,8 +33,16 @@ app.get("/api/recipes/search", async (req, res) => {
 
 //User api Calls
 
-//Add user
+//save ingredients
+app.get("/api/user/saveIngredients", async (req, res) => {
+    const UID = req.query.userID;
+    const nameList = req.query.nameList;
+    const amountList= req.query.amountList;
+    const dateList= req.query.dateList;
+    res.json(await userManager.saveIngredients(UID, userManager.zip(nameList, amountList, dateList)));
+});
 
+//Add user
 app.get("/api/user/adduser", async (req, res) => {
     const user = req.query.user;
     const pass = req.query.pass;
@@ -42,7 +50,6 @@ app.get("/api/user/adduser", async (req, res) => {
 });
 
 //Login user
-
 app.get("/api/user/login", async (req, res) => {
     const user = req.query.user;
     const pass = req.query.pass;
