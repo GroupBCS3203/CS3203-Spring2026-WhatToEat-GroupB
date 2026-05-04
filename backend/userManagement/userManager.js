@@ -46,7 +46,7 @@ async function getUserData(userID)
 function zip(l1, l2, l3){
     var element;
     for(let i = 0; i<length.length; i++){
-        output.push([l1[i], l2[i], l3[i] ]);
+        output.push([l1[i], parseInt(l2[i]), Date.parse(l3[i]) ]);
     }
 }
 //ingredient tracker save function

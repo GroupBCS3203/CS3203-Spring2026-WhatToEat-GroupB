@@ -24,10 +24,12 @@ export function Ingredients(){
         var info = [ingredient.value, amount.value, expiration.value];
     
         setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
+        setUserIngredients(ingredients);
     }
 
     function removeIngredient(id){
         setIngredients(ingredients.filter(ingredients => ingredients.id !== id));
+        setUserIngredients(ingredients);
     }
 
     function loadIngredients(){
@@ -40,6 +42,7 @@ export function Ingredients(){
                 info = [newList[i][0], newList[i][1], newList[i][2]]
                 setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
             }
+            setUserIngredients(ingredients);
         }
     }
 

@@ -36,9 +36,9 @@ app.get("/api/recipes/search", async (req, res) => {
 //save ingredients
 app.get("/api/user/saveIngredients", async (req, res) => {
     const UID = req.query.userID;
-    const nameList = req.query.nameList;
-    const amountList= req.query.amountList;
-    const dateList= req.query.dateList;
+    const nameList = req.query.nameList.split(", ");
+    const amountList= req.query.amountList.split(", ");
+    const dateList= req.query.dateList.split(", ");
     res.json(await userManager.saveIngredients(UID, userManager.zip(nameList, amountList, dateList)));
 });
 
