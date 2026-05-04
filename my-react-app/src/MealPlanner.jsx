@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Button } from './App';
+import { getSavedRecipes } from './varManager.jsx'; // to select from saved recipes when creating events in the planner (future feature)
 
 export function MealPlanner(){
-    const todayKey = new Date().toISOString().split('T')[0];
+    const today = new Date();
+    const todayKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
     const [plannerEvents, setPlannerEvents] = useState({});
     const [plannerDate, setPlannerDate] = useState(() => {
         const d = new Date();
@@ -10,24 +12,26 @@ export function MealPlanner(){
         d.setDate(1);
         return d;
     });
-    const [isAddEventOpen, setIsAddEventOpen] = useState(false);
-    const [newPlannerEventDate, setNewPlannerEventDate] = useState(todayKey);
-    const [newPlannerEventName, setNewPlannerEventName] = useState('');
-    const [newPlannerEventTime, setNewPlannerEventTime] = useState('12:00');
+    const [eventModalOpen, setEventModalOpen] = useState(false);
+    const [isEditingEvent, setIsEditingEvent] = useState(false);
+    const [editingDateKey, setEditingDateKey] = useState(todayKey);
+    const [editingEventId, setEditingEventId] = useState(null);
+    const [modalEventDate, setModalEventDate] = useState(todayKey);
+    const [modalEventName, setModalEventName] = useState('');
+    const [modalEventTime, setModalEventTime] = useState('12:00');
 
-    // Format date as YYYY-MM-DD for planner dates.
-      function formatDate(d) {
+    function formatDate(d) {
         return d.toISOString().split('T')[0];
-      }
-    
-      function getCalendarGrid() {
+    }
+
+    function getCalendarGrid() {
         const year = plannerDate.getFullYear();
         const month = plannerDate.getMonth();
         const firstOfMonth = new Date(year, month, 1);
         const startIndex = firstOfMonth.getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const grid = [];
-    
+
         for (let i = 0; i < 42; i++) {
           const dayNum = i - startIndex + 1;
           if (i < startIndex || dayNum > daysInMonth) {
@@ -36,101 +40,173 @@ export function MealPlanner(){
             grid.push(new Date(year, month, dayNum));
           }
         }
-    
+
         return grid;
-      }
-    
-      function handleAddPlannerEvent() {
-        if (!newPlannerEventName.trim()) {
+    }
+
+    function openAddEventModal(dateKey) {
+        setIsEditingEvent(false);
+        setEditingEventId(null);
+        setEditingDateKey(dateKey);
+        setModalEventDate(dateKey);
+        setModalEventName('');
+        setModalEventTime('12:00');
+        setEventModalOpen(true);
+    }
+
+    function openEditEventModal(dateKey, event) {
+        setIsEditingEvent(true);
+        setEditingEventId(event.id);
+        setEditingDateKey(dateKey);
+        setModalEventDate(dateKey);
+        setModalEventName(event.name);
+        setModalEventTime(event.time);
+        setEventModalOpen(true);
+    }
+
+    function closeEventModal() {
+        setEventModalOpen(false);
+        setIsEditingEvent(false);
+        setEditingEventId(null);
+    }
+
+    function saveEvent() {
+        if (!modalEventName.trim()) {
           return;
         }
-    
-        const dateKey = newPlannerEventDate;
-        const event = {
-          id: `${dateKey}-${Date.now()}`,
-          name: newPlannerEventName.trim(),
-          time: newPlannerEventTime,
-        };
-    
-        setPlannerEvents(prev => {
-          const existing = prev[dateKey] || [];
-          return {
-            ...prev,
-            [dateKey]: [...existing, event],
+
+        const dateKey = modalEventDate;
+
+        if (isEditingEvent && editingEventId) {
+          setPlannerEvents(prev => {
+            const existing = prev[editingDateKey] || [];
+            const updatedEvents = existing.filter(ev => ev.id !== editingEventId);
+            const movedEvent = {
+              id: editingEventId,
+              name: modalEventName.trim(),
+              time: modalEventTime,
+            };
+            const nextState = {
+              ...prev,
+              [editingDateKey]: updatedEvents,
+            };
+
+            if (updatedEvents.length === 0) {
+              delete nextState[editingDateKey];
+            }
+
+            const destinationEvents = nextState[dateKey] || [];
+            nextState[dateKey] = [...destinationEvents, movedEvent];
+
+            return nextState;
+          });
+        } else {
+          const event = {
+            id: `${dateKey}-${Date.now()}`,
+            name: modalEventName.trim(),
+            time: modalEventTime,
           };
+
+          setPlannerEvents(prev => {
+            const existing = prev[dateKey] || [];
+            return {
+              ...prev,
+              [dateKey]: [...existing, event],
+            };
+          });
+        }
+
+        closeEventModal();
+    }
+
+    function deleteEvent() {
+        if (!isEditingEvent || !editingEventId) {
+          return;
+        }
+
+        setPlannerEvents(prev => {
+          const existing = prev[editingDateKey] || [];
+          const updatedEvents = existing.filter(ev => ev.id !== editingEventId);
+          const nextState = {
+            ...prev,
+            [editingDateKey]: updatedEvents,
+          };
+
+          if (updatedEvents.length === 0) {
+            delete nextState[editingDateKey];
+          }
+
+          return nextState;
         });
-    
-        setIsAddEventOpen(false);
-        setNewPlannerEventName('');
-        setNewPlannerEventTime('12:00');
-      }
-    
-      function prevMonth() {
+
+        closeEventModal();
+    }
+
+    function prevMonth() {
         const d = new Date(plannerDate);
         d.setMonth(d.getMonth() - 1);
         d.setDate(1);
         setPlannerDate(d);
-      }
-    
-      function nextMonth() {
+    }
+
+    function nextMonth() {
         const d = new Date(plannerDate);
         d.setMonth(d.getMonth() + 1);
         d.setDate(1);
         setPlannerDate(d);
-      }
+    }
+
+    const modalOverlayStyle = {
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.55)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
+        padding: '12px',
+    };
+
+    const modalBoxStyle = {
+        width: '100%',
+        maxWidth: '420px',
+        background: '#161616',
+        borderRadius: '14px',
+        padding: '24px',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.45)',
+        color: '#fff',
+    };
+
+    const fieldLabelStyle = {
+        display: 'block',
+        marginBottom: '12px',
+        fontSize: '14px',
+        color: '#f5f5f5',
+    };
+
+    const fieldInputStyle = {
+        width: '100%',
+        marginTop: '6px',
+        padding: '10px 12px',
+        borderRadius: '8px',
+        border: '1px solid #444',
+        background: '#222',
+        color: '#fff',
+    };
 
     return (
         <>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <Button onClick={prevMonth}>◀</Button>
               <strong style={{ color: '#ffffff', fontSize: '18px' }}>{plannerDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</strong>
               <Button onClick={nextMonth}>▶</Button>
             </div>
 
-            <Button onClick={() => setIsAddEventOpen(prev => !prev)}>
-              {isAddEventOpen ? 'Close Event' : 'Create Event'}
+            <Button onClick={() => openAddEventModal(todayKey)}>
+              Plan Meal
             </Button>
           </div>
-
-          {isAddEventOpen && (
-            <div className="planner-event-form" style={{ marginBottom: '12px', background: '#1b1b1b', padding: '12px', borderRadius: '8px', textAlign: 'left' }}>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-                <label style={{ color: '#fff', fontSize: '14px' }}>
-                  Event Date
-                  <input
-                    type="date"
-                    value={newPlannerEventDate}
-                    onChange={e => setNewPlannerEventDate(e.target.value)}
-                    style={{ marginLeft: '4px', padding: '6px', borderRadius: '4px', border: '1px solid #444', background: '#222', color: '#fff' }}
-                  />
-                </label>
-
-                <label style={{ color: '#fff', fontSize: '14px' }}>
-                  Food name
-                  <input
-                    type="text"
-                    placeholder="Food name"
-                    value={newPlannerEventName}
-                    onChange={e => setNewPlannerEventName(e.target.value)}
-                    style={{ marginLeft: '4px', padding: '6px', borderRadius: '4px', border: '1px solid #444', background: '#222', color: '#fff' }}
-                  />
-                </label>
-
-                <label style={{ color: '#fff', fontSize: '14px' }}>
-                  Time
-                  <input
-                    type="time"
-                    value={newPlannerEventTime}
-                    onChange={e => setNewPlannerEventTime(e.target.value)}
-                    style={{ marginLeft: '4px', padding: '6px', borderRadius: '4px', border: '1px solid #444', background: '#222', color: '#fff' }}
-                  />
-                </label>
-
-                <Button onClick={handleAddPlannerEvent}>Save</Button>
-              </div>
-            </div>
-          )}
 
           <div className="planner-calendar" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
@@ -153,18 +229,23 @@ export function MealPlanner(){
                     minHeight: '90px',
                     background: isToday ? '#3272d9' : '#2b2b2b',
                     borderRadius: '6px',
-                    padding: '5px',
+                    padding: '8px',
                     color: '#fff',
                     cursor: 'pointer',
+                    position: 'relative',
                   }}
-                  onClick={() => {
-                    setIsAddEventOpen(true);
-                    setNewPlannerEventDate(dayKey);
-                  }}
+                  onClick={() => openAddEventModal(dayKey)}
                 >
                   <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>{date.getDate()}</div>
                   {events.slice(0, 3).map(ev => (
-                    <div key={ev.id} style={{ fontSize: '11px', marginBottom: '2px', textAlign: 'left' }}>
+                    <div
+                      key={ev.id}
+                      style={{ fontSize: '11px', marginBottom: '4px', textAlign: 'left', padding: '4px 6px', borderRadius: '6px', background: '#1f1f1f' }}
+                      onClick={e => {
+                        e.stopPropagation();
+                        openEditEventModal(dayKey, ev);
+                      }}
+                    >
                       {ev.time} {ev.name}
                     </div>
                   ))}
@@ -175,8 +256,82 @@ export function MealPlanner(){
               );
             })}
           </div>
+
+          {eventModalOpen && (
+            <div style={modalOverlayStyle} onClick={closeEventModal}>
+              <div style={modalBoxStyle} onClick={e => e.stopPropagation()}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+                  <div>
+                    <h2 style={{ margin: 0, fontSize: '22px' }}>{isEditingEvent ? 'Edit Plan' : 'Plan Meal'}</h2>
+                    <p style={{ margin: '6px 0 0', color: '#bbb', fontSize: '13px' }}>Use the fields below to save or update the event.</p>
+                  </div>
+                  <button
+                    onClick={closeEventModal}
+                    style={{ background: 'transparent', border: 'none', color: '#bbb', fontSize: '18px', cursor: 'pointer' }}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <label style={fieldLabelStyle}>
+                  Food name
+                  <input
+                    type="text"
+                    placeholder="Food name"
+                    value={modalEventName}
+                    onChange={e => setModalEventName(e.target.value)}
+                    style={fieldInputStyle}
+                  />
+                </label>
+
+                <label style={fieldLabelStyle}>
+                  Date
+                  <input
+                    type="date"
+                    value={modalEventDate}
+                    onChange={e => setModalEventDate(e.target.value)}
+                    style={fieldInputStyle}
+                  />
+                </label>
+
+                <label style={fieldLabelStyle}>
+                  Time
+                  <input
+                    type="time"
+                    value={modalEventTime}
+                    onChange={e => setModalEventTime(e.target.value)}
+                    style={fieldInputStyle}
+                  />
+                </label>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginTop: '22px', flexWrap: 'wrap' }}>
+                  <Button onClick={saveEvent} style={{ flex: 1 }}>Save</Button>
+                  <Button onClick={closeEventModal} style={{ flex: 1, background: '#444', color: '#fff' }}>Cancel</Button>
+                </div>
+
+                {isEditingEvent && (
+                  <button
+                    onClick={deleteEvent}
+                    style={{
+                      marginTop: '14px',
+                      width: '100%',
+                      padding: '12px 0',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: '#d32f2f',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Delete Plan
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </>
-        )
+    );
 }
 
 
