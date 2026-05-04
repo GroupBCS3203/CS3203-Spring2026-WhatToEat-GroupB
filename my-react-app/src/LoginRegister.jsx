@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import {getUID, setUID} from "./varManager.jsx";
 
-function LoginRegister() {
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+function LoginRegister({ onLoginChange }) {
   // Selects between Login and Register form.
   const [isLoginMode, setIsLoginMode] = useState(true);
 
@@ -15,17 +17,19 @@ function LoginRegister() {
   const [registerPassword, setRegisterPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [registerError, setRegisterError] = useState('');
+  const [registerSuccess, setRegisterSuccess] = useState('');
   const [registerLoading, setRegisterLoading] = useState(false);
 
 
-  function registerUser(username, password) {
-    fetch(`${import.meta.env.VITE_API_URL}/api/user/adduser?user=${username}&pass=${password}`)
-        .then(res => res.json())
-        .then(data => setRegisterError(data));
+  async function registerUser(username, password) {
+    const params = new URLSearchParams({ user: username, pass: password });
+    const res = await fetch(`${API_URL}/api/user/adduser?${params}`);
+    return res.json();
   }
 
   async function loginUser(username, password) {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/login?user=${username}&pass=${password}`);
+    const params = new URLSearchParams({ user: username, pass: password });
+    const res = await fetch(`${API_URL}/api/user/login?${params}`);
     return res.json();
   }
 
@@ -33,6 +37,7 @@ function LoginRegister() {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoginError('');
+    setRegisterSuccess('');
 
     if (!loginUsername || !loginPassword) {
       setLoginError('Please fill in all fields');
@@ -46,13 +51,14 @@ function LoginRegister() {
       if (loginData != 'none')
       {
         setUID(loginData);
-        settUID(loginData)
+        settUID(loginData);
+        onLoginChange?.(loginData);
         setLoginError('');
         alert('Login successful');
         return;
       }
 
-      setLoginError(loginData);
+      setLoginError('Invalid username or password');
     } catch (error) {
       setLoginError(error.message || 'Login failed. Please try again.');
     } finally {
@@ -65,6 +71,7 @@ function LoginRegister() {
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setRegisterError('');
+    setRegisterSuccess('');
 
     if (!registerUsername || !registerPassword || !confirmPassword) {
       setRegisterError('Please fill in all fields');
@@ -83,14 +90,26 @@ function LoginRegister() {
 
     setRegisterLoading(true);
     try {
-      // TODO: implement register API/database call and handle response
-      console.log('Register attempt:', { username: registerUsername, password: registerPassword });
+      const registerData = await registerUser(registerUsername, registerPassword);
 
-      registerUser(registerUsername, registerPassword);
+      if (registerData === 'success') {
+        setRegisterSuccess('Registration successful. You can now log in.');
+        setRegisterUsername('');
+        setRegisterPassword('');
+        setConfirmPassword('');
+        setIsLoginMode(true);
+        setLoginUsername(registerUsername);
+        return;
+      }
 
-      // TODO: handle successful register (e.g. store auth token, update user context, redirect)
-    } catch {
-      setRegisterError('Registration failed. Please try again.');
+      if (registerData === 'failed, duplicate') {
+        setRegisterError('That username is already taken.');
+        return;
+      }
+
+      setRegisterError(registerData || 'Registration failed. Please try again.');
+    } catch (error) {
+      setRegisterError(error.message || 'Registration failed. Please try again.');
     } finally {
       setRegisterLoading(false);
     }
@@ -101,6 +120,20 @@ function LoginRegister() {
       <h3 style={{ color:'#ffffff' }}>
         Login
       </h3>
+      <div
+        style={{
+          maxWidth: '300px',
+          margin: '0 auto 16px',
+          padding: '10px 12px',
+          borderRadius: '4px',
+          border: UID !== 'none' ? '1px solid #4CAF50' : '1px solid #666',
+          background: UID !== 'none' ? '#173d1a' : '#252525',
+          color: '#fff',
+          textAlign: 'center'
+        }}
+      >
+        {UID !== 'none' ? 'Logged in' : 'Not logged in'}
+      </div>
       <div style={{ marginBottom: '20px' }}>
         <button
           onClick={() => setIsLoginMode(true)}
@@ -156,6 +189,7 @@ function LoginRegister() {
               />
             </label>
             {loginError && <div style={{ color: '#ff6b6b', marginBottom: '12px' }}>{loginError}</div>}
+            {registerSuccess && <div style={{ color: '#7ee787', marginBottom: '12px' }}>{registerSuccess}</div>}
             <button
               type="submit"
               disabled={loginLoading}
@@ -200,6 +234,7 @@ function LoginRegister() {
               />
             </label>
             {registerError && <div style={{ color: '#ff6b6b', marginBottom: '12px' }}>{registerError}</div>}
+            {registerSuccess && <div style={{ color: '#7ee787', marginBottom: '12px' }}>{registerSuccess}</div>}
             <button
               type="submit"
               disabled={registerLoading}

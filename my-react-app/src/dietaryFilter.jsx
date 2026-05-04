@@ -7,7 +7,7 @@ export function DietaryFilter() {
 
     let mainPage = <div>
         <h3 style={{color: '#ffffff'}}>
-            Dietary Restrictions (Currently in testingg)
+            Dietary Restrictions (Currently in testing)
         </h3>
         <label>
             <input
