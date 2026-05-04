@@ -23,12 +23,12 @@ test("opening event form and adding an event appears on day cell", async () => {
 
   fireEvent.click(screen.getByText(/planner/i));
 
-  fireEvent.click(screen.getByRole('button', { name: /create event/i }));
+  fireEvent.click(screen.getByRole('button', { name: /plan meal/i }));
 
   const today = new Date();
   const formatted = today.toISOString().split('T')[0];
 
-  const dateInput = screen.getByLabelText(/event date/i);
+  const dateInput = screen.getByLabelText(/date/i);
   fireEvent.change(dateInput, { target: { value: formatted } });
 
   const nameInput = screen.getByLabelText(/food name/i);
