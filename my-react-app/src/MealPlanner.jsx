@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './App';
 import { getSavedRecipes } from './varManager.jsx'; // to select from saved recipes when creating events in the planner (future feature)
+import { getUID } from './varManager.jsx';
 
 export function MealPlanner(){
     const today = new Date();
@@ -19,6 +20,47 @@ export function MealPlanner(){
     const [modalEventDate, setModalEventDate] = useState(todayKey);
     const [modalEventName, setModalEventName] = useState('');
     const [modalEventTime, setModalEventTime] = useState('12:00');
+    const uid = getUID();
+
+    useEffect(() => {
+        if (uid !== 'none') {
+            fetchPlannedMeals();
+        } else {
+            setPlannerEvents({});
+        }
+    }, [uid]);
+
+    async function fetchPlannedMeals() {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/plannedMeals?userID=${uid}`);
+            const events = await res.json();
+            const eventsObj = {};
+            events.forEach(ev => {
+                if (!eventsObj[ev.date]) eventsObj[ev.date] = [];
+                eventsObj[ev.date].push(ev);
+            });
+            setPlannerEvents(eventsObj);
+        } catch (error) {
+            console.error('Failed to fetch planned meals:', error);
+        }
+    }
+
+    async function saveEventsToBackend(eventsObj) {
+        if (uid === 'none') return;
+        const events = [];
+        Object.keys(eventsObj).forEach(date => {
+            eventsObj[date].forEach(ev => events.push(ev));
+        });
+        try {
+            await fetch(`${import.meta.env.VITE_API_URL}/api/user/plannedMeals`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userID: uid, events })
+            });
+        } catch (error) {
+            console.error('Failed to save planned meals:', error);
+        }
+    }
 
     function formatDate(d) {
         return d.toISOString().split('T')[0];
@@ -84,6 +126,7 @@ export function MealPlanner(){
             const movedEvent = {
               id: editingEventId,
               name: modalEventName.trim(),
+              date: dateKey,
               time: modalEventTime,
             };
             const nextState = {
@@ -98,21 +141,25 @@ export function MealPlanner(){
             const destinationEvents = nextState[dateKey] || [];
             nextState[dateKey] = [...destinationEvents, movedEvent];
 
+            saveEventsToBackend(nextState);
             return nextState;
           });
         } else {
           const event = {
             id: `${dateKey}-${Date.now()}`,
             name: modalEventName.trim(),
+            date: dateKey,
             time: modalEventTime,
           };
 
           setPlannerEvents(prev => {
             const existing = prev[dateKey] || [];
-            return {
+            const nextState = {
               ...prev,
               [dateKey]: [...existing, event],
             };
+            saveEventsToBackend(nextState);
+            return nextState;
           });
         }
 
@@ -136,6 +183,7 @@ export function MealPlanner(){
             delete nextState[editingDateKey];
           }
 
+          saveEventsToBackend(nextState);
           return nextState;
         });
 
@@ -150,6 +198,8 @@ export function MealPlanner(){
               nextState[dateKey] = prev[dateKey];
             }
           });
+          saveEventsToBackend(nextState);
+          saveEventsToBackend(nextState);
           return nextState;
         });
     }

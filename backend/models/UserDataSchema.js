@@ -18,10 +18,13 @@ const DataSchema = new mongoose.Schema({
     DietFilters: { //dataType = "filters"
         type: [String]
     },
-    plannedMeals: { //dataType = "plans"
-        recipeID: String,
-        date: Date
-    },
+    plannedMeals: [{ //dataType = "plans"
+        id: String,
+        name: String,
+        date: String,
+        time: String,
+        recipeID: String
+    }],
     savedRecipes:{  //dataType = "recipes"
         recipe: [{
             title:{
