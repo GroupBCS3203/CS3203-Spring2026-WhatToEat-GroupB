@@ -75,6 +75,15 @@ app.get("/api/user/getdata", async (req, res) => {
     res.json(await userManager.getUserData(id));
 });
 
+
+//THIS IS A TEMPLATE TO SAVE USER DATA, IMPLEMENT THIS IN SUCH A WAY THAT FITS WITH UserDataSchema.js,
+
+app.get("/api/user/savedata", async (req, res) => {
+    const id = req.query.id;
+    const data = req.query.data;
+    res.json(await userManager.saveUserData(id));
+});
+
 //AI recipe recommendation api call
 
 app.get("/api/recipes/ai", async (req, res) => {
