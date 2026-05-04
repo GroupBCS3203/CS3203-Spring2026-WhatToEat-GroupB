@@ -42,11 +42,7 @@ const DataSchema = new mongoose.Schema({
         }]
     },
     ownedIngredients:{ //dataType = "ingredients"
-        lineItems: [{
-            ingredientName: String, 
-            amount: Number,
-            experation: Date
-        }]
+        type: [[String, Number, Date]]
     },
     shoppingList:{ //dataType = "shoppingList"
         lineItems: [{

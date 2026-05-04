@@ -7,6 +7,13 @@ import {getUID} from "./varManager.jsx";
 
 
 export function Ingredients(){
+    function updateIngredients(){
+        var temp = [];
+        for(let i = 0; i < ingredients.length; i++){
+            temp.push([ingredients.text.info[0],ingredients.text.info[1],ingredients.text.info[2]]);
+        }
+        setUserIngredients(temp);
+    }
     function getElements(list, index){
         var output = "";
         for(let i=0; i<list.length; i++ ){
@@ -24,12 +31,12 @@ export function Ingredients(){
         var info = [ingredient.value, amount.value, expiration.value];
     
         setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
-        setUserIngredients(ingredients);
+        updateIngredients();
     }
 
     function removeIngredient(id){
         setIngredients(ingredients.filter(ingredients => ingredients.id !== id));
-        setUserIngredients(ingredients);
+        updateIngredients();
     }
 
     function loadIngredients(){
@@ -42,7 +49,6 @@ export function Ingredients(){
                 info = [newList[i][0], newList[i][1], newList[i][2]]
                 setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
             }
-            setUserIngredients(ingredients);
         }
     }
 

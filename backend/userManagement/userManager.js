@@ -55,7 +55,7 @@ async function getUserData(userID)
 //ingredient tracker helper function
 function zip(l1, l2, l3){
     var output = [];
-    for(let i = 0; i<output.length; i++){
+    for(let i = 0; i<l1.length-1; i++){
         output.push([l1[i], parseInt(l2[i]), Date.parse(l3[i]) ]);
     }
     return output;
@@ -66,9 +66,10 @@ async function saveIngredients(ID, list) {
     if(userData != null){
         userData.ownedIngredients = list; //placeholder data
         userData.save();
+        console.log("saveIngredients success");
         return "success";
     }else{
-        
+        console.log("saveIngredients failure");
         return "failure";
     }
     
