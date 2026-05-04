@@ -9,6 +9,7 @@ import {getUID} from "./varManager.jsx";
 export function Ingredients(){
     function updateIngredients(){
         var temp = [];
+        
         for(let i = 0; i < ingredients.length; i++){
             temp.push([ingredients.text.info[0],ingredients.text.info[1],ingredients.text.info[2]]);
         }
@@ -21,7 +22,7 @@ export function Ingredients(){
         }
         return output;
     }
-    const [ingredients, setIngredients] = useState(getUserIngredients());
+    const [ingredients, setIngredients] = useState([]);
 
     function addIngredient(){
         var ingredient = document.getElementById("ingredient_input");
@@ -44,6 +45,8 @@ export function Ingredients(){
             alert("please login to load saved ingredents");
         }else{
             var newList = getUserIngredients(); 
+            var info;
+            console.log(newList);
             setIngredients([]);
             for(let i = 0; i<newList.length; i++){
                 info = [newList[i][0], newList[i][1], newList[i][2]]

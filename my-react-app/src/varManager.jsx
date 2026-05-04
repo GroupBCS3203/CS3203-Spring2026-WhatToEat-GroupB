@@ -14,7 +14,7 @@ const blankData = {
     "dietFilters": [""],
     "plannedMeals": {"lineItems": []},
     "savedRecipes": {"recipes": []},
-    "ownedIngredients": {"lineItems": []},
+    "ownedIngredients": [["String", 1, Date.now()]],
     "shoppingList": {"lineItems": []}
 }
 
@@ -26,7 +26,7 @@ let savedRecipes = [];
 let savedPlans = [];
 let shoppingList = [];
 let savedFilters = [];
-let userIngredients = [];
+let userIngredients = blankData.ownedIngredients;
 let excludedIngredients = [];
 
 export function getExcludedIngredients() {
@@ -117,20 +117,31 @@ export function setUserIngredients(ingredients)
 
 
 
-export function setUserData(id)
+export async function setUserData(id)
 {
+
+    console.log("ULTRA STINK >:)")
+    console.log(id);
+    console.log(UID);
+
     let allUserData = blankData;
-    fetch(`${import.meta.env.VITE_API_URL}/api/user/getdata?id=${id}`)
+    await fetch(`${import.meta.env.VITE_API_URL}/api/user/getdata?id=${UID}`)
         .then(res => res.json())
         .then(data => {
-            allUserData = data
+            console.log("ULTRA STINK 2 >:)");
+            allUserData = data;
         })
         .catch(err => console.error(err));
+
+    console.log("STINK INVASION");
+    console.log(allUserData.userID);
+    console.log(allUserData.ownedIngredients);
+
 
     savedRecipes = allUserData.savedRecipes;
     savedPlans = allUserData.plannedMeals;
     shoppingList = allUserData.shoppingList;
     savedFilters = allUserData.dietFilters;
-    userIngredients = allUserData.ingredients;
+    userIngredients = allUserData.ownedIngredients;
 }
 
