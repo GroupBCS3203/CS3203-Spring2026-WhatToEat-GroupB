@@ -15,7 +15,7 @@ const DataSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    DietFilters: { //dataType = "filters"
+    dietFilters: { //dataType = "filters"
         type: [String]
     },
     plannedMeals: [{ //dataType = "plans"
@@ -26,7 +26,7 @@ const DataSchema = new mongoose.Schema({
         recipeID: String
     }],
     savedRecipes:{  //dataType = "recipes"
-        recipe: [{
+        recipes: [{
             title:{
                 type: String
             },
@@ -45,23 +45,14 @@ const DataSchema = new mongoose.Schema({
         }]
     },
     ownedIngredients:{ //dataType = "ingredients"
-        lineItems: [{
-            ingredientName: String, 
-            amount: Number,
-            experation: Date
-        }]
+        type: [[String, Number, Date]]
     },
     shoppingList:{ //dataType = "shoppingList"
         lineItems: [{
             ingredient: String,
             amount: String
         }]
-    },
-    dataType: {
-        type: String,
     }
-
-
     });
 DataSchema.set('collection', 'data');
 module.exports = mongoose.model("Data", DataSchema, 'data');

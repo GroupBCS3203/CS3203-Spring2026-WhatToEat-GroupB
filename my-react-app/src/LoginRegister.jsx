@@ -55,6 +55,7 @@ function LoginRegister({ onLoginChange }) {
         settUID(loginData);
         onLoginChange?.(loginData);
         setLoginError('');
+        setUserData(UID);
         alert('Login successful');
         return;
       }
