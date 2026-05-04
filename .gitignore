@@ -6,3 +6,4 @@ backend/userManagement/uAuth.js
 #frontend
 my-react-app/.env
 my-react-app/node_modules/
+backend/ATT70363.env

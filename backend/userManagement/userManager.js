@@ -7,7 +7,16 @@ const userManager = require("./userManager");
 /*
 * Currently a WIP version management system. Needs to be implemented, I'm down to work on this -Matthew
 * */
-
+async function addUserData(username, password){
+    const newUserData = new dataModel({
+        userID: await uauth.getUserID(username, password), 
+        DietFilters: [], 
+        plannedMeals: "", 
+        ownedIngredients: [],
+        shoppingList:  ""
+    });
+    await newUserData.save();
+}
 
 async function addUser(username, password)
 {
@@ -20,6 +29,7 @@ async function addUser(username, password)
 
     if (dupeUser == null) {
         await newUser.save();
+        addUserData(username, password);
         return "success";
     }
     else
@@ -44,16 +54,24 @@ async function getUserData(userID)
 }
 //ingredient tracker helper function
 function zip(l1, l2, l3){
-    var element;
-    for(let i = 0; i<length.length; i++){
+    var output = [];
+    for(let i = 0; i<output.length; i++){
         output.push([l1[i], parseInt(l2[i]), Date.parse(l3[i]) ]);
     }
+    return output;
 }
 //ingredient tracker save function
 async function saveIngredients(ID, list) {
     const userData = await dataModel.findOne({userID: {$eq: ID}});
-    userData.ownedIngredients = list; //placeholder data
-    userData.save();
+    if(userData != null){
+        userData.ownedIngredients = list; //placeholder data
+        userData.save();
+        return "success";
+    }else{
+        
+        return "failure";
+    }
+    
 }
 
-module.exports = {addUser, login, getUserData}
+module.exports = {addUser, login, getUserData, zip, saveIngredients}

@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 
 const plannedMealSchema = new mongoose.Schema({
 
-})
+});
 
 
 
