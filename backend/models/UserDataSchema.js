@@ -4,37 +4,54 @@ const mongoose = require('mongoose');
 * This makes the model which user database entries will follow, I feel like it's pretty self-explanatory
 * */
 
-const plannedMealSchema = new mongoose.Schema({
-
-})
-
-
-
 const DataSchema = new mongoose.Schema({
     userID:{
         type: String,
         required: true
     },
-    DietFilters: {
+    DietFilters: { //dataType = "filters"
         type: [String]
     },
-    plannedMeals: {
+    plannedMeals: { //dataType = "plans"
         recipeID: String,
         date: Date
     },
-    ownedIngredients:{
+    savedRecipes:{  //dataType = "recipes"
+        recipe: [{
+            title:{
+                type: String
+            },
+            ingredients: {
+                datatype: [String]
+            },
+            directions:{
+                type: [String]
+            },
+            link:{
+                type: String
+            },
+            NER: {
+                datatype: [String]
+            }
+        }]
+    },
+    ownedIngredients:{ //dataType = "ingredients"
         lineItems: [{
             ingredientName: String, 
             amount: Number,
             experation: Date
         }]
     },
-    shoppingList:{
+    shoppingList:{ //dataType = "shoppingList"
         lineItems: [{
             ingredient: String,
             amount: String
         }]
+    },
+    dataType: {
+        type: String,
     }
+
 
     });
 DataSchema.set('collection', 'data');
