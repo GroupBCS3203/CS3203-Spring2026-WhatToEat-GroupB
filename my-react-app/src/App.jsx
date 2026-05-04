@@ -45,6 +45,7 @@ function App() {
   const [recipes] = useState([]);
   const [income, setIncome] = useState('');
   const [budget, setBudget] = useState(null);
+  const [excludedIngredients,setExcludedIngredients] = useState [()]; 
   const [currentUID, setCurrentUID] = useState(getUID());
 
 
@@ -129,7 +130,10 @@ function handleCalculate(){
         </div>
 
         <div id="diet-filter" className="tabcontent" style={{color: '#ffffff', display: "none"}}>
-          <DietaryFilter></DietaryFilter>
+          <DietaryFilter
+          excludedIngredients={excludedIngredients}
+          setExcludedIngredients={setExcludedIngredients}
+            />
         </div>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
