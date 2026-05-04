@@ -47,9 +47,12 @@ async function login(username, password)
 async function getUserData(userID)
 {
     //Gets all data tied to a specific userID
-    await dataModel.aggregate([
+    const data =
+        await dataModel.aggregate([
         {$match: {userID: userID }}
     ]);
+
+    return data;
 
 }
 //ingredient tracker helper function
