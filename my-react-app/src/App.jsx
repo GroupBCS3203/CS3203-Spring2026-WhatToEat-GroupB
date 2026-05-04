@@ -45,7 +45,7 @@ function App() {
   const [recipes] = useState([]);
   const [income, setIncome] = useState('');
   const [budget, setBudget] = useState(null);
-  const [excludedIngredients,setExcludedIngredients] = useState [()]; 
+  const [excludedIngredients,setExcludedIngredients] = useState ();
   const [currentUID, setCurrentUID] = useState(getUID());
 
 
