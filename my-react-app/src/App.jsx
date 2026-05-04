@@ -112,6 +112,10 @@ function handleCalculate(){
           <DietaryFilter></DietaryFilter>
         </div>
 
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <a href="https://sooners-my.sharepoint.com/:w:/g/personal/mhouston_ou_edu/IQBPBSeMG4lyRZ7IThFpwP7WAXuECP4D30NALbezmJQvZT4?e=dvYIak" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff' }}>Instruction Manual</a>
+        </div>
+
     </>
   )
 
