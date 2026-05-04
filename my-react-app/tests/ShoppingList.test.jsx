@@ -22,7 +22,7 @@ describe('Shopping List Feature', () => {
 
     render(<ShoppingList recipes={[]} />);
 
-    const generateButton = screen.getByRole('button', { name: /generate from saved recipes/i });
+    const generateButton = screen.getByRole('button', { name: /generate/i });
     fireEvent.click(generateButton);
 
     await waitFor(() => {
@@ -49,7 +49,7 @@ describe('Shopping List Feature', () => {
 
     render(<ShoppingList recipes={[]} />);
 
-    const generateButton = screen.getByRole('button', { name: /generate from saved recipes/i });
+    const generateButton = screen.getByRole('button', { name: /generate/i });
     fireEvent.click(generateButton);
 
     await waitFor(() => {
@@ -68,7 +68,7 @@ describe('Shopping List Feature', () => {
 
     render(<ShoppingList recipes={[]} />);
 
-    const generateButton = screen.getByRole('button', { name: /generate from saved recipes/i });
+    const generateButton = screen.getByRole('button', { name: /generate/i });
     fireEvent.click(generateButton);
 
     await waitFor(() => {
@@ -91,7 +91,7 @@ describe('Shopping List Feature', () => {
 
     render(<ShoppingList recipes={[]} />);
 
-    const generateButton = screen.getByRole('button', { name: /generate from saved recipes/i });
+    const generateButton = screen.getByRole('button', { name: /generate/i });
     fireEvent.click(generateButton);
 
     await waitFor(() => {
@@ -112,32 +112,11 @@ describe('Shopping List Feature', () => {
 
     render(<ShoppingList recipes={[]} />);
 
-    fireEvent.click(screen.getByRole('button', { name: /generate from saved recipes/i }));
+    fireEvent.click(screen.getByRole('button', { name: /generate/i }));
 
     await waitFor(() => {
       expect(screen.getByText('apple')).toBeInTheDocument();
       expect(screen.queryByText('banana')).not.toBeInTheDocument();
-    });
-  });
-
-  it('loads shopping list from saved ingredient tracker items', async () => {
-    setUserIngredients([
-      { id: '1', text: { info: ['banana', '2', '2026-01-01'] } },
-      { id: '2', text: { info: ['Apple', '1', '2026-02-02'] } },
-      { id: '3', text: { info: ['banana', '3', '2026-03-03'] } }
-    ]);
-
-    render(<ShoppingList recipes={[]} />);
-
-    fireEvent.click(screen.getByRole('button', { name: /load from ingredient tracker/i }));
-
-    await waitFor(() => {
-      const listItems = screen.getAllByRole('listitem');
-      expect(listItems).toHaveLength(2);
-      expect(listItems[0]).toHaveTextContent('Apple');
-      expect(listItems[1]).toHaveTextContent('banana');
-      expect(screen.getByText('Apple')).toBeInTheDocument();
-      expect(screen.getByText('banana')).toBeInTheDocument();
     });
   });
 
@@ -148,7 +127,7 @@ describe('Shopping List Feature', () => {
 
     render(<ShoppingList recipes={[]} />);
 
-    fireEvent.click(screen.getByRole('button', { name: /generate from saved recipes/i }));
+    fireEvent.click(screen.getByRole('button', { name: /generate/i }));
 
     await waitFor(() => {
       expect(screen.getByText('apple')).toBeInTheDocument();
@@ -173,7 +152,7 @@ describe('Shopping List Feature', () => {
     setSavedRecipes([{ _id: '1', title: 'Recipe 1', ingredients: ['apple', 'banana'] }]);
     const { rerender } = render(<ShoppingList recipes={[]} />);
 
-    fireEvent.click(screen.getByRole('button', { name: /generate from saved recipes/i }));
+    fireEvent.click(screen.getByRole('button', { name: /generate/i }));
 
     await waitFor(() => {
       expect(screen.getByText('apple')).toBeInTheDocument();
@@ -182,7 +161,7 @@ describe('Shopping List Feature', () => {
 
     setSavedRecipes([{ _id: '2', title: 'Recipe 2', ingredients: ['cherry', 'date'] }]);
     rerender(<ShoppingList recipes={[]} />);
-    fireEvent.click(screen.getByRole('button', { name: /generate from saved recipes/i }));
+    fireEvent.click(screen.getByRole('button', { name: /generate/i }));
 
     await waitFor(() => {
       expect(screen.getByText('cherry')).toBeInTheDocument();
@@ -195,7 +174,7 @@ describe('Shopping List Feature', () => {
   it('shows empty message when no saved recipes are loaded', async () => {
     render(<ShoppingList recipes={[]} />);
 
-    fireEvent.click(screen.getByRole('button', { name: /generate from saved recipes/i }));
+    fireEvent.click(screen.getByRole('button', { name: /generate/i }));
 
     await waitFor(() => {
       expect(screen.getByText('No ingredients found.')).toBeInTheDocument();

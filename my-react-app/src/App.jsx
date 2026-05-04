@@ -6,6 +6,7 @@ import { ShoppingList } from './ShoppingList.jsx'
 import { MealPlanner } from './MealPlanner.jsx';
 import {RecipeFinder} from "./recipeFinder.jsx";
 import {DietaryFilter} from "./dietaryFilter.jsx";
+import { getUID } from "./varManager.jsx";
 
 export function Button({ onClick, children, style, className }) {
   return (
@@ -44,6 +45,7 @@ function App() {
   const [recipes] = useState([]);
   const [income, setIncome] = useState('');
   const [budget, setBudget] = useState(null);
+  const [currentUID, setCurrentUID] = useState(getUID());
 
 
 
@@ -68,6 +70,20 @@ function handleCalculate(){
           <Tabbutton feature = "shopping-list" />
           <Tabbutton feature = "ingredients" />
           <Tabbutton feature = "diet-filter" />
+          <span
+            style={{
+              float: 'right',
+              margin: '8px 12px 0 0',
+              padding: '6px 10px',
+              borderRadius: '4px',
+              border: currentUID !== 'none' ? '1px solid #4CAF50' : '1px solid #666',
+              background: currentUID !== 'none' ? '#173d1a' : '#252525',
+              color: '#fff',
+              fontSize: '14px'
+            }}
+          >
+            {currentUID !== 'none' ? 'Logged in' : 'Not logged in'}
+          </span>
         </div>
 
         <div id="recipes" className="tabcontent" style={{ color:'#ffffff', display: "block"}}>
@@ -75,7 +91,7 @@ function handleCalculate(){
         </div>
 
         <div id="login" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
-          <LoginRegister />
+          <LoginRegister onLoginChange={setCurrentUID} />
         </div>
 
         <div id="planner" className="tabcontent" style={{color:'#ffffff',display: "none"}}>
@@ -110,6 +126,10 @@ function handleCalculate(){
 
         <div id="diet-filter" className="tabcontent" style={{color: '#ffffff', display: "none"}}>
           <DietaryFilter></DietaryFilter>
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <a href="https://sooners-my.sharepoint.com/:w:/g/personal/mhouston_ou_edu/IQBPBSeMG4lyRZ7IThFpwP7WAXuECP4D30NALbezmJQvZT4?e=dvYIak" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff' }}>Instruction Manual</a>
         </div>
 
     </>

@@ -53,16 +53,6 @@ export function ShoppingList({ recipes }) {
     setShoppingLoaded(true);
   }
 
-  function loadShoppingListFromTracker() {
-    const trackedIngredientNames = getUserIngredients()
-      .map(ing => ing?.text?.info?.[0])
-      .filter(name => typeof name === 'string' && name.trim())
-      .map(name => name.trim());
-
-    setShoppingItems(buildShoppingItems(trackedIngredientNames));
-    setShoppingLoaded(true);
-  }
-
   function toggleShoppingItem(index) {
     setShoppingItems(prev => {
       const next = [...prev];
@@ -75,10 +65,7 @@ export function ShoppingList({ recipes }) {
     <div className="shopping-panel">
       <div className="shopping-panel-actions">
         <h3 style={{ color:'#ffffff' }}>Shopping List</h3>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          <button className='button' onClick={loadShoppingList}>Generate from Saved Recipes</button>
-          <button className='button' onClick={loadShoppingListFromTracker}>Load from Ingredient Tracker</button>
-        </div>
+        <button className='button' onClick={loadShoppingList}>Generate</button>
       </div>
 
       <div className="shopping-items">

@@ -2,10 +2,11 @@ import {useEffect, useState} from "react";
 import {Button} from "./App.jsx";
 import {getUID, setRecipes as setGlobalRecipes, addSavedRecipe, getSavedRecipes, removeSavedRecipe, isRecipeSaved} from "./varManager.jsx";
 
-
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export function RecipeFinder()
 {
+    console.log("API BASE URL:", import.meta.env.VITE_API_URL);
 
     const baseJSON = {
         "_id": {
@@ -24,35 +25,68 @@ export function RecipeFinder()
     const [popUpRecipe, setPopUpRecipe] = useState(baseJSON);
     const [showSaved, setShowSaved] = useState(false);
     const [popUpSaved, setPopUpSaved] = useState(false);
+    const [useAI, setUseAI] = useState(true);
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_API_URL}/api/recipes/top`)
+        fetch(`${BASE_URL}/api/recipes/top`)
             .then(res => res.json())
             .then(data => setRecipes(data))
             .catch(err => console.error(err));
     }, []);
 
     function getTopTen() {
-        fetch(`${import.meta.env.VITE_API_URL}/api/recipes/top`)
+        fetch(`${BASE_URL}/api/recipes/top`)
             .then(res => res.json())
-            .then(data => setRecipes(data));
-        setGlobalRecipes(recipes);
+            .then(data => {
+                setRecipes(data);
+                setGlobalRecipes(data);
+            })
+            .catch(err => console.error(err));
     }
 
     function searchByIngredient(ingredients) {
-        fetch(`${import.meta.env.VITE_API_URL}/api/recipes/search?ingredients=${ingredients}`)
+        fetch(`${BASE_URL}/api/recipes/search?ingredients=${ingredients}`)
             .then(res => res.json())
-            .then(data => setRecipes(data));
-        setGlobalRecipes(recipes);
+            .then(data => {
+                setRecipes(data);
+                setGlobalRecipes(data);
+            })
+            .catch(err => console.error(err));
+    }
+
+    function searchAIRecipes(ingredients) {
+    fetch(`${BASE_URL}/api/recipes/ai?ingredients=${ingredients}`)
+        .then(res => res.json())
+        .then(data => {
+            // IMPORTANT: convert AI format → UI format
+            const aiRecipes = data?.recommendations?.recipes?.map(r => ({
+                title: r.name,
+                ingredients: [],
+                directions: [r.description],
+                link: "",
+                NER: [],
+                cookTime: r.cookTime,
+                collegeReason: r.collegeReason
+            })) || [];
+
+            setRecipes(aiRecipes);
+            setGlobalRecipes(aiRecipes);
+        })
+        .catch(err => console.error(err));
     }
     // Updates the search term to be lower case
     const handleInputChange = (event) => {
         // Convert input to lowercase for case-insensitive searching
         setSearchTerm(event.target.value.toLowerCase());
     };
+
     function searchRecipes() {
         if (searchTerm.length > 0) {
-            searchByIngredient(searchTerm);
+            if (useAI) {
+                searchAIRecipes(searchTerm);
+            } else {
+                searchByIngredient(searchTerm);
+            }
         } else {
             getTopTen();
         }
@@ -140,7 +174,9 @@ export function RecipeFinder()
             View Saved Recipes
         </Button>
 
-
+        <Button onClick={() => setUseAI(!useAI)}>
+            {useAI ? 'Using AI: ON' : 'Using AI: OFF'}
+        </Button>
         {showPopup && //This is the popup logic
             Popup
         }

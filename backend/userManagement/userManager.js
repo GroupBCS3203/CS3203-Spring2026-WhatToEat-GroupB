@@ -42,5 +42,18 @@ async function getUserData(userID)
     ]);
 
 }
+//ingredient tracker helper function
+function zip(l1, l2, l3){
+    var element;
+    for(let i = 0; i<length.length; i++){
+        output.push([l1[i], l2[i], l3[i] ]);
+    }
+}
+//ingredient tracker save function
+async function saveIngredients(ID, list) {
+    const userData = await dataModel.findOne({userID: {$eq: ID}});
+    userData.ownedIngredients = list; //placeholder data
+    userData.save();
+}
 
 module.exports = {addUser, login, getUserData}
