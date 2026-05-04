@@ -8,6 +8,29 @@
   
 }
 
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 24px;
+  background: #1f1f1f;
+  color: #ffffff;
+}
+
+.app-logo {
+  height: 60px;
+  width: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  letter-spacing: 0.02em;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

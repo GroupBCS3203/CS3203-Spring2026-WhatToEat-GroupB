@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {getUID, setUID} from "./varManager.jsx";
+import {setUserData} from "./varManager.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 

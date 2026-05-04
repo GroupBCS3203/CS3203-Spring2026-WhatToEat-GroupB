@@ -35,15 +35,23 @@ app.get("/api/recipes/search", async (req, res) => {
     res.json(await recipeManager.findRecipeByIngredient(ingredients));
 });
 
+//USER DATA
+
+app.get("/api/user/login", async (req, res) => {
+    const user = req.query.user;
+    const pass = req.query.pass;
+    res.json(await userManager.login(user, pass));
+});
+
 
 //User api Calls
 
 //save ingredients
 app.get("/api/user/saveIngredients", async (req, res) => {
     const UID = req.query.userID;
-    const nameList = req.query.nameList;
-    const amountList= req.query.amountList;
-    const dateList= req.query.dateList;
+    const nameList = req.query.nameList.split(", ");
+    const amountList= req.query.amountList.split(", ");
+    const dateList= req.query.dateList.split(", ");
     res.json(await userManager.saveIngredients(UID, userManager.zip(nameList, amountList, dateList)));
 });
 
@@ -59,6 +67,11 @@ app.get("/api/user/login", async (req, res) => {
     const user = req.query.user;
     const pass = req.query.pass;
     res.json(await userManager.login(user, pass));
+});
+
+app.get("/api/user/getdata", async (req, res) => {
+    const id = req.query.id;
+    res.json(await userManager.getUserData(id));
 });
 
 //AI recipe recommendation api call

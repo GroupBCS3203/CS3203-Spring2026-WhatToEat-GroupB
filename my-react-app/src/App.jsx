@@ -62,6 +62,10 @@ function handleCalculate(){
 
   return (
     <>
+      <header className="app-header">
+        <img src="/logo.png" alt="WhatToEat logo" className="app-logo" />
+      </header>
+
       <div className="tab">
           <Tabbutton feature = "recipes" />
           <Tabbutton feature = "login" />

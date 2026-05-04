@@ -24,22 +24,25 @@ export function Ingredients(){
         var info = [ingredient.value, amount.value, expiration.value];
     
         setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
+        setUserIngredients(ingredients);
     }
 
     function removeIngredient(id){
         setIngredients(ingredients.filter(ingredients => ingredients.id !== id));
+        setUserIngredients(ingredients);
     }
 
     function loadIngredients(){
         if(getUID() == "none"){
             alert("please login to load saved ingredents");
         }else{
-            var newList; /* placeholder for reading in the global user data getter */
+            var newList = getUserIngredients(); 
             setIngredients([]);
             for(let i = 0; i<newList.length; i++){
                 info = [newList[i][0], newList[i][1], newList[i][2]]
                 setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
             }
+            setUserIngredients(ingredients);
         }
     }
 
