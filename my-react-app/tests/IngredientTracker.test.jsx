@@ -25,6 +25,6 @@ test("renders Ingredient Tracker tab", () => {
   fireEvent.click(screen.getByText('Add to ingredient list'));
 
 
-  const ingredient_row = screen.getByText("remove button placeholder");
+  const ingredient_row = screen.getByText("remove Ingredient");
   expect(ingredient_row).toBeInTheDocument();
 });
