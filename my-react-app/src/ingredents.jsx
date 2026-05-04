@@ -34,7 +34,7 @@ export function Ingredients(){
         if(getUID() == "none"){
             alert("please login to load saved ingredents");
         }else{
-            var newList; /* placeholder for reading in the global user data getter */
+            var newList = getUserIngredients(); /* placeholder for reading in the global user data getter */
             setIngredients([]);
             for(let i = 0; i<newList.length; i++){
                 info = [newList[i][0], newList[i][1], newList[i][2]]
