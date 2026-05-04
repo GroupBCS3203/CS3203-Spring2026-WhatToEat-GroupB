@@ -1,6 +1,6 @@
 const recipeModel = require("./models/RecipeSchema.js");
 const mongoose = require("mongoose");
-
+const { GoogleGenAI } = require("@google/genai");
 
 //Gets a single recipe from the database, currently unused, but exists as a model function
 async function getOneRecipe()
@@ -50,4 +50,45 @@ async function  findRecipeByIngredient(ingredients)
     return tenRecipes;
 }
 
-module.exports = { getOneRecipe, getTopTenRecipes,makeIngredientMasterList,findRecipeByIngredient };
+async function getAIRecipeRecommendations(ingredients)
+{
+    const ai = new GoogleGenAI({
+        apiKey: process.env.GEMINI_API_KEY
+    });
+
+    const prompt = `
+    You are a recipe recommendation assistant for college students.
+
+    The user currently has these ingredients:
+    ${ingredients}
+
+    Return ONLY valid JSON in this format:
+
+    {
+    "recipes": [
+        {
+        "name": "",
+        "description": "",
+        "cookTime": "",
+        "collegeReason": ""
+        }
+    ]
+    }
+
+    Recommend exactly 3 recipes.
+    `;
+
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt
+    });
+
+    const cleanedText = response.text
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+
+    return JSON.parse(cleanedText);
+}
+
+module.exports = { getOneRecipe, getTopTenRecipes,makeIngredientMasterList,findRecipeByIngredient, getAIRecipeRecommendations};
