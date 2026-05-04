@@ -45,6 +45,9 @@ export function RecipeFinder()
     }
 
     function searchByIngredient(ingredients) {
+        const excludedIngredients = getExcludedIngredients(); 
+        const excludedQuery = excludedIngredients.join(","); // New query without excluded ingredients
+        
         fetch(`${BASE_URL}/api/recipes/search?ingredients=${ingredients}`)
             .then(res => res.json())
             .then(data => {
@@ -53,7 +56,7 @@ export function RecipeFinder()
             })
             .catch(err => console.error(err));
     }
-
+    
     function searchAIRecipes(ingredients) {
     fetch(`${BASE_URL}/api/recipes/ai?ingredients=${ingredients}`)
         .then(res => res.json())
