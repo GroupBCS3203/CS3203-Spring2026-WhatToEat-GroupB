@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Button } from './App';
+import { setUserIngredients, getUserIngredients } from './varManager.jsx';
 import {getUID} from "./varManager.jsx";
 
 
@@ -13,6 +14,8 @@ export function Ingredients(){
         }
         return output;
     }
+    const [ingredients, setIngredients] = useState(getUserIngredients());
+
     function addIngredient(){
         var ingredient = document.getElementById("ingredient_input");
         var amount = document.getElementById("amount_input");

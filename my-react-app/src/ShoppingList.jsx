@@ -1,31 +1,55 @@
 import { useState } from 'react';
+import { getSavedRecipes, getUserIngredients } from './varManager.jsx';
 
 export function ShoppingList({ recipes }) {
   const [shoppingItems, setShoppingItems] = useState([]);
   const [shoppingLoaded, setShoppingLoaded] = useState(false);
 
+  function normalizeIngredientName(ingredient) {
+    return typeof ingredient === 'string' ? ingredient.toLowerCase().trim() : '';
+  }
+
+  function getTrackedIngredientNames() {
+    return getUserIngredients()
+      .map(ing => ing?.text?.info?.[0])
+      .filter(name => typeof name === 'string' && name.trim())
+      .map(name => name.toLowerCase().trim());
+  }
+
+  function buildShoppingItems(names) {
+    const sorted = [...new Set(names.filter(Boolean).map(name => name.trim()))]
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    return sorted.map(name => ({ name, checked: false }));
+  }
+
   function loadShoppingList() {
-    const recipesToUse = recipes.length > 0 ? recipes : [];
+    const savedRecipes = getSavedRecipes();
+    const userIngredientNames = getTrackedIngredientNames();
     const ingredientSet = new Set();
-    
-    recipesToUse.forEach(recipe => {
+
+    savedRecipes.forEach(recipe => {
       if (Array.isArray(recipe.ingredients)) {
         recipe.ingredients.forEach(ing => {
           if (ing && typeof ing === 'string') {
-            ingredientSet.add(ing.trim());
+            const normalizedIng = normalizeIngredientName(ing);
+            if (normalizedIng && !userIngredientNames.includes(normalizedIng)) {
+              ingredientSet.add(ing.trim());
+            }
           }
         });
       } else if (typeof recipe.ingredients === 'string') {
         recipe.ingredients.split(',').forEach(ing => {
-          if (ing) ingredientSet.add(ing.trim());
+          if (ing && typeof ing === 'string') {
+            const normalizedIng = normalizeIngredientName(ing);
+            if (normalizedIng && !userIngredientNames.includes(normalizedIng)) {
+              ingredientSet.add(ing.trim());
+            }
+          }
         });
       }
     });
 
-    const sorted = [...ingredientSet]
-      .filter(Boolean)
-      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-    setShoppingItems(sorted.map(name => ({ name, checked: false })));
+    setShoppingItems(buildShoppingItems([...ingredientSet]));
     setShoppingLoaded(true);
   }
 
@@ -41,7 +65,7 @@ export function ShoppingList({ recipes }) {
     <div className="shopping-panel">
       <div className="shopping-panel-actions">
         <h3 style={{ color:'#ffffff' }}>Shopping List</h3>
-        <button className='button' onClick={loadShoppingList}>Generate from Current Recipes</button>
+        <button className='button' onClick={loadShoppingList}>Generate</button>
       </div>
 
       <div className="shopping-items">
