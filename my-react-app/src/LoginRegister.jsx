@@ -34,6 +34,12 @@ function LoginRegister({ onLoginChange }) {
     return res.json();
   }
 
+  async function getdata (id)
+    {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/getdata?id=${id}`)
+        console.log("ULTRA STINK 2 >:)");
+        return res.json;
+    }
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
