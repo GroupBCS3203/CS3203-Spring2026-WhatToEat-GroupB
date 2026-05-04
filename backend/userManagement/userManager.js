@@ -53,8 +53,25 @@ async function getUserData(userID)
     ]);
 
     return data;
-
 }
+
+
+// THIS IS AN EXAMPLE TO SAVE USER DATA, IMPLEMENT THIS IN A WAY THAT WORKS WITH THE CURRENT SCHEMA
+
+async function saveUserData(userID, data)
+{
+    //Gets all data tied to a specific userID
+    const findUser = await dataModel.findOne({userID: {$eq: userID}},{},{});
+
+    if (findUser != null) {
+        findUser.savedRecipes = data;
+        await findUser.save();
+    }
+    return data;
+}
+
+
+
 //ingredient tracker helper function
 function zip(l1, l2, l3){
     var output = [];
