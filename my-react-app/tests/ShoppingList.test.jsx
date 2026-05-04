@@ -177,7 +177,7 @@ describe('Shopping List Feature', () => {
     fireEvent.click(screen.getByRole('button', { name: /generate/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('No ingredients found.')).toBeInTheDocument();
+      expect(screen.getByText('No ingredients found. Check if you have any saved recipes.')).toBeInTheDocument();
     });
   });
 });

@@ -70,7 +70,7 @@ export function ShoppingList({ recipes }) {
 
       <div className="shopping-items">
         {!shoppingLoaded && <p>Click the button or open this tab to load the shopping list.</p>}
-        {shoppingLoaded && shoppingItems.length === 0 && <p>No ingredients found.</p>}
+        {shoppingLoaded && shoppingItems.length === 0 && <p>No ingredients found. Check if you have any saved recipes.</p>}
 
         {shoppingItems.length > 0 && (
           <ul style={{ listStyleType: 'none' }}>

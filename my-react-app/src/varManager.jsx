@@ -14,7 +14,12 @@ let UID = 'none';
 let recipes = [blankRecipe];
 let recipe = blankRecipe;
 let savedRecipes = [];
+let savedPlans = [];
+let shoppingList = [];
+let filters = [];
 let userIngredients = [];
+
+
 
 
 export function getUID()
@@ -95,4 +100,36 @@ export function setUserIngredients(ingredients)
     userIngredients = ingredients;
 }
 
+export function setUserData(id)
+{
+    let allUserData = [];
+    fetch(`${import.meta.env.VITE_API_URL}/api/user/getdata?id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+            allUserData = data
+        })
+        .catch(err => console.error(err));
+    allUserData.forEach(userData => {
+        if (userData.dataType === "recipes")
+        {
+            savedRecipes = userData;
+        }
+        else if (userData.dataType === "shoppingList")
+        {
+            shoppingList = userData;
+        }
+        else if (userData.dataType === "ingredients")
+        {
+            userIngredients = userData;
+        }
+        else if (userData.dataType === "plans")
+        {
+            savedPlans = userData;
+        }
+        else if (userData.dataType === "filters")
+        {
+            filters = userData;
+        }
+    })
+}
 
