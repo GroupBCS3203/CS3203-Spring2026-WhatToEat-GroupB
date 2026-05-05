@@ -194,7 +194,7 @@ export function RecipeFinder()
         </h3>
         <input
             type="text"
-            placeholder="Search here..."
+            placeholder="Search ingredients here..."
             onChange={handleInputChange} // Attach the onChange event handler
             value={searchTerm} // Control the input value with state
         />
