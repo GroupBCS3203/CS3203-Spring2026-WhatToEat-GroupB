@@ -18,7 +18,7 @@ export function Ingredients(){
     function getElements(list, index){
         var output = "";
         for(let i=0; i<list.length; i++ ){
-            output = output.concat( list[i].text.info[index], ", " );
+            output = output.concat( list[i].text.info[index], "," );
         }
         return output;
     }
@@ -49,7 +49,7 @@ export function Ingredients(){
             var temp = [];
             setIngredients([]);
             for(let i = 0; i<newList.length; i++){
-                info = [newList[i][0], newList[i][1], newList[i][2]];
+                info = [newList[i][0], newList[i][1],  newList[i][2]];
                 temp.push({ id: Date.now()+i, text: {info} });
             }
             setIngredients(temp);
