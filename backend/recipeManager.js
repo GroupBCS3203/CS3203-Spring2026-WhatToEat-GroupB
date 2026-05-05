@@ -68,14 +68,13 @@ async function getAIRecipeRecommendations(ingredients)
     "recipes": [
         {
         "name": "",
-        "description": "",
-        "cookTime": "",
-        "collegeReason": ""
+        "ingredients": ["", "", ""],
+        "instructions": ["", "", ""]
         }
     ]
     }
 
-    Recommend exactly 3 recipes.
+    Recommend exactly 10 recipes.
     `;
 
     const response = await ai.models.generateContent({

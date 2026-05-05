@@ -62,11 +62,11 @@ export function RecipeFinder()
             const aiRecipes = data?.recommendations?.recipes?.map(r => ({
                 title: r.name,
                 ingredients: [],
-                directions: [r.description],
+                ingredients: [r.ingredients],
+                directions: [r.instructions],
                 link: "",
                 NER: [],
-                cookTime: r.cookTime,
-                collegeReason: r.collegeReason
+                
             })) || [];
 
             setRecipes(aiRecipes);
