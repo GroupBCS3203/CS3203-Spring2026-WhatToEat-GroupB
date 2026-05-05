@@ -14,13 +14,13 @@ export function DietaryFilter({ excludedIngredients = [], setExcludedIngredients
 
   // Send user exclusions from the frontend to backend
   async function saveExcludedIngredients(newExcludedIngredients) {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/saveDietFilters`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/saveDietFilters`, { // Sending request to backend
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json", // Tells backend data being sent is JSON
       },
-      body: JSON.stringify({
-        userID: getUID(), dietFilters: newExcludedIngredients, // Request actual data being sent to backend
+      body: JSON.stringify({ // Converts object to JSON strings
+        userID: getUID(), dietFilters: newExcludedIngredients, // Sends new excluded ingredient list
       }),
     });
     
