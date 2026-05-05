@@ -19,10 +19,8 @@ export function RecipeFinder()
         "NER": []
     }
 
-    const [uid, setUID] = useState(getUID());
+    const [uid] = useState(getUID());
     const [recipes, setRecipes] = useState([]);
-    const [savedRecipes, setSavedRecipes] = useState([]);
-    const [localRecipes, setLocalRecipes] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [showPopup, setShowPopup] = useState(false);
     const [popUpRecipe, setPopUpRecipe] = useState(baseJSON);

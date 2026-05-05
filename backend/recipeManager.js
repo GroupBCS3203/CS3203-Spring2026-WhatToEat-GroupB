@@ -42,7 +42,7 @@ async function findRecipeByIngredient(ingredients, excludedIngredients) {
     let array = [];
     let excludedArray = [];
 
-    if (!ingredient) {
+    if (!ingredients) {
         console.error('ingredient is undefined');
     }
     else
