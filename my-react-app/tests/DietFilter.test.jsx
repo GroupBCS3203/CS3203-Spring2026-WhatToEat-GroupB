@@ -1,13 +1,45 @@
-import {fireEvent, render, screen} from "@testing-library/react";
-import '@testing-library/jest-dom';
-import { vi, test, expect } from "vitest";
-import App from "../src/App";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { DietaryFilter } from "../src/DietaryFilter";
+import * as varManager from "../src/varManager";
 
-test("Check the dietary restriction page", () => {
-  render(<App />);
+//When the user clicks a dietary filter button, the frontend attempts to save the excluded ingredients.
 
-  // Check if the dietary restrictions tab exists
-  const tabElement = screen.getByText("Dietary Filter");
-  expect(tabElement).toBeInTheDocument();
+global.fetch = jest.fn();
 
+jest.spyOn(varManager, "getUID").mockReturnValue("12345"); // Mock user ID
+
+describe("DietaryFilter frontend save test", () => { // Tests for DietaryFilter save behavior
+  beforeEach(() => {
+    fetch.mockClear(); // Clear old fetch called history 
+  });
+
+  test("clicking a filter saves excluded ingredients", async () => { // check does clicking the filter trigger saving?
+    const mockSetExcludedIngredients = jest.fn(); // lets jest track what is called and what is recieved
+
+    render( // creates a fake test browser
+      <DietaryFilter
+        excludedIngredients={[]}
+        setExcludedIngredients={mockSetExcludedIngredients}
+      />
+    );
+
+    const veganButton = screen.getByText("Vegan"); // Search page for rendered component for Vegan
+
+    fireEvent.click(veganButton); // Fire event simulates user actions, clicking, typing
+
+    expect(mockSetExcludedIngredients).toHaveBeenCalled(); // Checks if clicking the button updates exclusions
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith( // Check is called with correct arguments
+        expect.stringContaining("/api/user/saveDietFilters"),
+        expect.objectContaining({
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: expect.stringContaining("chicken"),
+        })
+      );
+    });
+  });
 });
