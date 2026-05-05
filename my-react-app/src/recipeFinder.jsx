@@ -191,8 +191,17 @@ export function RecipeFinder()
             Popup
         }
 
-        {recipes.length === 0 ? (
-            <p>Loading...</p>
+        {loading ? (
+            <div style={styles.loadingContainer}>
+                <div style={styles.spinner}></div>
+                <p style={{ color:'#ffffff' }}>
+                    Finding recipes...
+                </p>
+            </div>
+        ) : recipes.length === 0 ? (
+            <p style={{ color:'#ffffff' }}>
+                No recipes found.
+            </p>
         ) : (
             <div>
                 <h4 style={{ color:'#ffffff' }}>
@@ -210,6 +219,20 @@ export function RecipeFinder()
         )}
     </div>
 
+mainPage = (
+    <>
+        <style>
+        {`
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `}
+        </style>
+
+        {mainPage}
+    </>
+);
 
 return(mainPage);
 }
@@ -231,5 +254,22 @@ const styles = {
         overflowY: 'auto',
         height: '60%',
         width: '60%',
-    }
+    },
+
+    loadingContainer: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: "20px",
+    },
+
+    spinner: {
+        width: "40px",
+        height: "40px",
+        border: "4px solid #555",
+        borderTop: "4px solid white",
+        borderRadius: "50%",
+        animation: "spin 1s linear infinite",
+    },
 };
