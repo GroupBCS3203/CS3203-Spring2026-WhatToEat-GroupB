@@ -3,9 +3,9 @@ const userManager = require("./userManagement/userManager.js");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+require("dotenv").config(); // Load env variables for database and Gemini API
 const app = express();
-const USE_MOCK_DB = false
+const USE_MOCK_DB = false //Used for local testing w/o database access
 
 app.use(cors());
 app.use(express.json());
@@ -91,16 +91,15 @@ app.post("/api/user/savedata", express.json(), async (req, res) => {
 
 
 //AI recipe recommendation api call
-
 app.get("/api/recipes/ai", async (req, res) => {
     try {
         const ingredients = req.query.ingredients;
         const recommendations =
-            await recipeManager.getAIRecipeRecommendations(ingredients);
+            await recipeManager.getAIRecipeRecommendations(ingredients); //call AI user function
         res.json({
             recommendations
         });
-    } catch (err) {
+    } catch (err) { //default error for failed AI call.
         console.error(err);
         res.status(500).json({
             error: "Failed to generate AI recommendations"
