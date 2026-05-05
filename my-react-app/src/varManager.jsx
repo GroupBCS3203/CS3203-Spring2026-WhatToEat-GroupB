@@ -10,12 +10,12 @@ const blankRecipe = {
 }
 
 const blankData = {
-    "userID": "apple",
-    "dietFilters": [""],
-    "plannedMeals": {"lineItems": []},
-    "savedRecipes": {"recipes": []},
-    "ownedIngredients": [["String", 1, Date.now()]],
-    "shoppingList": {"lineItems": []}
+    userID: "apple",
+    dietFilters: [""],
+    plannedMeals: {lineItems: []},
+    savedRecipes: {recipes: [blankRecipe]},
+    ownedIngredients: [["String", 1, Date.now()]],
+    shoppingList: {lineItems: []}
 }
 
 
@@ -67,6 +67,7 @@ function getRecipeKey(recipe) {
 
 export function getSavedRecipes()
 {
+    console.log(savedRecipes);
     return savedRecipes;
 }
 
@@ -128,10 +129,15 @@ export async function setUserData(id)
     console.log(allUserData.ownedIngredients);
 
 
-    savedRecipes = allUserData.savedRecipes.recipes;
-    savedPlans = allUserData.plannedMeals.lineItems;
-    shoppingList = allUserData.shoppingList.lineItems;
-    savedFilters = allUserData.dietFilters;
-    userIngredients = allUserData.ownedIngredients;
+    try {
+        savedRecipes = allUserData.savedRecipes.recipes;
+        savedPlans = allUserData.plannedMeals.lineItems;
+        shoppingList = allUserData.shoppingList.lineItems;
+        savedFilters = allUserData.dietFilters;
+        userIngredients = allUserData.ownedIngredients;
+    }
+    catch(err) {
+        console.log(err);
+    }
 }
 

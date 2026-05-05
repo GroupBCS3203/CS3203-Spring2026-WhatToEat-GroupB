@@ -19,6 +19,7 @@ export function RecipeFinder()
         "NER": []
     }
 
+    const [uid, setUID] = useState(getUID());
     const [recipes, setRecipes] = useState([]);
     const [savedRecipes, setSavedRecipes] = useState([]);
     const [localRecipes, setLocalRecipes] = useState([]);
@@ -86,6 +87,25 @@ export function RecipeFinder()
             .catch(err => console.error(err))
             .finally(() => setLoading(false));
     }
+
+
+    async function saveRecipesToBackend() {
+        console.log("Recipes saved");
+        console.log(uid);
+        if (getUID() === 'none') return;
+        const returnRecipes = getSavedRecipes();
+
+        try {
+            console.log("Recipes poseted");
+            await fetch(`${import.meta.env.VITE_API_URL}/api/user/saveSavedRecipes`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userID: getUID(), returnRecipes: returnRecipes }),
+            });
+        } catch (error) {
+            console.error('Failed to save planned meals:', error);
+        }
+    }
     // Updates the search term to be lower case
     const handleInputChange = (event) => {
         // Convert input to lowercase for case-insensitive searching
@@ -120,6 +140,7 @@ export function RecipeFinder()
             addSavedRecipe(popUpRecipe);
             setPopUpSaved(true);
         }
+        saveRecipesToBackend();
     }
 
     let Popup =

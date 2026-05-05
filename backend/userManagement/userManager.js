@@ -80,11 +80,11 @@ function zip(l1, l2, l3){
 
 //ingredient tracker save function. Just puts the inputed list into the userData schema.
 async function saveIngredients(ID, list) {
-    
+
     const userData = await dataModel.findOne({userID: {$eq: ID}});
-    
+
     if(userData != null){
-        
+
         userData.ownedIngredients = list; //placeholder data
         userData.save();
         console.log("saveIngredients success");
@@ -112,7 +112,7 @@ async function savePlannedMeals(userID, events) {
 // Dietary filter function, find user and update new filter in database
 async function saveDietFilters(ID, list) { // Recieve user ID and list of excluded foods
     const userData = await dataModel.findOne({userID: {$eq: ID}}); // Search for user (ID == ID)
-    if (userData != null) { 
+    if (userData != null) {
         userData.DietFilters = list; // Updates the users filter list
         await userData.save(); // Writes updated data in mongoDB, saves PERMANENTLY
         console.log("saveDietFilters success"); // Prints to backend
@@ -123,4 +123,14 @@ async function saveDietFilters(ID, list) { // Recieve user ID and list of exclud
     }
 }
 
-module.exports = {addUser, login, getUserData, zip, saveIngredients, getPlannedMeals, savePlannedMeals, saveDietFilters}
+async function saveSavedRecipes(userID, recipes) {
+    console.log("we in");
+    await dataModel.findOneAndUpdate(
+        { userID: userID },
+        { $set: { "savedRecipes.recipes": recipes } },
+        { new: true }
+    );
+}
+
+
+module.exports = {addUser, login, getUserData, zip, saveIngredients, saveSavedRecipes, getPlannedMeals, savePlannedMeals, saveDietFilters}

@@ -37,11 +37,11 @@ async function makeIngredientMasterList()
     console.log(masterNER.length);
 }
 
-async function  findRecipeByIngredient(ingredients, excludedIngredients) {
+async function findRecipeByIngredient(ingredients, excludedIngredients) {
 
     let array = ingredients.split(",");
 
-  let excludedArray = excludedIngredients.split(",");
+    let excludedArray = excludedIngredients.split(",");
 
     let tenRecipes = await recipeModel.aggregate([
         {$match: {NER: { $all: array, $nin: excludedArray }}},

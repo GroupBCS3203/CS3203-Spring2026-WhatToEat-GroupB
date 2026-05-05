@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import React from "react";
-import { setExcludedIngredients as setGlobalExcludedIngredients } from "./varManager.jsx";
+import { setExcludedIngredients as setGlobalExcludedIngredients, getUID } from "./varManager.jsx";
 
 // Component DietaryFilter to take in an array and a function to update array (params)
 export function DietaryFilter({ excludedIngredients = [], setExcludedIngredients }) { 
@@ -54,6 +54,7 @@ export function DietaryFilter({ excludedIngredients = [], setExcludedIngredients
     // Update both local and global states (same time to stay in sync) 
     setExcludedIngredients(newExcludedIngredients);
     setGlobalExcludedIngredients(newExcludedIngredients);
+    saveExcludedIngredients(newExcludedIngredients);
   }
 
   // Prints excluded ingredients to user

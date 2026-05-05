@@ -10,8 +10,6 @@ const USE_MOCK_DB = false //Used for local testing w/o database access
 app.use(cors());
 app.use(express.json());
 
-console.log("MONGO URI:", process.env.MONGO_URI);
-
 //Connects to the database
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("MongoDB Connected")
@@ -79,6 +77,15 @@ app.post("/api/user/plannedMeals", express.json(), async (req, res) => {
     const UID = req.body.userID;
     const events = req.body.events;
     await userManager.savePlannedMeals(UID, events);
+    res.json({ success: true });
+});
+
+//Save saved recipes
+app.post("/api/user/saveSavedRecipes", express.json(), async (req, res) => {
+    console.log("Recipes poseted");
+    const UID = req.body.userID;
+    const recipes = req.body.returnRecipes;
+    await userManager.saveSavedRecipes(UID, recipes);
     res.json({ success: true });
 });
 
