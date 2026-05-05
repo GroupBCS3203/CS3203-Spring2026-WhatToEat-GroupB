@@ -49,10 +49,12 @@ app.get("/api/user/login", async (req, res) => {
 
 //save ingredients
 app.get("/api/user/saveIngredients", async (req, res) => {
+    //retrive the inputed data
     const UID = req.query.userID;
     const nameList = req.query.nameList.split(",");
     const amountList= req.query.amountList.split(",");
     const dateList= req.query.dateList.split(",");
+    //run the actual function
     res.json(await userManager.saveIngredients(UID, userManager.zip(nameList, amountList, dateList)));
 });
 

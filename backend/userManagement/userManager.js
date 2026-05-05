@@ -76,7 +76,7 @@ async function saveUserData(userID, data)
 
 
 
-//ingredient tracker helper function
+//ingredient tracker helper function. Puts the 3 string lists into a single list.
 function zip(l1, l2, l3){
     var output = [];
     for(let i = 0; i<l1.length-1; i++){
@@ -84,7 +84,8 @@ function zip(l1, l2, l3){
     }
     return output;
 }
-//ingredient tracker save function
+
+//ingredient tracker save function. Just puts the inputed list into the userData schema.
 async function saveIngredients(ID, list) {
     const userData = await dataModel.findOne({userID: {$eq: ID}});
     if(userData != null){
