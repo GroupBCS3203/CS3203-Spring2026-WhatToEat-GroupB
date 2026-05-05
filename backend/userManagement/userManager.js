@@ -120,4 +120,4 @@ async function saveDietFilters(ID, list) {
     }
 }
 
-module.exports = {addUser, login, getUserData, zip, saveIngredients, getPlannedMeals, savePlannedMeals}
+module.exports = {addUser, login, getUserData, zip, saveIngredients, getPlannedMeals, savePlannedMeals, saveDietFilters}
