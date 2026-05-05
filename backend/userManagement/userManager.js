@@ -80,7 +80,7 @@ async function saveUserData(userID, data)
 function zip(l1, l2, l3){
     var output = [];
     for(let i = 0; i<l1.length-1; i++){
-        output.push([l1[i], parseInt(l2[i]), Date.parse(l3[i]) ]);
+        output.push([l1[i], parseInt(l2[i]), l3[i] ]);
     }
     return output;
 }
