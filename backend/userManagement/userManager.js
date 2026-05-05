@@ -11,7 +11,7 @@ async function addUserData(username, password){
     const newUserData = new dataModel({
         userID: await uauth.getUserID(username, password), 
         DietFilters: [], 
-        plannedMeals: "", 
+        plannedMeals: [],
         ownedIngredients: [],
         shoppingList:  ""
     });
@@ -109,5 +109,18 @@ async function savePlannedMeals(userID, events) {
         {upsert: true, new: true}
     );
 }
+// Dietary filter function, find user and update new filter in database
+async function saveDietFilters(ID, list) { // Recieve user ID and list of excluded foods
+    const userData = await dataModel.findOne({userID: {$eq: ID}}); // Search for user (ID == ID)
+    if (userData != null) { 
+        userData.DietFilters = list; // Updates the users filter list
+        await userData.save(); // Writes updated data in mongoDB, saves PERMANENTLY
+        console.log("saveDietFilters success"); // Prints to backend
+        return "success";
+    } else { // Run if no valid user exists
+        console.log("saveDietFilters failed");
+        return "failed";
+    }
+}
 
-module.exports = {addUser, login, getUserData, zip, saveIngredients, getPlannedMeals, savePlannedMeals}
+module.exports = {addUser, login, getUserData, zip, saveIngredients, getPlannedMeals, savePlannedMeals, saveDietFilters}

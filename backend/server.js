@@ -3,9 +3,9 @@ const userManager = require("./userManagement/userManager.js");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+require("dotenv").config(); // Load env variables for database and Gemini API
 const app = express();
-const USE_MOCK_DB = false
+const USE_MOCK_DB = false //Used for local testing w/o database access
 
 app.use(cors());
 app.use(express.json());
@@ -63,18 +63,50 @@ app.get("/api/user/login", async (req, res) => {
     res.json(await userManager.login(user, pass));
 });
 
+app.get("/api/user/getdata", async (req, res) => {
+    const id = req.query.id;
+    res.json(await userManager.getUserData(id));
+});
+
+//Get planned meals
+app.get("/api/user/plannedMeals", async (req, res) => {
+    const UID = req.query.userID;
+    res.json(await userManager.getPlannedMeals(UID));
+});
+
+//Save planned meals
+app.post("/api/user/plannedMeals", express.json(), async (req, res) => {
+    const UID = req.body.userID;
+    const events = req.body.events;
+    await userManager.savePlannedMeals(UID, events);
+    res.json({ success: true });
+});
+
+// Save dietary filter
+app.post("/api/user/saveDietFilters", async (req, res) => { // When POST request sent, run this function
+    const { userID, dietFilters } = req.body; // Contains incoming data that is requested
+    const result = await userManager.saveDietFilters(userID, dietFilters); // Call saveDietFilters in userManager
+    res.json(result); // Send result back 
+});
+
+//THIS IS A TEMPLATE TO SAVE USER DATA, IMPLEMENT THIS IN SUCH A WAY THAT FITS WITH UserDataSchema.js,
+app.post("/api/user/savedata", express.json(), async (req, res) => {
+    const id = req.query.id;
+    const data = req.query.data;
+    res.json(await userManager.saveUserData(id));
+});
+
+
 //AI recipe recommendation api call
-
 app.get("/api/recipes/ai", async (req, res) => {
-
     try {
         const ingredients = req.query.ingredients;
         const recommendations =
-            await recipeManager.getAIRecipeRecommendations(ingredients);
+            await recipeManager.getAIRecipeRecommendations(ingredients); //call AI user function
         res.json({
             recommendations
         });
-    } catch (err) {
+    } catch (err) { //default error for failed AI call.
         console.error(err);
         res.status(500).json({
             error: "Failed to generate AI recommendations"

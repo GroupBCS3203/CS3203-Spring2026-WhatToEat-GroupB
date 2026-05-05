@@ -53,6 +53,7 @@ async function  findRecipeByIngredient(ingredients, excludedIngredients) {
     return tenRecipes;
 }
 
+// Access LLM to get recipe outside of database
 async function getAIRecipeRecommendations(ingredients)
 {
     const ai = new GoogleGenAI({
