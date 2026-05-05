@@ -107,14 +107,14 @@ async function savePlannedMeals(userID, events) {
     );
 }
 // Dietary filter function, find user and update new filter in database
-async function saveDietFilters(ID, list) {
-    const userData = await dataModel.findOne({userID: {$eq: ID}});
-    if (userData != null) {
-        userData.DietFilters = list;
-        await userData.save();
-        console.log("saveDietFilters success");
+async function saveDietFilters(ID, list) { // Recieve user ID and list of excluded foods
+    const userData = await dataModel.findOne({userID: {$eq: ID}}); // Search for user (ID == ID)
+    if (userData != null) { 
+        userData.DietFilters = list; // Updates the users filter list
+        await userData.save(); // Writes updated data in mongoDB, saves PERMANENTLY
+        console.log("saveDietFilters success"); // Prints to backend
         return "success";
-    } else {
+    } else { // Run if no valid user exists
         console.log("saveDietFilters failed");
         return "failed";
     }
