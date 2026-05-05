@@ -8,9 +8,9 @@ import {RecipeFinder} from "./recipeFinder.jsx";
 import {DietaryFilter} from "./dietaryFilter.jsx";
 import { getUID } from "./varManager.jsx";
 
-export function Button({ onClick, children }) {
+export function Button({ onClick, children, style, className }) {
   return (
-    <button className='button' onClick={onClick}>
+    <button className={className || 'button'} onClick={onClick} style={style}>
       {children}
     </button>
   );
@@ -45,6 +45,7 @@ function App() {
   const [recipes] = useState([]);
   const [income, setIncome] = useState('');
   const [budget, setBudget] = useState(null);
+  const [excludedIngredients,setExcludedIngredients] = useState ();
   const [currentUID, setCurrentUID] = useState(getUID());
 
 
@@ -62,6 +63,10 @@ function handleCalculate(){
 
   return (
     <>
+      <header className="app-header">
+        <img src="/logo.png" alt="WhatToEat logo" className="app-logo" />
+      </header>
+
       <div className="tab">
           <Tabbutton feature = "recipes" />
           <Tabbutton feature = "login" />
@@ -125,7 +130,10 @@ function handleCalculate(){
         </div>
 
         <div id="diet-filter" className="tabcontent" style={{color: '#ffffff', display: "none"}}>
-          <DietaryFilter></DietaryFilter>
+          <DietaryFilter
+          excludedIngredients={excludedIngredients}
+          setExcludedIngredients={setExcludedIngredients}
+            />
         </div>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>

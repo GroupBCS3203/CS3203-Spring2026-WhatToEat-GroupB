@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 
 const plannedMealSchema = new mongoose.Schema({
 
-})
+});
 
 
 
@@ -15,27 +15,44 @@ const DataSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    DietFilters: {
+    dietFilters: { //dataType = "filters"
         type: [String]
     },
-    plannedMeals: {
-        recipeID: String,
-        date: Date
-    },
-    ownedIngredients:{
-        lineItems: [{
-            ingredientName: String, 
-            amount: Number,
-            experation: Date
+    plannedMeals: [{ //dataType = "plans"
+        id: String,
+        name: String,
+        date: String,
+        time: String,
+        recipeID: String
+    }],
+    savedRecipes:{  //dataType = "recipes"
+        recipes: [{
+            title:{
+                type: String
+            },
+            ingredients: {
+                datatype: [String]
+            },
+            directions:{
+                type: [String]
+            },
+            link:{
+                type: String
+            },
+            NER: {
+                datatype: [String]
+            }
         }]
     },
-    shoppingList:{
+    ownedIngredients:{ //dataType = "ingredients"
+        type: [[String, Number, Date]]
+    },
+    shoppingList:{ //dataType = "shoppingList"
         lineItems: [{
             ingredient: String,
             amount: String
         }]
     }
-
     });
 DataSchema.set('collection', 'data');
 module.exports = mongoose.model("Data", DataSchema, 'data');

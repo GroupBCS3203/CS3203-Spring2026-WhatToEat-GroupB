@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {getUID, setUID} from "./varManager.jsx";
+import {setUserData} from "./varManager.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -33,6 +34,12 @@ function LoginRegister({ onLoginChange }) {
     return res.json();
   }
 
+  async function getdata (id)
+    {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/getdata?id=${id}`)
+        console.log("ULTRA STINK 2 >:)");
+        return res.json;
+    }
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -54,6 +61,7 @@ function LoginRegister({ onLoginChange }) {
         settUID(loginData);
         onLoginChange?.(loginData);
         setLoginError('');
+        setUserData(UID);
         alert('Login successful');
         return;
       }

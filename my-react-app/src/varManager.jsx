@@ -5,17 +5,36 @@ const blankRecipe = {
     "title": "Blank Recipe",
     "ingredients": [""],
     "directions": [""],
-    "link": "www.google.com",
+    "link": "google.com",
     "NER": []
+}
+
+const blankData = {
+    "userID": "apple",
+    "dietFilters": [""],
+    "plannedMeals": {"lineItems": []},
+    "savedRecipes": {"recipes": []},
+    "ownedIngredients": [["String", 1, Date.now()]],
+    "shoppingList": {"lineItems": []}
 }
 
 
 let UID = 'none';
 let recipes = [blankRecipe];
-let recipe = blankRecipe;
 let savedRecipes = [];
-let userIngredients = [];
+let savedPlans = [];
+let shoppingList = [];
+let savedFilters = [];
+let userIngredients = blankData.ownedIngredients;
+let excludedIngredients = [];
 
+export function getExcludedIngredients() {
+    return excludedIngredients;
+}
+
+export function setExcludedIngredients(newExcludedIngredients) {
+    excludedIngredients = newExcludedIngredients;
+}
 
 export function getUID()
 {
@@ -37,15 +56,6 @@ export function setRecipes(recipeList)
     recipes = recipeList;
 }
 
-export function getRecipe()
-{
-    return recipe;
-}
-
-export function setRecipe(newRecipe)
-{
-    recipe = newRecipe;
-}
 
 function getRecipeKey(recipe) {
     if (!recipe) return undefined;
@@ -95,4 +105,33 @@ export function setUserIngredients(ingredients)
     userIngredients = ingredients;
 }
 
+
+
+export async function setUserData(id)
+{
+
+    console.log("ULTRA STINK >:)")
+    console.log(id);
+    console.log(UID);
+
+    let allUserData = blankData;
+    await fetch(`${import.meta.env.VITE_API_URL}/api/user/getdata?id=${UID}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log("ULTRA STINK 2 >:)");
+            allUserData = data;
+        })
+        .catch(err => console.error(err));
+
+    console.log("STINK INVASION");
+    console.log(allUserData.userID);
+    console.log(allUserData.ownedIngredients);
+
+
+    savedRecipes = allUserData.savedRecipes.recipes;
+    savedPlans = allUserData.plannedMeals.lineItems;
+    shoppingList = allUserData.shoppingList.lineItems;
+    savedFilters = allUserData.dietFilters;
+    userIngredients = allUserData.ownedIngredients;
+}
 

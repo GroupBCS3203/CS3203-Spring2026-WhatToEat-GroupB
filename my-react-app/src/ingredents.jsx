@@ -7,14 +7,22 @@ import {getUID} from "./varManager.jsx";
 
 
 export function Ingredients(){
+    function updateIngredients(){
+        var temp = [];
+        console.log(ingredients);
+        for(let i = 0; i < ingredients.length; i++){
+            temp.push([ingredients[i].text.info[0],ingredients[i].text.info[1],ingredients[i].text.info[2]]);
+        }
+        setUserIngredients(temp);
+    }
     function getElements(list, index){
         var output = "";
         for(let i=0; i<list.length; i++ ){
-            output = output.concat( list[i].text.info[index], ", " );
+            output = output.concat( list[i].text.info[index], "," );
         }
         return output;
     }
-    const [ingredients, setIngredients] = useState(getUserIngredients());
+    const [ingredients, setIngredients] = useState([]);
 
     function addIngredient(){
         var ingredient = document.getElementById("ingredient_input");
@@ -24,22 +32,28 @@ export function Ingredients(){
         var info = [ingredient.value, amount.value, expiration.value];
     
         setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
+        //updateIngredients();
     }
 
     function removeIngredient(id){
         setIngredients(ingredients.filter(ingredients => ingredients.id !== id));
+        //updateIngredients();
     }
 
     function loadIngredients(){
         if(getUID() == "none"){
             alert("please login to load saved ingredents");
         }else{
-            var newList; /* placeholder for reading in the global user data getter */
+            var newList = getUserIngredients(); 
+            var info = [];
+            var temp = [];
             setIngredients([]);
             for(let i = 0; i<newList.length; i++){
-                info = [newList[i][0], newList[i][1], newList[i][2]]
-                setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
+                info = [newList[i][0], newList[i][1],  newList[i][2]];
+                temp.push({ id: Date.now()+i, text: {info} });
             }
+            setIngredients(temp);
+
         }
     }
 
@@ -51,6 +65,7 @@ export function Ingredients(){
             const amountList =  getElements(ingredients, 1);
             const dateList =  getElements(ingredients, 2);
             fetch(`${import.meta.env.VITE_API_URL}/api/user/saveIngredients?userID=${getUID()}&nameList=${nameList}&amountList=${amountList}&dateList=${dateList}`);
+            updateIngredients();
         }
     }
 

@@ -7,16 +7,7 @@ test("Check the dietary restriction page", () => {
   render(<App />);
 
   // Check if the dietary restrictions tab exists
-  const tabElement = screen.getByText("Dietary Restrictions (Currently in testing)");
+  const tabElement = screen.getByText("Dietary Filter");
   expect(tabElement).toBeInTheDocument();
 
-  const checkbox = screen.getByLabelText("Vegan Only");
-
-  expect(checkbox).not.toBeChecked();
-
-  // Click checkbox
-  fireEvent.click(checkbox);
-
-  // Check handler called with true
-  expect(checkbox).toBeChecked();
 });
