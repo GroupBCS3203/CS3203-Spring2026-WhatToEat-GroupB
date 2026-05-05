@@ -64,7 +64,6 @@ app.get("/api/user/login", async (req, res) => {
 //AI recipe recommendation api call
 
 app.get("/api/recipes/ai", async (req, res) => {
-
     try {
         const ingredients = req.query.ingredients;
         const recommendations =
