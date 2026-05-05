@@ -20,6 +20,8 @@ export function RecipeFinder()
     }
 
     const [recipes, setRecipes] = useState([]);
+    const [savedRecipes, setSavedRecipes] = useState([]);
+    const [localRecipes, setLocalRecipes] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [showPopup, setShowPopup] = useState(false);
     const [popUpRecipe, setPopUpRecipe] = useState(baseJSON);

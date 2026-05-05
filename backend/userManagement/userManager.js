@@ -49,13 +49,6 @@ async function getUserData(userID)
     //Gets all data tied to a specific userID
     let data =
         await dataModel.findOne({userID: {$eq: userID}});
-    console.log(userID);
-    console.log("MEGA STICK");
-    console.log(data.userID);
-    console.log(data._id);
-    console.log(data.__v);
-    console.log(data.ownedIngredients);
-
     return data;
 }
 
