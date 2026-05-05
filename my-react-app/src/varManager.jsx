@@ -21,7 +21,6 @@ const blankData = {
 
 let UID = 'none';
 let recipes = [blankRecipe];
-let recipe = blankRecipe;
 let savedRecipes = [];
 let savedPlans = [];
 let shoppingList = [];
@@ -57,15 +56,6 @@ export function setRecipes(recipeList)
     recipes = recipeList;
 }
 
-export function getRecipe()
-{
-    return recipe;
-}
-
-export function setRecipe(newRecipe)
-{
-    recipe = newRecipe;
-}
 
 function getRecipeKey(recipe) {
     if (!recipe) return undefined;
@@ -138,9 +128,9 @@ export async function setUserData(id)
     console.log(allUserData.ownedIngredients);
 
 
-    savedRecipes = allUserData.savedRecipes;
-    savedPlans = allUserData.plannedMeals;
-    shoppingList = allUserData.shoppingList;
+    savedRecipes = allUserData.savedRecipes.recipes;
+    savedPlans = allUserData.plannedMeals.lineItems;
+    shoppingList = allUserData.shoppingList.lineItems;
     savedFilters = allUserData.dietFilters;
     userIngredients = allUserData.ownedIngredients;
 }

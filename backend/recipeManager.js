@@ -65,20 +65,42 @@ async function getAIRecipeRecommendations(ingredients)
     The user currently has these ingredients:
     ${ingredients}
 
-    Return ONLY valid JSON in this format:
+    Return ONLY valid JSON.
+
+    Requirements:
+    - Recommend exactly 10 recipes.
+    - Each recipe must contain:
+    - "name"
+    - "ingredients"
+    - "instructions"
+    - "ingredients" MUST be an array where EACH ingredient is its own separate string entry including measurements.
+    - "instructions" MUST be an array where EACH instruction step is its own separate string entry.
+    - Do NOT combine ingredients into one comma-separated string.
+    - Do NOT combine instructions into one paragraph.
+    - No markdown.
+    - No explanation text.
+    - No code fences.
+
+    Use this EXACT format:
 
     {
     "recipes": [
         {
-        "name": "",
-        "description": "",
-        "cookTime": "",
-        "collegeReason": ""
+        "name": "Recipe Name",
+        "ingredients": [
+            "1 cup rice",
+            "2 eggs",
+            "1/2 cup shredded cheese"
+        ],
+        "instructions": [
+            "Cook the rice according to package instructions.",
+            "Scramble the eggs in a skillet.",
+            "Mix the rice and eggs together.",
+            "Add cheese and stir until melted."
+        ]
         }
     ]
     }
-
-    Recommend exactly 3 recipes.
     `;
 
     const response = await ai.models.generateContent({

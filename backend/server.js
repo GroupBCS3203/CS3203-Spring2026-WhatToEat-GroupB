@@ -31,17 +31,8 @@ app.get("/api/recipes/one", async (req, res) => {
 
 //Ingredient search api call
 app.get("/api/recipes/search", async (req, res) => {
-    const ingredients = req.query.ingredients;
-    const excluded = req.query.excluded;
-    res.json(await recipeManager.findRecipeByIngredient(ingredients,excluded));
-});
-
-//USER DATA
-
-app.get("/api/user/login", async (req, res) => {
-    const user = req.query.user;
-    const pass = req.query.pass;
-    res.json(await userManager.login(user, pass));
+   const ingredients = req.query.ingredients;
+    res.json(await recipeManager.findRecipeByIngredient(ingredients));
 });
 
 
@@ -51,9 +42,9 @@ app.get("/api/user/login", async (req, res) => {
 app.get("/api/user/saveIngredients", async (req, res) => {
     //retrive the inputed data
     const UID = req.query.userID;
-    const nameList = req.query.nameList.split(",");
-    const amountList= req.query.amountList.split(",");
-    const dateList= req.query.dateList.split(",");
+    const nameList = req.query.nameList;
+    const amountList= req.query.amountList;
+    const dateList= req.query.dateList;
     //run the actual function
     res.json(await userManager.saveIngredients(UID, userManager.zip(nameList, amountList, dateList)));
 });
@@ -70,20 +61,6 @@ app.get("/api/user/login", async (req, res) => {
     const user = req.query.user;
     const pass = req.query.pass;
     res.json(await userManager.login(user, pass));
-});
-
-app.get("/api/user/getdata", async (req, res) => {
-    const id = req.query.id;
-    res.json(await userManager.getUserData(id));
-});
-
-
-//THIS IS A TEMPLATE TO SAVE USER DATA, IMPLEMENT THIS IN SUCH A WAY THAT FITS WITH UserDataSchema.js,
-
-app.get("/api/user/savedata", async (req, res) => {
-    const id = req.query.id;
-    const data = req.query.data;
-    res.json(await userManager.saveUserData(id));
 });
 
 //AI recipe recommendation api call

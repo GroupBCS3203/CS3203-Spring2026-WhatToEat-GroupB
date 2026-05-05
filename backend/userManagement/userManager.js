@@ -49,13 +49,6 @@ async function getUserData(userID)
     //Gets all data tied to a specific userID
     let data =
         await dataModel.findOne({userID: {$eq: userID}});
-    console.log(userID);
-    console.log("MEGA STICK");
-    console.log(data.userID);
-    console.log(data._id);
-    console.log(data.__v);
-    console.log(data.ownedIngredients);
-
     return data;
 }
 
@@ -99,5 +92,19 @@ async function saveIngredients(ID, list) {
     }
     
 }
+//meal planner functions
+async function getPlannedMeals(userID) {
+    const userData = await dataModel.findOne({userID: {$eq: userID}});
+    if (!userData) return [];
+    return userData.plannedMeals || [];
+}
+//meal planner save function
+async function savePlannedMeals(userID, events) {
+    await dataModel.findOneAndUpdate(
+        {userID: {$eq: userID}},
+        {plannedMeals: events},
+        {upsert: true, new: true}
+    );
+}
 
-module.exports = {addUser, login, getUserData, zip, saveIngredients}
+module.exports = {addUser, login, getUserData, zip, saveIngredients, getPlannedMeals, savePlannedMeals}

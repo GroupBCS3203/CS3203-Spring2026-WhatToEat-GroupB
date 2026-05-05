@@ -8,9 +8,9 @@ import {RecipeFinder} from "./recipeFinder.jsx";
 import {DietaryFilter} from "./dietaryFilter.jsx";
 import { getUID } from "./varManager.jsx";
 
-export function Button({ onClick, children }) {
+export function Button({ onClick, children, style, className }) {
   return (
-    <button className='button' onClick={onClick}>
+    <button className={className || 'button'} onClick={onClick} style={style}>
       {children}
     </button>
   );
