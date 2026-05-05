@@ -83,10 +83,10 @@ app.post("/api/user/plannedMeals", express.json(), async (req, res) => {
 });
 
 // Save dietary filter
-app.post("/api/user/saveDietFilters", async (req, res) => {
-    const { userID, dietFilters } = req.body;
-    const result = await userManager.saveDietFilters(userID, dietFilters);
-    res.json(result);
+app.post("/api/user/saveDietFilters", async (req, res) => { // When POST request sent, run this function
+    const { userID, dietFilters } = req.body; // Contains incoming data that is requested
+    const result = await userManager.saveDietFilters(userID, dietFilters); // Call saveDietFilters in userManager
+    res.json(result); // Send result back 
 });
 
 //THIS IS A TEMPLATE TO SAVE USER DATA, IMPLEMENT THIS IN SUCH A WAY THAT FITS WITH UserDataSchema.js,
