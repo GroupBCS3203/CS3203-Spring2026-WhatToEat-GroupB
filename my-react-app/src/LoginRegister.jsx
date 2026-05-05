@@ -21,31 +21,30 @@ function LoginRegister({ onLoginChange }) {
   const [registerSuccess, setRegisterSuccess] = useState('');
   const [registerLoading, setRegisterLoading] = useState(false);
 
-
+//Helps encode username and password into a format that can be sent in a URL query string, then makes a GET request to the server to either register a new user or log in an existing user. The server's response is expected to be in JSON format, which is returned as a JavaScript object.
   async function registerUser(username, password) {
     const params = new URLSearchParams({ user: username, pass: password });
     const res = await fetch(`${API_URL}/api/user/adduser?${params}`);
     return res.json();
   }
-
+//Helps encode username and password into a format that can be sent in a URL query string, then makes a GET request to the server to either register a new user or log in an existing user. The server's response is expected to be in JSON format, which is returned as a JavaScript object.
   async function loginUser(username, password) {
     const params = new URLSearchParams({ user: username, pass: password });
     const res = await fetch(`${API_URL}/api/user/login?${params}`);
     return res.json();
   }
-
+//gets the user data for a given user ID making a get request to the server with the user ID as a query parameters. 
   async function getdata (id)
     {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/getdata?id=${id}`)
-        console.log("ULTRA STINK 2 >:)");
         return res.json;
     }
-
+//Checks if the login form fields are empty and if not, it attempts to log in the user by calling the loginUser function. If the login is successful, it updates the UID state and calls the onLoginChange callback with the new UID. If the login fails, it sets an appropriate error message.
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoginError('');
     setRegisterSuccess('');
-
+//checks if loginUsername and password are empty and if so, sets an error message and returns early to prevent the login attempt.  
     if (!loginUsername || !loginPassword) {
       setLoginError('Please fill in all fields');
       return;
@@ -80,22 +79,23 @@ function LoginRegister({ onLoginChange }) {
     e.preventDefault();
     setRegisterError('');
     setRegisterSuccess('');
+    //check if any of the fields are empty, if the passwords do not match, or if the password is too short. If any of these conditions are true, it sets an appropriate error message and returns early to prevent the registration attempt.
 
     if (!registerUsername || !registerPassword || !confirmPassword) {
       setRegisterError('Please fill in all fields');
       return;
     }
-
+    //checks if the password and confirm passwords are the same and returns an error if they are not.
     if (registerPassword !== confirmPassword) {
       setRegisterError('Passwords do not match');
       return;
     }
-
+//Checks if the password is at least 6 characters.
     if (registerPassword.length < 6) {
       setRegisterError('Password must be at least 6 characters');
       return;
     }
-
+//If all checks are passed, it sets the registerLoading state to true and attempts to register the user by calling the registerUser function. If the registration is successful, it sets a success message, clears the form fields, switches to login mode, and pre-fills the login username with the registered username. If the registration fails, it sets an appropriate error message.
     setRegisterLoading(true);
     try {
       const registerData = await registerUser(registerUsername, registerPassword);
