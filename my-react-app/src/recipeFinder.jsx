@@ -28,6 +28,7 @@ export function RecipeFinder()
     const [showSaved, setShowSaved] = useState(false);
     const [popUpSaved, setPopUpSaved] = useState(false);
     const [useAI, setUseAI] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetch(`${BASE_URL}/api/recipes/top`)
@@ -37,16 +38,19 @@ export function RecipeFinder()
     }, []);
 
     function getTopTen() {
+        setLoading(true);
         fetch(`${BASE_URL}/api/recipes/top`)
             .then(res => res.json())
             .then(data => {
                 setRecipes(data);
                 setGlobalRecipes(data);
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
     }
 
     function searchByIngredient(ingredients) {
+        setLoading(true);
         const excludedIngredients = getExcludedIngredients(); 
         const excludedQuery = excludedIngredients.join(","); // New query without excluded ingredients
         
@@ -56,28 +60,29 @@ export function RecipeFinder()
                 setRecipes(data);
                 setGlobalRecipes(data);
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
     }
     
     function searchAIRecipes(ingredients) {
-    fetch(`${BASE_URL}/api/recipes/ai?ingredients=${ingredients}`)
-        .then(res => res.json())
-        .then(data => {
-            // IMPORTANT: convert AI format → UI format
-            const aiRecipes = data?.recommendations?.recipes?.map(r => ({
-                title: r.name,
-                ingredients: [],
-                ingredients: [r.ingredients],
-                directions: [r.instructions],
-                link: "",
-                NER: [],
-                
-            })) || [];
+        setLoading(true);
+        fetch(`${BASE_URL}/api/recipes/ai?ingredients=${ingredients}`)
+            .then(res => res.json())
+            .then(data => {
 
-            setRecipes(aiRecipes);
-            setGlobalRecipes(aiRecipes);
-        })
-        .catch(err => console.error(err));
+                const aiRecipes = data?.recommendations?.recipes?.map(r => ({
+                    title: r.name,
+                    ingredients: r.ingredients,
+                    directions: r.instructions,
+                    link: "",
+                    NER: [],
+                })) || [];
+
+                setRecipes(aiRecipes);
+                setGlobalRecipes(aiRecipes);
+            })
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
     }
     // Updates the search term to be lower case
     const handleInputChange = (event) => {
