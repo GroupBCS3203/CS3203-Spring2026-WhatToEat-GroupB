@@ -28,7 +28,7 @@ export function RecipeFinder()
     const [showSaved, setShowSaved] = useState(false);
     const [popUpSaved, setPopUpSaved] = useState(false);
     const [useAI, setUseAI] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false); //load state is true whenever we start a search
 
     useEffect(() => {
         fetch(`${BASE_URL}/api/recipes/top`)
@@ -64,12 +64,14 @@ export function RecipeFinder()
             .finally(() => setLoading(false));
     }
     
+    // Search for recipes with LLM assistance
     function searchAIRecipes(ingredients) {
         setLoading(true);
+        //fetches based on input ingredients
         fetch(`${BASE_URL}/api/recipes/ai?ingredients=${ingredients}`)
             .then(res => res.json())
             .then(data => {
-
+                // Same setup as other searches, but requires direct mapping of each trait of the recipe since the AI response format is different than our database format
                 const aiRecipes = data?.recommendations?.recipes?.map(r => ({
                     title: r.name,
                     ingredients: r.ingredients,
