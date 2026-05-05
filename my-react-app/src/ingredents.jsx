@@ -7,6 +7,10 @@ import {getUID} from "./varManager.jsx";
 
 
 export function Ingredients(){
+    //react hook that holds the ingredents list
+    const [ingredients, setIngredients] = useState([]);
+
+    //Updates the global user ingredents list to be consistant with the display
     function updateIngredients(){
         var temp = [];
         console.log(ingredients);
@@ -14,7 +18,10 @@ export function Ingredients(){
             temp.push([ingredients[i].text.info[0],ingredients[i].text.info[1],ingredients[i].text.info[2]]);
         }
         setUserIngredients(temp);
+        console.log("user ingredients");
     }
+
+    //reduces a list of elements to a single string
     function getElements(list, index){
         var output = "";
         for(let i=0; i<list.length; i++ ){
@@ -22,24 +29,30 @@ export function Ingredients(){
         }
         return output;
     }
-    const [ingredients, setIngredients] = useState([]);
 
+    //Click handler for the add button. Retrives the inputed data and adds it to the list if ingredents.
     function addIngredient(){
         var ingredient = document.getElementById("ingredient_input");
         var amount = document.getElementById("amount_input");
         var expiration = document.getElementById("expiration_input");
 
-        var info = [ingredient.value, amount.value, expiration.value];
+        if(ingredient.value.split(",").length > 1){
+            alert("Please do not include special characters or commas");
+        }else{
+            var info = [ingredient.value, amount.value, expiration.value];
     
-        setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
-        //updateIngredients();
+            setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
+            //updateIngredients();
+        }        
     }
 
+    //Click handler for the remove button. Removes the ingredents that is pressed using its ID.
     function removeIngredient(id){
         setIngredients(ingredients.filter(ingredients => ingredients.id !== id));
         //updateIngredients();
     }
 
+    //Loads ingredents from the global ingredent list. Overwrites the current list.
     function loadIngredients(){
         if(getUID() == "none"){
             alert("please login to load saved ingredents");
@@ -53,10 +66,10 @@ export function Ingredients(){
                 temp.push({ id: Date.now()+i, text: {info} });
             }
             setIngredients(temp);
-
         }
     }
 
+    //Saves the current ingredent list to the database.
     function saveIngredients(){
         if(getUID() == "none"){
             alert("please login to save ingredents");
@@ -69,7 +82,7 @@ export function Ingredients(){
         }
     }
 
-
+    //front end elements
     return (<div>
             <h3 style={{ color:'#ffffff' }}>
             Ingredient Tracker
