@@ -125,6 +125,7 @@ async function saveDietFilters(ID, list) { // Recieve user ID and list of exclud
 
 async function saveSavedRecipes(userID, recipes) {
     console.log("we in");
+    console.log(recipes);
     await dataModel.findOneAndUpdate(
         { userID: userID },
         { $set: { "savedRecipes.recipes": recipes } },

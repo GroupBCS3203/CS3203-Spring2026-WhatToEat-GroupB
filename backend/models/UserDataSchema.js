@@ -30,9 +30,7 @@ const DataSchema = new mongoose.Schema({
             title:{
                 type: String
             },
-            ingredients: {
-                datatype: [String]
-            },
+            ingredients: [String],
             directions:{
                 type: [String]
             },

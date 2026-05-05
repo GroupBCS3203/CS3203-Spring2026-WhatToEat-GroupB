@@ -39,9 +39,24 @@ async function makeIngredientMasterList()
 
 async function findRecipeByIngredient(ingredients, excludedIngredients) {
 
-    let array = ingredients.split(",");
+    let array = [];
+    let excludedArray = [];
 
-    let excludedArray = excludedIngredients.split(",");
+    if (!ingredient) {
+        console.error('ingredient is undefined');
+    }
+    else
+    {
+        array = ingredients.split(",");
+    }
+
+    if (!excludedIngredients) {
+        console.error('ingredient is undefined');
+    }
+    else
+    {
+        excludedArray = excludedIngredients.split(",");
+    }
 
     let tenRecipes = await recipeModel.aggregate([
         {$match: {NER: { $all: array, $nin: excludedArray }}},
