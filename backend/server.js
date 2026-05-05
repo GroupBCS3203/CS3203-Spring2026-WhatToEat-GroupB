@@ -82,6 +82,13 @@ app.post("/api/user/plannedMeals", express.json(), async (req, res) => {
     res.json({ success: true });
 });
 
+// Save dietary filter
+app.post("/api/user/saveDietFilters", async (req, res) => {
+    const { userID, dietFilters } = req.body;
+    const result = await userManager.saveDietFilters(userID, dietFilters);
+    res.json(result);
+});
+
 //THIS IS A TEMPLATE TO SAVE USER DATA, IMPLEMENT THIS IN SUCH A WAY THAT FITS WITH UserDataSchema.js,
 app.post("/api/user/savedata", express.json(), async (req, res) => {
     const id = req.query.id;
