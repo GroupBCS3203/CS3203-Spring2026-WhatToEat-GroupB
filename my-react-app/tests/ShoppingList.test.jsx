@@ -4,12 +4,19 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { ShoppingList } from '../src/ShoppingList.jsx';
 import { addSavedRecipe, setSavedRecipes, setUserIngredients } from '../src/varManager.jsx';
 
+// These tests validate the ShoppingList component's ability to build
+// an ingredient list from stored recipe data, keep it sorted, remove
+// duplicates, and respect the user's existing ingredient inventory.
 describe('Shopping List Feature', () => {
   beforeEach(() => {
+    // Reset the shared in-memory recipe and user ingredient state
+    // before each test runs.
     setSavedRecipes([]);
     setUserIngredients([]);
   });
 
+  // Helper that stores a list of recipes using the same shared API
+  // that the component uses, so tests reflect actual app state.
   function saveRecipes(recipes) {
     recipes.forEach(addSavedRecipe);
   }

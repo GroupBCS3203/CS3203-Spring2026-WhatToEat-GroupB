@@ -1,14 +1,23 @@
 import { useState } from 'react';
 import { getSavedRecipes, getUserIngredients } from './varManager.jsx';
 
+// ShoppingList displays ingredients that are needed for saved recipes.
+// It ignores ingredients the user already has and supports recipe data
+// stored as arrays or comma-separated strings.
 export function ShoppingList({ recipes }) {
+  // shoppingItems stores the list of ingredients with checked state.
   const [shoppingItems, setShoppingItems] = useState([]);
+  // shoppingLoaded is used to determine whether the list has been generated.
   const [shoppingLoaded, setShoppingLoaded] = useState(false);
 
+  // Normalize ingredient values for comparison.
+  // This is important for deduplication and user-stock filtering.
   function normalizeIngredientName(ingredient) {
     return typeof ingredient === 'string' ? ingredient.toLowerCase().trim() : '';
   }
 
+  // Retrieve the list of ingredients the user already tracks,
+  // normalized to lower-case trimmed strings.
   function getTrackedIngredientNames() {
     return getUserIngredients()
       .map(ing => ing?.text?.info?.[0])
@@ -16,12 +25,16 @@ export function ShoppingList({ recipes }) {
       .map(name => name.toLowerCase().trim());
   }
 
+  // Convert raw ingredient names into the shopping list format.
+  // This removes duplicates, trims whitespace, and sorts alphabetically.
   function buildShoppingItems(names) {
     const sorted = [...new Set(names.filter(Boolean).map(name => name.trim()))]
       .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
     return sorted.map(name => ({ name, checked: false }));
   }
 
+  // Build the list from saved recipes and exclude ingredients
+  // the user already owns.
   function loadShoppingList() {
     const savedRecipes = getSavedRecipes();
     const userIngredientNames = getTrackedIngredientNames();
@@ -53,6 +66,8 @@ export function ShoppingList({ recipes }) {
     setShoppingLoaded(true);
   }
 
+  // Toggle the checked state for an individual shopping item.
+  // This updates the local component state immutably.
   function toggleShoppingItem(index) {
     setShoppingItems(prev => {
       const next = [...prev];
