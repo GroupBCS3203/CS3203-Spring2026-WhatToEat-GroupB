@@ -7,8 +7,26 @@ import {getUID} from "./varManager.jsx";
 
 
 export function Ingredients(){
+    
     //react hook that holds the ingredents list
     const [ingredients, setIngredients] = useState([]);
+    var numCalls = 0;
+    var callTime = Date.now();
+
+    //prevents the user from making too many calls
+    function throttle(){
+        const COOLDOWN = 3000;
+        const MAX_CALLS = 5;
+        numCalls++;
+        if(Date.now() > callTime + COOLDOWN){
+            callTime = Date.now();
+            numCalls = 0;
+        }
+        if(numCalls >= MAX_CALLS){
+            return true;
+        }
+        return false;
+    }
 
     //Updates the global user ingredents list to be consistant with the display
     function updateIngredients(){
@@ -18,7 +36,7 @@ export function Ingredients(){
             temp.push([ingredients[i].text.info[0],ingredients[i].text.info[1],ingredients[i].text.info[2]]);
         }
         setUserIngredients(temp);
-        console.log("user ingredients");
+        
     }
 
     //reduces a list of elements to a single string
@@ -54,24 +72,27 @@ export function Ingredients(){
 
     //Loads ingredents from the global ingredent list. Overwrites the current list.
     function loadIngredients(){
-        if(getUID() == "none"){
-            alert("please login to load saved ingredents");
-        }else{
-            var newList = getUserIngredients(); 
-            var info = [];
-            var temp = [];
-            setIngredients([]);
-            for(let i = 0; i<newList.length; i++){
-                info = [newList[i][0], newList[i][1],  newList[i][2]];
-                temp.push({ id: Date.now()+i, text: {info} });
+            if(getUID() == "none"){
+                alert("please login to load saved ingredents");
+            }else{
+                var newList = getUserIngredients(); 
+                var info = [];
+                var temp = [];
+                setIngredients([]);
+                for(let i = 0; i<newList.length; i++){
+                    info = [newList[i][0], newList[i][1],  newList[i][2]];
+                    temp.push({ id: Date.now()+i, text: {info} });
+                }
+                setIngredients(temp);
             }
-            setIngredients(temp);
-        }
+        
     }
 
     //Saves the current ingredent list to the database.
     function saveIngredients(){
-        if(getUID() == "none"){
+        if(throttle()){
+            alert("please wait before making more server requests");
+        }else if(getUID() == "none"){
             alert("please login to save ingredents");
         }else{
             const nameList = getElements(ingredients, 0);

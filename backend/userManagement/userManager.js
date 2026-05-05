@@ -80,8 +80,11 @@ function zip(l1, l2, l3){
 
 //ingredient tracker save function. Just puts the inputed list into the userData schema.
 async function saveIngredients(ID, list) {
+    
     const userData = await dataModel.findOne({userID: {$eq: ID}});
+    
     if(userData != null){
+        
         userData.ownedIngredients = list; //placeholder data
         userData.save();
         console.log("saveIngredients success");
