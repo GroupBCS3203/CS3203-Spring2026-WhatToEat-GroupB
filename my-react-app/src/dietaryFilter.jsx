@@ -11,6 +11,23 @@ export function DietaryFilter({ excludedIngredients = [], setExcludedIngredients
     "Dairy-Free": ["milk", "cheese", "yogurt", "butter", "cream", "ice cream", "whey", "chocolate"],
     "Seafood-Free": ["fish", "salmon", "tuna", "shrimp", "prawns", "lobster", "crab", "oysters", "grouper", "cod", "halibut", "swordfish", "trout"],
   };
+
+  // Send user exclusions from the frontend to backend
+  async function saveExcludedIngredients(newExcludedIngredients) {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/saveDietFilters`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userID: getUID(), dietFilters: newExcludedIngredients, // Request actual data being sent to backend
+      }),
+    });
+    
+    const result = await response.json();
+    console.log("Saved diet filters:", result); // Success or failure from userManager.js
+  }
+  
   // Only run if filter is selected
   function findExclusions(dietType) {
     const foodsToExclude = dietFilterOptions[dietType];
