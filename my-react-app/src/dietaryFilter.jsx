@@ -2,42 +2,49 @@ import { useState } from 'react'
 import React from "react";
 import { setExcludedIngredients as setGlobalExcludedIngredients } from "./varManager.jsx";
 
-export function DietaryFilter({ excludedIngredients = [], setExcludedIngredients }) {
-  const dietFilterOptions = {
+// Component DietaryFilter to take in an array and a function to update array (params)
+export function DietaryFilter({ excludedIngredients = [], setExcludedIngredients }) { 
+  const dietFilterOptions = { // Maps all diet types, selecting ingredients to EXCLUDE
     Vegan: ["chicken", "beef", "steak", "pork", "bacon", "sausage", "ham", "lamb", "eggs"],
     "Nut-Free": ["almonds", "cashews", "peanuts", "peanut-butter", "peanut butter", "pecans"],
     "Gluten-Free": ["bread", "wheat", "barley", "rye", "triticale", "rolls", "bagels", "pasta", "flour"],
     "Dairy-Free": ["milk", "cheese", "yogurt", "butter", "cream", "ice cream", "whey", "chocolate"],
     "Seafood-Free": ["fish", "salmon", "tuna", "shrimp", "prawns", "lobster", "crab", "oysters", "grouper", "cod", "halibut", "swordfish", "trout"],
   };
-
+  // Only run if filter is selected
   function findExclusions(dietType) {
     const foodsToExclude = dietFilterOptions[dietType];
-
-    const alreadySelected = foodsToExclude.every((food) =>
+    
+    // Checks if all foods in foodsToExclude are alr in excludedIngredients
+    const alreadySelected = foodsToExclude.every((food) => 
       excludedIngredients.includes(food)
     );
-
+    // Store updated list
     let newExcludedIngredients;
 
+    // If already selected, delete/remove
     if (alreadySelected) {
       newExcludedIngredients = excludedIngredients.filter(
         (item) => !foodsToExclude.includes(item)
       );
+      // Else, combine existing exclusions, remove duplicate and turn into array
     } else {
       newExcludedIngredients = [
         ...new Set([...excludedIngredients, ...foodsToExclude]),
       ];
     }
 
+    // Update both local and global states (same time to stay in sync) 
     setExcludedIngredients(newExcludedIngredients);
     setGlobalExcludedIngredients(newExcludedIngredients);
   }
 
+  // Prints excluded ingredients to user
   function searchRecipes() {
     console.log("Excluded:", excludedIngredients);
   }
 
+  // Check which filter is selected and check if all excluded foods are included
   function isDietSelected(dietType) {
     const foods = dietFilterOptions[dietType];
     return foods.every((food) => excludedIngredients.includes(food));
