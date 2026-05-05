@@ -3,6 +3,8 @@ import { DietaryFilter } from "../src/DietaryFilter";
 import * as varManager from "../src/varManager";
 
 //When the user clicks a dietary filter button, the frontend attempts to save the excluded ingredients.
+// User clicks Vegan button -> DietaryFilter component executes ->
+// saveExcludedIngredients() -> fetch POST request -> backendAPI
 
 global.fetch = jest.fn();
 
