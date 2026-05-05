@@ -13,7 +13,7 @@ test("planner tab shows month title and navigation controls", async () => {
   const monthLabel = await screen.findByText(/\w+\s+\d{4}/);
   expect(monthLabel).toBeInTheDocument();
 
-  expect(screen.getByRole('button', { name: /create event/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /plan meal/i })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: '◀' })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: '▶' })).toBeInTheDocument();
 });
@@ -23,7 +23,7 @@ test("opening event form and adding an event appears on day cell", async () => {
 
   fireEvent.click(screen.getByText(/planner/i));
 
-  fireEvent.click(screen.getByRole('button', { name: /create event/i }));
+  fireEvent.click(screen.getByRole('button', { name: /plan meal/i }));
 
   const today = new Date();
   const formatted = today.toISOString().split('T')[0];
