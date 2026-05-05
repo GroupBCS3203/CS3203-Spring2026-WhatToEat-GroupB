@@ -50,9 +50,9 @@ app.get("/api/user/login", async (req, res) => {
 //save ingredients
 app.get("/api/user/saveIngredients", async (req, res) => {
     const UID = req.query.userID;
-    const nameList = req.query.nameList.split(", ");
-    const amountList= req.query.amountList.split(", ");
-    const dateList= req.query.dateList.split(", ");
+    const nameList = req.query.nameList.split(",");
+    const amountList= req.query.amountList.split(",");
+    const dateList= req.query.dateList.split(",");
     res.json(await userManager.saveIngredients(UID, userManager.zip(nameList, amountList, dateList)));
 });
 
@@ -75,10 +75,22 @@ app.get("/api/user/getdata", async (req, res) => {
     res.json(await userManager.getUserData(id));
 });
 
+//Get planned meals
+app.get("/api/user/plannedMeals", async (req, res) => {
+    const UID = req.query.userID;
+    res.json(await userManager.getPlannedMeals(UID));
+});
+
+//Save planned meals
+app.post("/api/user/plannedMeals", express.json(), async (req, res) => {
+    const UID = req.body.userID;
+    const events = req.body.events;
+    await userManager.savePlannedMeals(UID, events);
+    res.json({ success: true });
+});
 
 //THIS IS A TEMPLATE TO SAVE USER DATA, IMPLEMENT THIS IN SUCH A WAY THAT FITS WITH UserDataSchema.js,
-
-app.get("/api/user/savedata", async (req, res) => {
+app.post("/api/user/savedata", express.json(), async (req, res) => {
     const id = req.query.id;
     const data = req.query.data;
     res.json(await userManager.saveUserData(id));

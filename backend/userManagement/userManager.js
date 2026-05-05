@@ -73,7 +73,7 @@ async function saveUserData(userID, data)
 function zip(l1, l2, l3){
     var output = [];
     for(let i = 0; i<l1.length-1; i++){
-        output.push([l1[i], parseInt(l2[i]), Date.parse(l3[i]) ]);
+        output.push([l1[i], parseInt(l2[i]), l3[i] ]);
     }
     return output;
 }
@@ -91,5 +91,19 @@ async function saveIngredients(ID, list) {
     }
     
 }
+//meal planner functions
+async function getPlannedMeals(userID) {
+    const userData = await dataModel.findOne({userID: {$eq: userID}});
+    if (!userData) return [];
+    return userData.plannedMeals || [];
+}
+//meal planner save function
+async function savePlannedMeals(userID, events) {
+    await dataModel.findOneAndUpdate(
+        {userID: {$eq: userID}},
+        {plannedMeals: events},
+        {upsert: true, new: true}
+    );
+}
 
-module.exports = {addUser, login, getUserData, zip, saveIngredients}
+module.exports = {addUser, login, getUserData, zip, saveIngredients, getPlannedMeals, savePlannedMeals}
