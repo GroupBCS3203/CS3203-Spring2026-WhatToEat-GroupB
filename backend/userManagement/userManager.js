@@ -106,5 +106,18 @@ async function savePlannedMeals(userID, events) {
         {upsert: true, new: true}
     );
 }
+// Dietary filter function, find user and update new filter in database
+async function saveDietFilters(ID, list) {
+    const userData = await dataModel.findOne({userID: {$eq: ID}});
+    if (userData != null) {
+        userData.DietFilters = list;
+        await userData.save();
+        console.log("saveDietFilters success");
+        return "success";
+    } else {
+        console.log("saveDietFilters failed");
+        return "failed";
+    }
+}
 
 module.exports = {addUser, login, getUserData, zip, saveIngredients, getPlannedMeals, savePlannedMeals}
