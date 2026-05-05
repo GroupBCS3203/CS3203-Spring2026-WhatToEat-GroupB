@@ -11,7 +11,7 @@ async function addUserData(username, password){
     const newUserData = new dataModel({
         userID: await uauth.getUserID(username, password), 
         DietFilters: [], 
-        plannedMeals: "", 
+        plannedMeals: [],
         ownedIngredients: [],
         shoppingList:  ""
     });

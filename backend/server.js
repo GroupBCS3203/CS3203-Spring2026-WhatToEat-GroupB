@@ -63,6 +63,33 @@ app.get("/api/user/login", async (req, res) => {
     res.json(await userManager.login(user, pass));
 });
 
+app.get("/api/user/getdata", async (req, res) => {
+    const id = req.query.id;
+    res.json(await userManager.getUserData(id));
+});
+
+//Get planned meals
+app.get("/api/user/plannedMeals", async (req, res) => {
+    const UID = req.query.userID;
+    res.json(await userManager.getPlannedMeals(UID));
+});
+
+//Save planned meals
+app.post("/api/user/plannedMeals", express.json(), async (req, res) => {
+    const UID = req.body.userID;
+    const events = req.body.events;
+    await userManager.savePlannedMeals(UID, events);
+    res.json({ success: true });
+});
+
+//THIS IS A TEMPLATE TO SAVE USER DATA, IMPLEMENT THIS IN SUCH A WAY THAT FITS WITH UserDataSchema.js,
+app.post("/api/user/savedata", express.json(), async (req, res) => {
+    const id = req.query.id;
+    const data = req.query.data;
+    res.json(await userManager.saveUserData(id));
+});
+
+
 //AI recipe recommendation api call
 
 app.get("/api/recipes/ai", async (req, res) => {
