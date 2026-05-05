@@ -139,6 +139,9 @@ function handleCalculate(){
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <a href="https://github.com/GroupBCS3203/CS3203-Spring2026-WhatToEat-GroupB/blob/main/GroupB_Ticket5Sprint2InstructionManual_CS3203Spring2026-2.pdf" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff' }}>Instruction Manual</a>
         </div>
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <a href="https://github.com/GroupBCS3203/CS3203-Spring2026-WhatToEat-GroupB/" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff' }}>GitHub</a>
+        </div>
 
     </>
   )
