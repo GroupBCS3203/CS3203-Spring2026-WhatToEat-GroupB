@@ -97,7 +97,8 @@ export function DietaryFilter({ excludedIngredients = [], setExcludedIngredients
       </div>
 
       <h3>Excluded Ingredients:</h3>
-
+      <p>(If you are logged in as a user, excluded ingredients will automatically save) </p>
+      
       <ul>
         {excludedIngredients.map((ingredient) => (
           <li key={ingredient}>{ingredient}</li>
