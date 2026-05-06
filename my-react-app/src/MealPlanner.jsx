@@ -226,18 +226,36 @@ export function MealPlanner(){
         closeEventModal();
     }
 
-    //delete all events that are before today (past events)
+    //delete all events that are before today or have passed the current time on today (past events)
     function deleteAllPastEvents() {
-        setPlannerEvents(prev => {
-          const nextState = {};
-          Object.keys(prev).forEach(dateKey => {
-            if (dateKey >= todayKey) {
-              nextState[dateKey] = prev[dateKey];
+        const currentTime = new Date();
+        const currentHours = String(currentTime.getHours()).padStart(2, '0');
+        const currentMinutes = String(currentTime.getMinutes()).padStart(2, '0');
+        const currentTimeString = `${currentHours}:${currentMinutes}`;
+        
+        let deletedCount = 0;
+        const nextState = {};
+        Object.keys(plannerEvents).forEach(dateKey => {
+          if (dateKey < todayKey) {
+            // Delete all events from past dates
+            deletedCount += plannerEvents[dateKey].length;
+          } else if (dateKey === todayKey) {
+            // For today, only keep events that haven't passed
+            const futureEvents = plannerEvents[dateKey].filter(ev => ev.time > currentTimeString);
+            deletedCount += plannerEvents[dateKey].length - futureEvents.length;
+            if (futureEvents.length > 0) {
+              nextState[dateKey] = futureEvents;
             }
-          });
-          saveEventsToBackend(nextState);
-          return nextState;
+          } else {
+            // Keep all future events
+            nextState[dateKey] = plannerEvents[dateKey];
+          }
         });
+        
+        setPlannerEvents(nextState);
+        saveEventsToBackend(nextState);
+        // Decrement counter by the number of deleted events
+        setEventCounter(prevCount => Math.max(0, prevCount - deletedCount));
     }
 
     function prevMonth() {
