@@ -5,14 +5,15 @@ import { getUID } from './varManager.jsx';
 
 export function MealPlanner(){
     const today = new Date();
-    const todayKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    const todayKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`; // YYYY-MM-DD format for consistent date keys
     const [plannerEvents, setPlannerEvents] = useState({});
-    const [plannerDate, setPlannerDate] = useState(() => {
+    const [plannerDate, setPlannerDate] = useState(() => { // initialize to first day of current month
         const d = new Date();
         d.setHours(0,0,0,0);
         d.setDate(1);
         return d;
     });
+    //state for controlling the add/edit event modal
     const [eventModalOpen, setEventModalOpen] = useState(false);
     const [isEditingEvent, setIsEditingEvent] = useState(false);
     const [editingDateKey, setEditingDateKey] = useState(todayKey);
@@ -20,8 +21,13 @@ export function MealPlanner(){
     const [modalEventDate, setModalEventDate] = useState(todayKey);
     const [modalEventName, setModalEventName] = useState('');
     const [modalEventTime, setModalEventTime] = useState('12:00');
-    const uid = getUID();
-
+    // counter to keep track of total number of events for enforcing the limit of 200 planned meals
+    const maxEvents = 200;
+    const [eventCounter, setEventCounter] = useState(0);
+    const [limitNotificationOpen, setLimitNotificationOpen] = useState(false);
+    const uid = getUID(); // get current user ID for fetching/saving planned meals
+    
+    //fetch planned meals on component mount and whenever userID changes
     useEffect(() => {
         if (uid !== 'none') {
             fetchPlannedMeals();
@@ -30,27 +36,35 @@ export function MealPlanner(){
         }
     }, [uid]);
 
+    //fetch planned meals from backend and convert to object keyed by date for easier access in the calendar
     async function fetchPlannedMeals() {
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/plannedMeals?userID=${uid}`);
-            const events = await res.json();
-            const eventsObj = {};
-            events.forEach(ev => {
-                if (!eventsObj[ev.date]) eventsObj[ev.date] = [];
-                eventsObj[ev.date].push(ev);
+            // make API call to fetch planned meals for the user
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/plannedMeals?userID=${uid}`); // expected response format: [{ id, name, date, time }, ...]
+            const events = await res.json();  // expected format: [{ id, name, date, time }, ...]
+            // convert array of events to an object keyed by date for easier access in the calendar
+            const eventsObj = {}; 
+            events.forEach(ev => {  
+                if (!eventsObj[ev.date]) eventsObj[ev.date] = [];   // initialize array for the date if it doesn't exist
+                eventsObj[ev.date].push(ev);  // add event to the corresponding date key
             });
             setPlannerEvents(eventsObj);
+            // set counter to total number of events
+            setEventCounter(events.length);
         } catch (error) {
             console.error('Failed to fetch planned meals:', error);
         }
     }
 
+    //save planned meals to backend (called whenever events are added/edited/deleted)
     async function saveEventsToBackend(eventsObj) {
         if (uid === 'none') return;
+        // convert events object back to array format for backend API ({ userID, events: [{ id, name, date, time }, ...] })
         const events = [];
-        Object.keys(eventsObj).forEach(date => {
-            eventsObj[date].forEach(ev => events.push(ev));
+        Object.keys(eventsObj).forEach(date => { 
+            eventsObj[date].forEach(ev => events.push(ev)); // flatten events into a single array
         });
+        // make API call to save planned meals for the user
         try {
             await fetch(`${import.meta.env.VITE_API_URL}/api/user/plannedMeals`, {
                 method: 'POST',
@@ -63,9 +77,19 @@ export function MealPlanner(){
     }
 
     function formatDate(d) {
-        return d.toISOString().split('T')[0];
+        return d.toISOString().split('T')[0]; // YYYY-MM-DD format for consistent date keys
     }
 
+    // convert 24-hour time to 12-hour format with AM/PM for display in the calendar
+    function formatTime12Hour(time24) {
+        const [hourStr, minute] = time24.split(':');
+        let hour = parseInt(hourStr, 10);
+        const suffix = hour >= 12 ? 'PM' : 'AM';
+        hour = hour % 12 || 12;
+        return `${hour}:${minute} ${suffix}`;
+    }
+
+    //generate calendar grid for current plannerDate (always starts on Sunday and has 42 cells to cover all month lengths and starting weekdays)
     function getCalendarGrid() {
         const year = plannerDate.getFullYear();
         const month = plannerDate.getMonth();
@@ -86,6 +110,7 @@ export function MealPlanner(){
         return grid;
     }
 
+    //open modal to add a new event on the selected date (dateKey is in YYYY-MM-DD format)
     function openAddEventModal(dateKey) {
         setIsEditingEvent(false);
         setEditingEventId(null);
@@ -95,7 +120,8 @@ export function MealPlanner(){
         setModalEventTime('12:00');
         setEventModalOpen(true);
     }
-
+    
+    // open modal to edit an existing event (pre-fills fields with event data)
     function openEditEventModal(dateKey, event) {
         setIsEditingEvent(true);
         setEditingEventId(event.id);
@@ -106,29 +132,40 @@ export function MealPlanner(){
         setEventModalOpen(true);
     }
 
+    //close the add/edit event modal and reset related state
     function closeEventModal() {
         setEventModalOpen(false);
         setIsEditingEvent(false);
         setEditingEventId(null);
     }
 
+    //save event handler (handles both adding new events and editing existing ones)
     function saveEvent() {
-        if (!modalEventName.trim()) {
+        if (!modalEventName.trim()) { // require event name
           return;
         }
 
-        const dateKey = modalEventDate;
+        // Check if creating a new event and counter is at limit
+        if (!isEditingEvent && eventCounter >= maxEvents) {
+          setLimitNotificationOpen(true);
+          return;
+        }
 
+        const dateKey = modalEventDate; // use the date from the modal (allows changing the date when editing an event)
+
+        // If editing an existing event and the date has changed, we need to move the event to the new date key
         if (isEditingEvent && editingEventId) {
+          // Remove the event from the old date key and add it to the new date key
           setPlannerEvents(prev => {
             const existing = prev[editingDateKey] || [];
-            const updatedEvents = existing.filter(ev => ev.id !== editingEventId);
+            const updatedEvents = existing.filter(ev => ev.id !== editingEventId);  
             const movedEvent = {
               id: editingEventId,
               name: modalEventName.trim(),
               date: dateKey,
               time: modalEventTime,
             };
+            // Create the next state by removing the event from the old date and adding it to the new date
             const nextState = {
               ...prev,
               [editingDateKey]: updatedEvents,
@@ -144,6 +181,7 @@ export function MealPlanner(){
             saveEventsToBackend(nextState);
             return nextState;
           });
+        // If adding a new event or editing an existing event without changing the date, we can simply add/update the event in the current date key
         } else {
           const event = {
             id: `${dateKey}-${Date.now()}`,
@@ -152,6 +190,7 @@ export function MealPlanner(){
             time: modalEventTime,
           };
 
+          // Add the new event to the corresponding date key in the plannerEvents state and save the updated events to the backend
           setPlannerEvents(prev => {
             const existing = prev[dateKey] || [];
             const nextState = {
@@ -161,16 +200,20 @@ export function MealPlanner(){
             saveEventsToBackend(nextState);
             return nextState;
           });
+          // increment counter when creating a new event
+          setEventCounter(prev => prev + 1);
         }
 
         closeEventModal();
     }
 
+    //delete a single event (only available when editing an existing event)
     function deleteEvent() {
         if (!isEditingEvent || !editingEventId) {
           return;
         }
 
+        // Remove the event from the current date key
         setPlannerEvents(prev => {
           const existing = prev[editingDateKey] || [];
           const updatedEvents = existing.filter(ev => ev.id !== editingEventId);
@@ -186,21 +229,42 @@ export function MealPlanner(){
           saveEventsToBackend(nextState);
           return nextState;
         });
+        // decrement counter when deleting an event
+        setEventCounter(prev => Math.max(0, prev - 1));
 
         closeEventModal();
     }
 
+    //delete all events that are before today or have passed the current time on today (past events)
     function deleteAllPastEvents() {
-        setPlannerEvents(prev => {
-          const nextState = {};
-          Object.keys(prev).forEach(dateKey => {
-            if (dateKey >= todayKey) {
-              nextState[dateKey] = prev[dateKey];
+        const currentTime = new Date();
+        const currentHours = String(currentTime.getHours()).padStart(2, '0');
+        const currentMinutes = String(currentTime.getMinutes()).padStart(2, '0');
+        const currentTimeString = `${currentHours}:${currentMinutes}`;
+        
+        let deletedCount = 0;
+        const nextState = {};
+        Object.keys(plannerEvents).forEach(dateKey => {
+          if (dateKey < todayKey) {
+            // Delete all events from past dates
+            deletedCount += plannerEvents[dateKey].length;
+          } else if (dateKey === todayKey) {
+            // For today, only keep events that haven't passed
+            const futureEvents = plannerEvents[dateKey].filter(ev => ev.time > currentTimeString);
+            deletedCount += plannerEvents[dateKey].length - futureEvents.length;
+            if (futureEvents.length > 0) {
+              nextState[dateKey] = futureEvents;
             }
-          });
-          saveEventsToBackend(nextState);
-          return nextState;
+          } else {
+            // Keep all future events
+            nextState[dateKey] = plannerEvents[dateKey];
+          }
         });
+        
+        setPlannerEvents(nextState);
+        saveEventsToBackend(nextState);
+        // Decrement counter by the number of deleted events
+        setEventCounter(prevCount => Math.max(0, prevCount - deletedCount));
     }
 
     function prevMonth() {
@@ -247,6 +311,8 @@ export function MealPlanner(){
 
     const fieldInputStyle = {
         width: '100%',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
         marginTop: '6px',
         padding: '10px 12px',
         borderRadius: '8px',
@@ -315,7 +381,7 @@ export function MealPlanner(){
                         openEditEventModal(dayKey, ev);
                       }}
                     >
-                      {ev.time} {ev.name}
+                      {formatTime12Hour(ev.time)} {ev.name}
                     </div>
                   ))}
                   {events.length > 3 && (
@@ -325,6 +391,26 @@ export function MealPlanner(){
               );
             })}
           </div>
+
+          {limitNotificationOpen && (
+            <div style={modalOverlayStyle} onClick={() => setLimitNotificationOpen(false)}>
+              <div style={modalBoxStyle} onClick={e => e.stopPropagation()}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+                  <div>
+                    <h2 style={{ margin: 0, fontSize: '22px' }}>Limit Reached</h2>
+                  </div>
+                  <button
+                    onClick={() => setLimitNotificationOpen(false)}
+                    style={{ background: 'transparent', border: 'none', color: '#bbb', fontSize: '18px', cursor: 'pointer' }}
+                  >
+                    ✕
+                  </button>
+                </div>
+                <p style={{ color: '#f5f5f5', marginBottom: '20px', fontSize: '15px' }}>You have reached the limit of meal plans you can make. Please delete all past plans</p>
+                <Button onClick={() => setLimitNotificationOpen(false)} style={{ width: '100%' }}>OK</Button>
+              </div>
+            </div>
+          )}
 
           {eventModalOpen && (
             <div style={modalOverlayStyle} onClick={closeEventModal}>
