@@ -56,7 +56,7 @@ async function findRecipeByIngredient(ingredients, excludedIngredients) {
 
     // Exists to make sure ingredients and excludedIngredients are usable, then splits for query usage
     if (!ingredients) {
-        console.error('ingredients is undefined');
+        console.error('ingredients is undefined :)');
     }
     else
     {
@@ -72,9 +72,22 @@ async function findRecipeByIngredient(ingredients, excludedIngredients) {
     }
 
 
+    // Due to how $all works, we need to check if array is empty, and if it isn't we pass a query with both $all and $nin,
+    // otherwise we just pass $nin
+    let query = {};
+
+    if (array.length > 0) {
+        query = { $all: array, $nin: excludedArray };
+    }
+    else
+    {
+        query = { $nin: excludedArray }
+    }
+
+
     //Basically a repeat of getTopTen, but now we have a match condition for the two arrays
     let tenRecipes = await recipeModel.aggregate([
-        {$match: {NER: { $all: array, $nin: excludedArray }}},
+        {$match: {NER: query}},
         { $group: { _id: "$title", doc: { $first: "$$ROOT" } } },
         { $replaceRoot: { newRoot: "$doc" } },
         { $limit: 10 }

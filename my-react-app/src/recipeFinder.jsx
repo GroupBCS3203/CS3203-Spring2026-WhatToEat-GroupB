@@ -51,6 +51,7 @@ export function RecipeFinder()
             .finally(() => setLoading(false));
     }
 
+    //Searches both by included and excluded ingredidents, returning those who
     function searchByIngredient(ingredients) {
         setLoading(true);
         const excludedIngredients = getExcludedIngredients(); 

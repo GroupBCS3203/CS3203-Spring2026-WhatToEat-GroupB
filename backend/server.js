@@ -32,8 +32,9 @@ app.get("/api/recipes/one", async (req, res) => {
 
 //Ingredient search api call
 app.get("/api/recipes/search", async (req, res) => {
-   const ingredients = req.query.ingredients;
-    res.json(await recipeManager.findRecipeByIngredient(ingredients));
+    const ingredients = req.query.ingredients;
+    const excluded = req.query.excluded;
+    res.json(await recipeManager.findRecipeByIngredient(ingredients,excluded));
 });
 
 //AI recipe recommendation api call
