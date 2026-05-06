@@ -1,6 +1,6 @@
 const request = require("supertest");
 const app = require("../server");
-const userManager = require("../userManagement/userManager");
+const dataManager = require("../userManagement/dataManager");
 
 describe("GET /api/user/saveIngredients", () => {
     it("should return fail if UserID is invalid", async () => {
@@ -18,7 +18,7 @@ describe("GET /api/user/saveIngredients", () => {
     });*/
 
     it("strings should be combined", async () => {
-        const res = userManager.zip(["1", ""], ["2", ""], ["3", ""]);
+        const res = dataManager.zip(["1", ""], ["2", ""], ["3", ""]);
         console.log(res);
         expect(res[0][0] == "1" ).toBe(true);
         expect(res[0][1] == 2 ).toBe(true);
