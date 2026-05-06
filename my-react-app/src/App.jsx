@@ -67,7 +67,6 @@ function handleCalculate(){
         <img src="/logo.png" alt="WhatToEat logo" className="app-logo" />
       </header>
 
-      // define the different tab buttons on the website
       <div className="tab">
           <Tabbutton feature = "recipes" />
           <Tabbutton feature = "login" />
@@ -92,7 +91,6 @@ function handleCalculate(){
           </span>
         </div>
 
-        // each tab content is rended based on the button clicked, where each function file is referenced
         <div id="recipes" className="tabcontent" style={{ color:'#ffffff', display: "block"}}>
           <RecipeFinder/>
         </div>
@@ -138,7 +136,6 @@ function handleCalculate(){
             />
         </div>
 
-        // Add footer to website with links to the instruction manual and the github repo
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <a href="https://github.com/GroupBCS3203/CS3203-Spring2026-WhatToEat-GroupB/blob/main/GroupB_Ticket5Sprint2InstructionManual_CS3203Spring2026-2.pdf" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff' }}>Instruction Manual</a>
         </div>
