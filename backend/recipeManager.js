@@ -37,11 +37,26 @@ async function makeIngredientMasterList()
     console.log(masterNER.length);
 }
 
-async function  findRecipeByIngredient(ingredients, excludedIngredients) {
+async function findRecipeByIngredient(ingredients, excludedIngredients) {
 
-    let array = ingredients.split(",");
+    let array = [];
+    let excludedArray = [];
 
-  let excludedArray = excludedIngredients.split(",");
+    if (!ingredients) {
+        console.error('ingredient is undefined');
+    }
+    else
+    {
+        array = ingredients.split(",");
+    }
+
+    if (!excludedIngredients) {
+        console.error('ingredient is undefined');
+    }
+    else
+    {
+        excludedArray = excludedIngredients.split(",");
+    }
 
     let tenRecipes = await recipeModel.aggregate([
         {$match: {NER: { $all: array, $nin: excludedArray }}},
@@ -53,6 +68,7 @@ async function  findRecipeByIngredient(ingredients, excludedIngredients) {
     return tenRecipes;
 }
 
+// Access LLM to get recipe outside of database
 async function getAIRecipeRecommendations(ingredients)
 {
     const ai = new GoogleGenAI({
@@ -65,20 +81,42 @@ async function getAIRecipeRecommendations(ingredients)
     The user currently has these ingredients:
     ${ingredients}
 
-    Return ONLY valid JSON in this format:
+    Return ONLY valid JSON.
+
+    Requirements:
+    - Recommend exactly 10 recipes.
+    - Each recipe must contain:
+    - "name"
+    - "ingredients"
+    - "instructions"
+    - "ingredients" MUST be an array where EACH ingredient is its own separate string entry including measurements.
+    - "instructions" MUST be an array where EACH instruction step is its own separate string entry.
+    - Do NOT combine ingredients into one comma-separated string.
+    - Do NOT combine instructions into one paragraph.
+    - No markdown.
+    - No explanation text.
+    - No code fences.
+
+    Use this EXACT format:
 
     {
     "recipes": [
         {
-        "name": "",
-        "description": "",
-        "cookTime": "",
-        "collegeReason": ""
+        "name": "Recipe Name",
+        "ingredients": [
+            "1 cup rice",
+            "2 eggs",
+            "1/2 cup shredded cheese"
+        ],
+        "instructions": [
+            "Cook the rice according to package instructions.",
+            "Scramble the eggs in a skillet.",
+            "Mix the rice and eggs together.",
+            "Add cheese and stir until melted."
+        ]
         }
     ]
     }
-
-    Recommend exactly 3 recipes.
     `;
 
     const response = await ai.models.generateContent({

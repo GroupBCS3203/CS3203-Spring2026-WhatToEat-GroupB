@@ -10,18 +10,17 @@ const blankRecipe = {
 }
 
 const blankData = {
-    "userID": "apple",
-    "dietFilters": [""],
-    "plannedMeals": {"lineItems": []},
-    "savedRecipes": {"recipes": []},
-    "ownedIngredients": [["String", 1, Date.now()]],
-    "shoppingList": {"lineItems": []}
+    userID: "apple",
+    dietFilters: [""],
+    plannedMeals: {lineItems: []},
+    savedRecipes: {recipes: [blankRecipe]},
+    ownedIngredients: [["String", 1, Date.now()]],
+    shoppingList: {lineItems: []}
 }
 
 
 let UID = 'none';
 let recipes = [blankRecipe];
-let recipe = blankRecipe;
 let savedRecipes = [];
 let savedPlans = [];
 let shoppingList = [];
@@ -57,15 +56,6 @@ export function setRecipes(recipeList)
     recipes = recipeList;
 }
 
-export function getRecipe()
-{
-    return recipe;
-}
-
-export function setRecipe(newRecipe)
-{
-    recipe = newRecipe;
-}
 
 function getRecipeKey(recipe) {
     if (!recipe) return undefined;
@@ -115,33 +105,39 @@ export function setUserIngredients(ingredients)
     userIngredients = ingredients;
 }
 
+export function getUserFilters()
+{
+    return savedFilters;
+}
+
+export function setUserFilters(filters)
+{
+    savedFilters = filters;
+}
+
 
 
 export async function setUserData(id)
 {
 
-    console.log("ULTRA STINK >:)")
-    console.log(id);
-    console.log(UID);
-
     let allUserData = blankData;
     await fetch(`${import.meta.env.VITE_API_URL}/api/user/getdata?id=${UID}`)
         .then(res => res.json())
         .then(data => {
-            console.log("ULTRA STINK 2 >:)");
             allUserData = data;
         })
         .catch(err => console.error(err));
 
-    console.log("STINK INVASION");
-    console.log(allUserData.userID);
-    console.log(allUserData.ownedIngredients);
 
-
-    savedRecipes = allUserData.savedRecipes;
-    savedPlans = allUserData.plannedMeals;
-    shoppingList = allUserData.shoppingList;
-    savedFilters = allUserData.dietFilters;
-    userIngredients = allUserData.ownedIngredients;
+    try {
+        savedRecipes = allUserData.savedRecipes.recipes;
+        savedPlans = allUserData.plannedMeals.lineItems;
+        shoppingList = allUserData.shoppingList.lineItems;
+        excludedIngredients = allUserData.dietFilters;
+        userIngredients = allUserData.ownedIngredients;
+    }
+    catch(err) {
+        console.log(err);
+    }
 }
 

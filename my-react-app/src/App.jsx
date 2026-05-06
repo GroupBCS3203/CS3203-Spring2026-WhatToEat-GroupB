@@ -16,7 +16,7 @@ export function Button({ onClick, children, style, className }) {
   );
 }
 
-
+// handles the tab button functionality, where clicking a tab will display different content
 function Tabbutton({ feature, onOpen }) {
 
   function handlePlayClick() {
@@ -40,16 +40,16 @@ function Tabbutton({ feature, onOpen }) {
   );
 }
 
-
+// app function that defines the structure of the website (like the different tabs and the header/footer)
 function App() {
   const [recipes] = useState([]);
   const [income, setIncome] = useState('');
   const [budget, setBudget] = useState(null);
-  const [excludedIngredients,setExcludedIngredients] = useState ();
   const [currentUID, setCurrentUID] = useState(getUID());
 
 
 
+// calculates monthly food budget based on income, doesn't have it's own file because it is so small
 function calculateBudget(income) {
   return income * 0.15; 
 }
@@ -130,14 +130,14 @@ function handleCalculate(){
         </div>
 
         <div id="diet-filter" className="tabcontent" style={{color: '#ffffff', display: "none"}}>
-          <DietaryFilter
-          excludedIngredients={excludedIngredients}
-          setExcludedIngredients={setExcludedIngredients}
-            />
+            <DietaryFilter></DietaryFilter>
         </div>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <a href="https://sooners-my.sharepoint.com/:w:/g/personal/mhouston_ou_edu/IQBPBSeMG4lyRZ7IThFpwP7WAXuECP4D30NALbezmJQvZT4?e=dvYIak" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff' }}>Instruction Manual</a>
+          <a href="https://github.com/GroupBCS3203/CS3203-Spring2026-WhatToEat-GroupB/blob/main/GroupB_Ticket5Sprint2InstructionManual_CS3203Spring2026-2.pdf" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff' }}>Instruction Manual</a>
+        </div>
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <a href="https://github.com/GroupBCS3203/CS3203-Spring2026-WhatToEat-GroupB/" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff' }}>GitHub</a>
         </div>
 
     </>

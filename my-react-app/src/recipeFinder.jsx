@@ -19,6 +19,7 @@ export function RecipeFinder()
         "NER": []
     }
 
+    const [uid] = useState(getUID());
     const [recipes, setRecipes] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [showPopup, setShowPopup] = useState(false);
@@ -26,6 +27,7 @@ export function RecipeFinder()
     const [showSaved, setShowSaved] = useState(false);
     const [popUpSaved, setPopUpSaved] = useState(false);
     const [useAI, setUseAI] = useState(false);
+    const [loading, setLoading] = useState(false); //load state is true whenever we start a search
 
     useEffect(() => {
         fetch(`${BASE_URL}/api/recipes/top`)
@@ -35,16 +37,19 @@ export function RecipeFinder()
     }, []);
 
     function getTopTen() {
+        setLoading(true);
         fetch(`${BASE_URL}/api/recipes/top`)
             .then(res => res.json())
             .then(data => {
                 setRecipes(data);
                 setGlobalRecipes(data);
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
     }
 
     function searchByIngredient(ingredients) {
+        setLoading(true);
         const excludedIngredients = getExcludedIngredients(); 
         const excludedQuery = excludedIngredients.join(","); // New query without excluded ingredients
         
@@ -54,28 +59,46 @@ export function RecipeFinder()
                 setRecipes(data);
                 setGlobalRecipes(data);
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
     }
     
+    // Search for recipes with LLM assistance
     function searchAIRecipes(ingredients) {
-    fetch(`${BASE_URL}/api/recipes/ai?ingredients=${ingredients}`)
-        .then(res => res.json())
-        .then(data => {
-            // IMPORTANT: convert AI format → UI format
-            const aiRecipes = data?.recommendations?.recipes?.map(r => ({
-                title: r.name,
-                ingredients: [],
-                directions: [r.description],
-                link: "",
-                NER: [],
-                cookTime: r.cookTime,
-                collegeReason: r.collegeReason
-            })) || [];
+        setLoading(true);
+        //fetches based on input ingredients
+        fetch(`${BASE_URL}/api/recipes/ai?ingredients=${ingredients}`)
+            .then(res => res.json())
+            .then(data => {
+                // Same setup as other searches, but requires direct mapping of each trait of the recipe since the AI response format is different than our database format
+                const aiRecipes = data?.recommendations?.recipes?.map(r => ({
+                    title: r.name,
+                    ingredients: r.ingredients,
+                    directions: r.instructions,
+                    link: "",
+                    NER: [],
+                })) || [];
 
-            setRecipes(aiRecipes);
-            setGlobalRecipes(aiRecipes);
-        })
-        .catch(err => console.error(err));
+                setRecipes(aiRecipes);
+                setGlobalRecipes(aiRecipes);
+            })
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
+    }
+
+
+    async function saveRecipesToBackend() {
+        if (getUID() === 'none') return;
+        const returnRecipes = getSavedRecipes();
+        try {
+            await fetch(`${import.meta.env.VITE_API_URL}/api/user/saveSavedRecipes`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userID: getUID(), returnRecipes: returnRecipes }),
+            });
+        } catch (error) {
+            console.error('Failed to save planned meals:', error);
+        }
     }
     // Updates the search term to be lower case
     const handleInputChange = (event) => {
@@ -111,6 +134,7 @@ export function RecipeFinder()
             addSavedRecipe(popUpRecipe);
             setPopUpSaved(true);
         }
+        saveRecipesToBackend();
     }
 
     let Popup =
@@ -166,7 +190,7 @@ export function RecipeFinder()
         </h3>
         <input
             type="text"
-            placeholder="Search here..."
+            placeholder="Search ingredients here..."
             onChange={handleInputChange} // Attach the onChange event handler
             value={searchTerm} // Control the input value with state
         />
@@ -184,8 +208,17 @@ export function RecipeFinder()
             Popup
         }
 
-        {recipes.length === 0 ? (
-            <p>Loading...</p>
+        {loading ? (
+            <div style={styles.loadingContainer}>
+                <div style={styles.spinner}></div>
+                <p style={{ color:'#ffffff' }}>
+                    Finding recipes...
+                </p>
+            </div>
+        ) : recipes.length === 0 ? (
+            <p style={{ color:'#ffffff' }}>
+                No recipes found.
+            </p>
         ) : (
             <div>
                 <h4 style={{ color:'#ffffff' }}>
@@ -203,6 +236,20 @@ export function RecipeFinder()
         )}
     </div>
 
+mainPage = (
+    <>
+        <style>
+        {`
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `}
+        </style>
+
+        {mainPage}
+    </>
+);
 
 return(mainPage);
 }
@@ -224,5 +271,22 @@ const styles = {
         overflowY: 'auto',
         height: '60%',
         width: '60%',
-    }
+    },
+
+    loadingContainer: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: "20px",
+    },
+
+    spinner: {
+        width: "40px",
+        height: "40px",
+        border: "4px solid #555",
+        borderTop: "4px solid white",
+        borderRadius: "50%",
+        animation: "spin 1s linear infinite",
+    },
 };

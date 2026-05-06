@@ -17,6 +17,8 @@ It is important to note that this README mirrors the progress of WhatToEat, so a
 
 ## Usage
 The current, work-in-progress website can be accessed using at [https://whattoeat-client.onrender.com/](https://whattoeat-client.onrender.com/). Please note that if our website only displays "Loading", that means the API is currently booting-up, and will need some time. You can look at [local testing](#local-testing) to see how to check the progress of the API boot-up.
+
+For instructions on how to use the current website, please reference our [Instruction Manual](https://github.com/GroupBCS3203/CS3203-Spring2026-WhatToEat-GroupB/blob/main/GroupB_Ticket5Sprint2InstructionManual_CS3203Spring2026-2.pdf). If anything is still unclear or there are any issues with the website, please see the [Support Contacts](#support-contacts) page.
 ## Local Installation and Testing
 
 ### Local Installation
@@ -66,7 +68,7 @@ npx vitest RecipeFetch.test.jsx
 If you want to see our backend tests, feel free to look at them both in the files at `.\backend\tests\recipeDB.test.js` and in our [Git Hub Actions](https://github.com/GroupBCS3203/CS3203-Spring2026-WhatToEat-GroupB/actions). 
 
 ## Current Status
-WhatToEat is currently around Phase 1 - Phase 2. Our WIP website can be found in [Usage](#usage). There are currently four phases worth of content planned out for our future development which can be seen in the [Roadmap](#roadmap)
+WhatToEat's WIP website can be found in [Usage](#usage). There are currently four phases worth of content planned out for our future development which can be seen in the [Roadmap](#roadmap)
 ## Roadmap
 ### Phase 1: Core Project
 - **Ingredient Tracker**

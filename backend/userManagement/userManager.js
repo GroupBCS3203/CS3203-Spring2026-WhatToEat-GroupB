@@ -11,7 +11,7 @@ async function addUserData(username, password){
     const newUserData = new dataModel({
         userID: await uauth.getUserID(username, password), 
         DietFilters: [], 
-        plannedMeals: "", 
+        plannedMeals: [],
         ownedIngredients: [],
         shoppingList:  ""
     });
@@ -49,13 +49,6 @@ async function getUserData(userID)
     //Gets all data tied to a specific userID
     let data =
         await dataModel.findOne({userID: {$eq: userID}});
-    console.log(userID);
-    console.log("MEGA STICK");
-    console.log(data.userID);
-    console.log(data._id);
-    console.log(data.__v);
-    console.log(data.ownedIngredients);
-
     return data;
 }
 
@@ -76,7 +69,7 @@ async function saveUserData(userID, data)
 
 
 
-//ingredient tracker helper function
+//ingredient tracker helper function. Puts the 3 string lists into a single list.
 function zip(l1, l2, l3){
     var output = [];
     for(let i = 0; i<l1.length-1; i++){
@@ -84,10 +77,14 @@ function zip(l1, l2, l3){
     }
     return output;
 }
-//ingredient tracker save function
+
+//ingredient tracker save function. Just puts the inputed list into the userData schema.
 async function saveIngredients(ID, list) {
+
     const userData = await dataModel.findOne({userID: {$eq: ID}});
+
     if(userData != null){
+
         userData.ownedIngredients = list; //placeholder data
         userData.save();
         console.log("saveIngredients success");
@@ -112,5 +109,23 @@ async function savePlannedMeals(userID, events) {
         {upsert: true, new: true}
     );
 }
+// Dietary filter function, find user and update new filter in database
+async function saveDietFilters(ID, list) { // Recieve user ID and list of excluded foods
+    console.log(list);
+    await dataModel.findOneAndUpdate(
+        { userID: ID },
+        { $set: { "dietFilters": list } },
+        { returnDocument: "after" }
+    );
+}
 
-module.exports = {addUser, login, getUserData, zip, saveIngredients, getPlannedMeals, savePlannedMeals}
+async function saveSavedRecipes(userID, recipes) {
+    await dataModel.findOneAndUpdate(
+        { userID: userID },
+        { $set: { "savedRecipes.recipes": recipes } },
+        { new: true }
+    );
+}
+
+
+module.exports = {addUser, login, getUserData, zip, saveIngredients, saveSavedRecipes, getPlannedMeals, savePlannedMeals, saveDietFilters}

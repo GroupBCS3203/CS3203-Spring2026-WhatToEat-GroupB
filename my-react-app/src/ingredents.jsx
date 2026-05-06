@@ -7,6 +7,28 @@ import {getUID} from "./varManager.jsx";
 
 
 export function Ingredients(){
+    
+    //react hook that holds the ingredents list
+    const [ingredients, setIngredients] = useState([]);
+    var numCalls = 0;
+    var callTime = Date.now();
+
+    //prevents the user from making too many calls
+    function throttle(){
+        const COOLDOWN = 3000;
+        const MAX_CALLS = 5;
+        numCalls++;
+        if(Date.now() > callTime + COOLDOWN){
+            callTime = Date.now();
+            numCalls = 0;
+        }
+        if(numCalls >= MAX_CALLS){
+            return true;
+        }
+        return false;
+    }
+
+    //Updates the global user ingredents list to be consistant with the display
     function updateIngredients(){
         var temp = [];
         console.log(ingredients);
@@ -14,7 +36,10 @@ export function Ingredients(){
             temp.push([ingredients[i].text.info[0],ingredients[i].text.info[1],ingredients[i].text.info[2]]);
         }
         setUserIngredients(temp);
+        
     }
+
+    //reduces a list of elements to a single string
     function getElements(list, index){
         var output = "";
         for(let i=0; i<list.length; i++ ){
@@ -22,43 +47,55 @@ export function Ingredients(){
         }
         return output;
     }
-    const [ingredients, setIngredients] = useState([]);
 
+    //Click handler for the add button. Retrives the inputed data and adds it to the list if ingredents.
     function addIngredient(){
         var ingredient = document.getElementById("ingredient_input");
         var amount = document.getElementById("amount_input");
         var expiration = document.getElementById("expiration_input");
 
-        var info = [ingredient.value, amount.value, expiration.value];
+
+        // Ensures the user can only input letters and spaces as ingredients,
+        // this prevents the user from being able to input anything that could mess with API calls
+        if(/[^A-Za-z\s]/.test(ingredient.value)){
+            alert("Please only include letters and spaces in ingredient names");
+        }else{
+            var info = [ingredient.value, amount.value, expiration.value];
     
-        setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
-        //updateIngredients();
+            setIngredients([...ingredients, { id: Date.now(), text: {info} }]);
+            //updateIngredients();
+        }        
     }
 
+    //Click handler for the remove button. Removes the ingredents that is pressed using its ID.
     function removeIngredient(id){
         setIngredients(ingredients.filter(ingredients => ingredients.id !== id));
         //updateIngredients();
     }
 
+    //Loads ingredents from the global ingredent list. Overwrites the current list.
     function loadIngredients(){
-        if(getUID() == "none"){
-            alert("please login to load saved ingredents");
-        }else{
-            var newList = getUserIngredients(); 
-            var info = [];
-            var temp = [];
-            setIngredients([]);
-            for(let i = 0; i<newList.length; i++){
-                info = [newList[i][0], newList[i][1],  newList[i][2]];
-                temp.push({ id: Date.now()+i, text: {info} });
+            if(getUID() == "none"){
+                alert("please login to load saved ingredents");
+            }else{
+                var newList = getUserIngredients(); 
+                var info = [];
+                var temp = [];
+                setIngredients([]);
+                for(let i = 0; i<newList.length; i++){
+                    info = [newList[i][0], newList[i][1],  newList[i][2]];
+                    temp.push({ id: Date.now()+i, text: {info} });
+                }
+                setIngredients(temp);
             }
-            setIngredients(temp);
-
-        }
+        
     }
 
+    //Saves the current ingredent list to the database.
     function saveIngredients(){
-        if(getUID() == "none"){
+        if(throttle()){
+            alert("please wait before making more server requests");
+        }else if(getUID() == "none"){
             alert("please login to save ingredents");
         }else{
             const nameList = getElements(ingredients, 0);
@@ -69,7 +106,7 @@ export function Ingredients(){
         }
     }
 
-
+    //front end elements
     return (<div>
             <h3 style={{ color:'#ffffff' }}>
             Ingredient Tracker
