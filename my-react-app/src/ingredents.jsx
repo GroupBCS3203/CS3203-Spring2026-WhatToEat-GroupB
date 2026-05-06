@@ -54,8 +54,11 @@ export function Ingredients(){
         var amount = document.getElementById("amount_input");
         var expiration = document.getElementById("expiration_input");
 
-        if(ingredient.value.split(",").length > 1){
-            alert("Please do not include special characters or commas");
+
+        // Ensures the user can only input letters and spaces as ingredients,
+        // this prevents the user from being able to input anything that could mess with API calls
+        if(/[^A-Za-z\s]/.test(ingredient.value)){
+            alert("Please only include letters and spaces in ingredient names");
         }else{
             var info = [ingredient.value, amount.value, expiration.value];
     
