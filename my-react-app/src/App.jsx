@@ -45,7 +45,6 @@ function App() {
   const [recipes] = useState([]);
   const [income, setIncome] = useState('');
   const [budget, setBudget] = useState(null);
-  const [excludedIngredients,setExcludedIngredients] = useState ();
   const [currentUID, setCurrentUID] = useState(getUID());
 
 
@@ -54,6 +53,7 @@ function App() {
 function calculateBudget(income) {
   return income * 0.15; 
 }
+
 function handleCalculate(){
   const numericIncome = parseFloat(income);
   if (!isNaN(numericIncome) && numericIncome > 0) {
@@ -130,10 +130,7 @@ function handleCalculate(){
         </div>
 
         <div id="diet-filter" className="tabcontent" style={{color: '#ffffff', display: "none"}}>
-          <DietaryFilter
-          excludedIngredients={excludedIngredients}
-          setExcludedIngredients={setExcludedIngredients}
-            />
+            <DietaryFilter></DietaryFilter>
         </div>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>

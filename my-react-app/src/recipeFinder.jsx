@@ -88,13 +88,9 @@ export function RecipeFinder()
 
 
     async function saveRecipesToBackend() {
-        console.log("Recipes saved");
-        console.log(uid);
         if (getUID() === 'none') return;
         const returnRecipes = getSavedRecipes();
-
         try {
-            console.log("Recipes poseted");
             await fetch(`${import.meta.env.VITE_API_URL}/api/user/saveSavedRecipes`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

@@ -67,7 +67,6 @@ function getRecipeKey(recipe) {
 
 export function getSavedRecipes()
 {
-    console.log(savedRecipes);
     return savedRecipes;
 }
 
@@ -106,34 +105,35 @@ export function setUserIngredients(ingredients)
     userIngredients = ingredients;
 }
 
+export function getUserFilters()
+{
+    return savedFilters;
+}
+
+export function setUserFilters(filters)
+{
+    savedFilters = filters;
+}
+
 
 
 export async function setUserData(id)
 {
 
-    console.log("ULTRA STINK >:)")
-    console.log(id);
-    console.log(UID);
-
     let allUserData = blankData;
     await fetch(`${import.meta.env.VITE_API_URL}/api/user/getdata?id=${UID}`)
         .then(res => res.json())
         .then(data => {
-            console.log("ULTRA STINK 2 >:)");
             allUserData = data;
         })
         .catch(err => console.error(err));
-
-    console.log("STINK INVASION");
-    console.log(allUserData.userID);
-    console.log(allUserData.ownedIngredients);
 
 
     try {
         savedRecipes = allUserData.savedRecipes.recipes;
         savedPlans = allUserData.plannedMeals.lineItems;
         shoppingList = allUserData.shoppingList.lineItems;
-        savedFilters = allUserData.dietFilters;
+        excludedIngredients = allUserData.dietFilters;
         userIngredients = allUserData.ownedIngredients;
     }
     catch(err) {

@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import React from "react";
-import { setExcludedIngredients as setGlobalExcludedIngredients, getUID } from "./varManager.jsx";
+import { setExcludedIngredients as setGlobalExcludedIngredients, getUID, getExcludedIngredients } from "./varManager.jsx";
 
 // Component DietaryFilter to take in an array and a function to update array (params)
-export function DietaryFilter({ excludedIngredients = [], setExcludedIngredients }) { 
+export function DietaryFilter() {
   const dietFilterOptions = { // Maps all diet types, selecting ingredients to EXCLUDE
     Vegan: ["chicken", "beef", "steak", "pork", "bacon", "sausage", "ham", "lamb", "eggs"],
     "Nut-Free": ["almonds", "cashews", "peanuts", "peanut-butter", "peanut butter", "pecans"],
@@ -12,9 +12,39 @@ export function DietaryFilter({ excludedIngredients = [], setExcludedIngredients
     "Seafood-Free": ["fish", "salmon", "tuna", "shrimp", "prawns", "lobster", "crab", "oysters", "grouper", "cod", "halibut", "swordfish", "trout"],
   };
 
+  const [excludedIngredients, setExcludedIngredients] = useState(getExcludedIngredients());
+  const uid = getUID();
+
+
+  //Implemented a sleep function to wait for excludedIngredients to update inside varManager.jsx
+  async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  //A function to get the excludedIngredidents from varManager.jsx, waits as it triggers when uid updates
+  async function getData()
+  {
+    await sleep(100);
+    const savedFilters = getExcludedIngredients();
+    setExcludedIngredients(savedFilters);
+  }
+
+
+  //Anytime uid updates, get the excludedIngredients
+  //This is what allows the UI to be updated in realTime for dietaryFilter
+  useEffect(() => {
+    if (uid !== 'none') {
+      getData();
+    }
+  }, [uid]);
+
+
+
+
+
   // Send user exclusions from the frontend to backend
   async function saveExcludedIngredients(newExcludedIngredients) {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/saveDietFilters`, { // Sending request to backend
+    await fetch(`${import.meta.env.VITE_API_URL}/api/user/saveDietFilters`, { // Sending request to backend
       method: "POST",
       headers: {
         "Content-Type": "application/json", // Tells backend data being sent is JSON
@@ -23,13 +53,12 @@ export function DietaryFilter({ excludedIngredients = [], setExcludedIngredients
         userID: getUID(), dietFilters: newExcludedIngredients, // Sends new excluded ingredient list
       }),
     });
-    
-    const result = await response.json();
-    console.log("Saved diet filters:", result); // Success or failure from userManager.js
   }
   
   // Only run if filter is selected
   function findExclusions(dietType) {
+    console.log("Excluding: ");
+    console.log(dietType);
     const foodsToExclude = dietFilterOptions[dietType];
     
     // Checks if all foods in foodsToExclude are alr in excludedIngredients
@@ -57,10 +86,6 @@ export function DietaryFilter({ excludedIngredients = [], setExcludedIngredients
     saveExcludedIngredients(newExcludedIngredients);
   }
 
-  // Prints excluded ingredients to user
-  function searchRecipes() {
-    console.log("Excluded:", excludedIngredients);
-  }
 
   // Check which filter is selected and check if all excluded foods are included
   function isDietSelected(dietType) {

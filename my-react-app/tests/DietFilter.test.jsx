@@ -1,14 +1,16 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { DietaryFilter } from "../src/DietaryFilter";
+import { DietaryFilter } from "../src/dietaryFilter";
 import * as varManager from "../src/varManager";
+import { vi, test, expect, describe, beforeEach } from "vitest";
+
 
 //When the user clicks a dietary filter button, the frontend attempts to save the excluded ingredients.
 // User clicks Vegan button -> DietaryFilter component executes ->
 // saveExcludedIngredients() -> fetch POST request -> backendAPI
 
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
-jest.spyOn(varManager, "getUID").mockReturnValue("12345"); // Mock user ID
+vi.spyOn(varManager, "getUID").mockReturnValue("12345"); // Mock user ID
 
 describe("DietaryFilter frontend save test", () => { // Tests for DietaryFilter save behavior
   beforeEach(() => {
@@ -16,7 +18,7 @@ describe("DietaryFilter frontend save test", () => { // Tests for DietaryFilter 
   });
 
   test("clicking a filter saves excluded ingredients", async () => { // check does clicking the filter trigger saving?
-    const mockSetExcludedIngredients = jest.fn(); // lets jest track what is called and what is recieved
+    const mockSetExcludedIngredients = vi.fn(); // lets jest track what is called and what is recieved
 
     render( // creates a fake test browser
       <DietaryFilter
