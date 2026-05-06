@@ -21,6 +21,10 @@ export function MealPlanner(){
     const [modalEventDate, setModalEventDate] = useState(todayKey);
     const [modalEventName, setModalEventName] = useState('');
     const [modalEventTime, setModalEventTime] = useState('12:00');
+    // counter to keep track of total number of events for enforcing the limit of 200 planned meals
+    const maxEvents = 200;
+    const [eventCounter, setEventCounter] = useState(0);
+    const [limitNotificationOpen, setLimitNotificationOpen] = useState(false);
     const uid = getUID(); // get current user ID for fetching/saving planned meals
     
     //fetch planned meals on component mount and whenever userID changes
@@ -45,6 +49,8 @@ export function MealPlanner(){
                 eventsObj[ev.date].push(ev);  // add event to the corresponding date key
             });
             setPlannerEvents(eventsObj);
+            // set counter to total number of events
+            setEventCounter(events.length);
         } catch (error) {
             console.error('Failed to fetch planned meals:', error);
         }
@@ -130,6 +136,12 @@ export function MealPlanner(){
           return;
         }
 
+        // Check if creating a new event and counter is at limit
+        if (!isEditingEvent && eventCounter >= maxEvents) {
+          setLimitNotificationOpen(true);
+          return;
+        }
+
         const dateKey = modalEventDate; // use the date from the modal (allows changing the date when editing an event)
 
         // If editing an existing event and the date has changed, we need to move the event to the new date key
@@ -179,6 +191,8 @@ export function MealPlanner(){
             saveEventsToBackend(nextState);
             return nextState;
           });
+          // increment counter when creating a new event
+          setEventCounter(prev => prev + 1);
         }
 
         closeEventModal();
@@ -206,6 +220,8 @@ export function MealPlanner(){
           saveEventsToBackend(nextState);
           return nextState;
         });
+        // decrement counter when deleting an event
+        setEventCounter(prev => Math.max(0, prev - 1));
 
         closeEventModal();
     }
@@ -346,6 +362,26 @@ export function MealPlanner(){
               );
             })}
           </div>
+
+          {limitNotificationOpen && (
+            <div style={modalOverlayStyle} onClick={() => setLimitNotificationOpen(false)}>
+              <div style={modalBoxStyle} onClick={e => e.stopPropagation()}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+                  <div>
+                    <h2 style={{ margin: 0, fontSize: '22px' }}>Limit Reached</h2>
+                  </div>
+                  <button
+                    onClick={() => setLimitNotificationOpen(false)}
+                    style={{ background: 'transparent', border: 'none', color: '#bbb', fontSize: '18px', cursor: 'pointer' }}
+                  >
+                    ✕
+                  </button>
+                </div>
+                <p style={{ color: '#f5f5f5', marginBottom: '20px', fontSize: '15px' }}>You have reached the limit of meal plans you can make. Please delete all past plans</p>
+                <Button onClick={() => setLimitNotificationOpen(false)} style={{ width: '100%' }}>OK</Button>
+              </div>
+            </div>
+          )}
 
           {eventModalOpen && (
             <div style={modalOverlayStyle} onClick={closeEventModal}>
