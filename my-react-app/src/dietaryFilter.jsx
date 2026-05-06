@@ -33,7 +33,7 @@ export function DietaryFilter() {
   //Anytime uid updates, get the excludedIngredients
   //This is what allows the UI to be updated in realTime for dietaryFilter
   useEffect(() => {
-    if (uid !== 'none') {
+    if (uid !== 'none') { // Deccides if the user id logged in before saving filters
       getData();
     }
   }, [uid]);
@@ -49,6 +49,7 @@ export function DietaryFilter() {
       headers: {
         "Content-Type": "application/json", // Tells backend data being sent is JSON
       },
+      // Frontend state -> global variable manager -> backend data
       body: JSON.stringify({ // Converts object to JSON strings
         userID: getUID(), dietFilters: newExcludedIngredients, // Sends new excluded ingredient list
       }),
@@ -68,7 +69,7 @@ export function DietaryFilter() {
     // Store updated list
     let newExcludedIngredients;
 
-    // If already selected, delete/remove
+    // Decides whether to delete/remove already selected
     if (alreadySelected) {
       newExcludedIngredients = excludedIngredients.filter(
         (item) => !foodsToExclude.includes(item)
@@ -90,7 +91,7 @@ export function DietaryFilter() {
   // Check which filter is selected and check if all excluded foods are included
   function isDietSelected(dietType) {
     const foods = dietFilterOptions[dietType];
-    return foods.every((food) => excludedIngredients.includes(food));
+    return foods.every((food) => excludedIngredients.includes(food)); // Decided whether a filter button should appear as selected
   }
 
   return (
