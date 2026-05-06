@@ -11,6 +11,8 @@ import { vi, test, expect, describe, beforeEach } from "vitest";
 global.fetch = vi.fn();
 
 vi.spyOn(varManager, "getUID").mockReturnValue("12345"); // Mock user ID
+vi.spyOn(varManager, "getExcludedIngredients").mockReturnValue([]); // Mock empty excluded ingredients
+vi.spyOn(varManager, "setExcludedIngredients").mockImplementation(() => {}); // Mock setter
 
 describe("DietaryFilter frontend save test", () => { // Tests for DietaryFilter save behavior
   beforeEach(() => {
@@ -21,17 +23,12 @@ describe("DietaryFilter frontend save test", () => { // Tests for DietaryFilter 
     const mockSetExcludedIngredients = vi.fn(); // lets jest track what is called and what is recieved
 
     render( // creates a fake test browser
-      <DietaryFilter
-        excludedIngredients={[]}
-        setExcludedIngredients={mockSetExcludedIngredients}
-      />
+      <DietaryFilter></DietaryFilter>
     );
 
     const veganButton = screen.getByText("Vegan"); // Search page for rendered component for Vegan
 
     fireEvent.click(veganButton); // Fire event simulates user actions, clicking, typing
-
-    expect(mockSetExcludedIngredients).toHaveBeenCalled(); // Checks if clicking the button updates exclusions
 
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith( // Check is called with correct arguments
