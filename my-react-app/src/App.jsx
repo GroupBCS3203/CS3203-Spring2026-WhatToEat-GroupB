@@ -8,6 +8,7 @@ import {RecipeFinder} from "./recipeFinder.jsx";
 import {DietaryFilter} from "./dietaryFilter.jsx";
 import { getUID } from "./varManager.jsx";
 
+// Basic button model
 export function Button({ onClick, children, style, className }) {
   return (
     <button className={className || 'button'} onClick={onClick} style={style}>

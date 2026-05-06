@@ -1,3 +1,7 @@
+//This is the global variable controller, kinda archaic, but it works
+
+
+// Blank recipe to serve as a referencable model of a recipe
 const blankRecipe = {
     "_id": {
         "$oid": "2"
@@ -9,6 +13,7 @@ const blankRecipe = {
     "NER": []
 }
 
+// Blank dataModel to serve as a referencable model of a user's data
 const blankData = {
     userID: "apple",
     dietFilters: [""],
@@ -19,6 +24,8 @@ const blankData = {
 }
 
 
+
+//Global variables
 let UID = 'none';
 let recipes = [blankRecipe];
 let savedRecipes = [];
@@ -28,6 +35,8 @@ let savedFilters = [];
 let userIngredients = blankData.ownedIngredients;
 let excludedIngredients = [];
 
+
+// Self-explanatory getters and setters
 export function getExcludedIngredients() {
     return excludedIngredients;
 }
@@ -56,7 +65,7 @@ export function setRecipes(recipeList)
     recipes = recipeList;
 }
 
-
+// All of these are meant to help handle the saved recipes
 function getRecipeKey(recipe) {
     if (!recipe) return undefined;
     if (recipe._id && typeof recipe._id === 'object' && '$oid' in recipe._id) {
@@ -74,7 +83,7 @@ export function setSavedRecipes(recipes)
 {
     savedRecipes = recipes;
 }
-
+// adds a saved recipe to the existing list
 export function addSavedRecipe(recipe)
 {
     const key = getRecipeKey(recipe);
@@ -83,18 +92,21 @@ export function addSavedRecipe(recipe)
     }
 }
 
+// removes a given saved recipe from the existing list
 export function removeSavedRecipe(recipe)
 {
     const key = getRecipeKey(recipe);
     savedRecipes = savedRecipes.filter(r => getRecipeKey(r) !== key);
 }
 
+//Checks if a recipe is saved
 export function isRecipeSaved(recipe)
 {
     const key = getRecipeKey(recipe);
     return savedRecipes.some(r => getRecipeKey(r) === key);
 }
 
+// More getters and setters
 export function getUserIngredients()
 {
     return userIngredients;
@@ -105,18 +117,7 @@ export function setUserIngredients(ingredients)
     userIngredients = ingredients;
 }
 
-export function getUserFilters()
-{
-    return savedFilters;
-}
-
-export function setUserFilters(filters)
-{
-    savedFilters = filters;
-}
-
-
-
+//Sets the global variables to the based on a user's data
 export async function setUserData(id)
 {
 

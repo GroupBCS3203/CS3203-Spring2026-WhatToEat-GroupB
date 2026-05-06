@@ -6,8 +6,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export function RecipeFinder()
 {
-    console.log("API BASE URL:", import.meta.env.VITE_API_URL);
-
+    //BaseJSON so that the code has an example of the recipe format
     const baseJSON = {
         "_id": {
             "$oid": "2"
@@ -19,7 +18,7 @@ export function RecipeFinder()
         "NER": []
     }
 
-    const [uid] = useState(getUID());
+    //Various Variables throughout the code
     const [recipes, setRecipes] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [showPopup, setShowPopup] = useState(false);
@@ -29,6 +28,8 @@ export function RecipeFinder()
     const [useAI, setUseAI] = useState(false);
     const [loading, setLoading] = useState(false); //load state is true whenever we start a search
 
+
+    //Automatically fills the page with recipes
     useEffect(() => {
         fetch(`${BASE_URL}/api/recipes/top`)
             .then(res => res.json())
@@ -36,6 +37,8 @@ export function RecipeFinder()
             .catch(err => console.error(err));
     }, []);
 
+
+    //Gets the top ten recipes the API produces without search terms
     function getTopTen() {
         setLoading(true);
         fetch(`${BASE_URL}/api/recipes/top`)
@@ -48,6 +51,7 @@ export function RecipeFinder()
             .finally(() => setLoading(false));
     }
 
+    //Searches both by included and excluded ingredidents, returning those who
     function searchByIngredient(ingredients) {
         setLoading(true);
         const excludedIngredients = getExcludedIngredients(); 
@@ -107,18 +111,25 @@ export function RecipeFinder()
     };
 
     function searchRecipes() {
-        if (searchTerm.length > 0) {
+        //This if decides which call to make
+        if (searchTerm.length > 0 || (getExcludedIngredients().length > 0 )) {
             if (useAI) {
+                //Searches with AI
+                //only triggers with the flag on and a search term/excludedIngredident, currently ignores filters
                 searchAIRecipes(searchTerm);
             } else {
+                //Searches without AI
+                //only triggers with the flag on and a search term/excluded ingredent list (basically anything to filter by)
                 searchByIngredient(searchTerm);
             }
         } else {
+            //Gets the top ten, runs if no filters are given
             getTopTen();
         }
         setShowSaved(false);
     }
 
+    //Pulls up a user's saved recipes
     function viewSavedRecipes() {
         const saved = getSavedRecipes();
         setRecipes(saved);
@@ -126,6 +137,7 @@ export function RecipeFinder()
         setShowSaved(true);
     }
 
+    // Handles the logic of a user saving and unsaving a recipe
     function handleSaveToggle() {
         if (isRecipeSaved(popUpRecipe)) {
             removeSavedRecipe(popUpRecipe);
@@ -137,6 +149,8 @@ export function RecipeFinder()
         saveRecipesToBackend();
     }
 
+
+    //Defines the pop-up object, dynaically
     let Popup =
         (
             <div style={styles.popup}>
@@ -172,11 +186,13 @@ export function RecipeFinder()
 
         );
 
+    //Defines the aspects of the Popup object
     function setPopup(recipe) {
         setPopUpRecipe(recipe);
         setPopUpSaved(isRecipeSaved(recipe));
     }
 
+    //Shows the popup
     function runPopup(recipe)
     {
         setPopup(recipe);
@@ -184,8 +200,9 @@ export function RecipeFinder()
     }
 
 
+    //Defines the mainPage to be returned to App.jsx
     let mainPage = <div>
-        <h3 style={{ color:'#ffffff', cursor: "pointer" ,  textDecoration: 'underline' }} onClick={() => setShowPopup(true)}>
+        <h3 style={{ color:'#ffffff' }} onClick={() => setShowPopup(true)}>
             Recipe Browser
         </h3>
         <input
@@ -254,6 +271,7 @@ mainPage = (
 return(mainPage);
 }
 
+//Styles to make our stuff look less bad
 const styles = {
     popup: {
         position: "fixed",

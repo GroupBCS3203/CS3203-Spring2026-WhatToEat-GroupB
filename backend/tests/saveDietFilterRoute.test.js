@@ -1,15 +1,16 @@
 const request = require("supertest");
 const app = require("../server");
 const userManager = require("../userManagement/userManager");
+const dataManager = require("../userManagement/dataManager");
 
 // Testing call in server.js
 // Simulates a frontend request and checks if backend works correctly
 
-jest.mock("../userManagement/userManager"); // Replaces all REAL data with mock data
+jest.mock("../userManagement/dataManager"); // Replaces all REAL data with mock data
 
 describe("POST /api/user/saveDietFilters", () => {
   test("should save diet filters and return success", async () => { // Tests to see if saving works correctly
-    userManager.saveDietFilters.mockResolvedValue("success"); // Creates a fake saveDietFilters()
+      dataManager.saveDietFilters.mockResolvedValue("success"); // Creates a fake saveDietFilters()
 
     const response = await request(app) 
       .post("/api/user/saveDietFilters")
@@ -21,14 +22,14 @@ describe("POST /api/user/saveDietFilters", () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toBe("success");
 
-    expect(userManager.saveDietFilters).toHaveBeenCalledWith( // Verifies if route correctly calls saveDietFilters 
+    expect(dataManager.saveDietFilters).toHaveBeenCalledWith( // Verifies if route correctly calls saveDietFilters
       "12345",
       ["milk", "peanuts"]
     );
   });
 
   test("should return failed if saveDietFilters fails", async () => {
-    userManager.saveDietFilters.mockResolvedValue("failed");
+      dataManager.saveDietFilters.mockResolvedValue("failed");
 
     const response = await request(app)
       .post("/api/user/saveDietFilters") // Simulates invalid user data
