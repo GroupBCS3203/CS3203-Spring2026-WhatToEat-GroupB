@@ -1,5 +1,6 @@
 const recipeManager = require("./recipeManager.js");
 const userManager = require("./userManagement/userManager.js");
+const dataManager = require("./userManagement/dataManager.js");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -15,6 +16,8 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("MongoDB Connected")
     )
     .catch(err => console.log(err));
+
+//RECIPE API CALLS
 
 // Top 10 recipes api call
 app.get("/api/recipes/top", async (req, res) => {
@@ -33,77 +36,6 @@ app.get("/api/recipes/search", async (req, res) => {
     res.json(await recipeManager.findRecipeByIngredient(ingredients));
 });
 
-
-//User api Calls
-
-//save ingredients
-app.get("/api/user/saveIngredients", async (req, res) => {
-    //retrive the inputed data
-    const UID = req.query.userID;
-    const nameList = req.query.nameList.split(",");
-    const amountList= req.query.amountList.split(",");
-    const dateList= req.query.dateList.split(",");
-    //run the actual function
-    res.json(await userManager.saveIngredients(UID, userManager.zip(nameList, amountList, dateList)));
-});
-
-//Add user
-app.get("/api/user/adduser", async (req, res) => {
-    const user = req.query.user;
-    const pass = req.query.pass;
-    res.json(await userManager.addUser(user, pass));
-});
-
-//Login user
-app.get("/api/user/login", async (req, res) => {
-    const user = req.query.user;
-    const pass = req.query.pass;
-    res.json(await userManager.login(user, pass));
-});
-
-app.get("/api/user/getdata", async (req, res) => {
-    const id = req.query.id;
-    res.json(await userManager.getUserData(id));
-});
-
-//Get planned meals
-app.get("/api/user/plannedMeals", async (req, res) => {
-    const UID = req.query.userID;
-    res.json(await userManager.getPlannedMeals(UID));
-});
-
-//Save planned meals
-app.post("/api/user/plannedMeals", express.json(), async (req, res) => {
-    const UID = req.body.userID;
-    const events = req.body.events;
-    await userManager.savePlannedMeals(UID, events);
-    res.json({ success: true });
-});
-
-//Save saved recipes
-app.post("/api/user/saveSavedRecipes", express.json(), async (req, res) => {
-    console.log("Recipes poseted");
-    const UID = req.body.userID;
-    const recipes = req.body.returnRecipes;
-    await userManager.saveSavedRecipes(UID, recipes);
-    res.json({ success: true });
-});
-
-// Save dietary filter
-app.post("/api/user/saveDietFilters", async (req, res) => { // When POST request sent, run this function
-    const { userID, dietFilters } = req.body; // Contains incoming data that is requested
-    const result = await userManager.saveDietFilters(userID, dietFilters); // Call saveDietFilters in userManager
-    res.json(result); // Send result back 
-});
-
-//THIS IS A TEMPLATE TO SAVE USER DATA, IMPLEMENT THIS IN SUCH A WAY THAT FITS WITH UserDataSchema.js,
-app.post("/api/user/savedata", express.json(), async (req, res) => {
-    const id = req.query.id;
-    const data = req.query.data;
-    res.json(await userManager.saveUserData(id));
-});
-
-
 //AI recipe recommendation api call
 app.get("/api/recipes/ai", async (req, res) => {
     try {
@@ -121,7 +53,80 @@ app.get("/api/recipes/ai", async (req, res) => {
     }
 });
 
-// Just consistently sets the port to 5000 to make testing easy
+//User api Calls
+
+//Add user
+app.get("/api/user/adduser", async (req, res) => {
+    const user = req.query.user;
+    const pass = req.query.pass;
+    res.json(await userManager.addUser(user, pass));
+});
+
+//Login user
+app.get("/api/user/login", async (req, res) => {
+    const user = req.query.user;
+    const pass = req.query.pass;
+    res.json(await userManager.login(user, pass));
+});
+
+
+//DATA API CALLS
+
+//save ingredients
+app.get("/api/user/saveIngredients", async (req, res) => {
+    //retrive the inputed data
+    const UID = req.query.userID;
+    const nameList = req.query.nameList.split(",");
+    const amountList= req.query.amountList.split(",");
+    const dateList= req.query.dateList.split(",");
+    //run the actual function
+    res.json(await dataManager.saveIngredients(UID, dataManager.zip(nameList, amountList, dateList)));
+});
+
+//Retrieves all of a user's data
+app.get("/api/user/getdata", async (req, res) => {
+    const id = req.query.id;
+    res.json(await dataManager.getUserData(id));
+});
+
+//Get planned meals
+app.get("/api/user/plannedMeals", async (req, res) => {
+    const UID = req.query.userID;
+    res.json(await dataManager.getPlannedMeals(UID));
+});
+
+//Save planned meals
+app.post("/api/user/plannedMeals", express.json(), async (req, res) => {
+    const UID = req.body.userID;
+    const events = req.body.events;
+    await dataManager.savePlannedMeals(UID, events);
+    res.json({ success: true });
+});
+
+//Save saved recipes
+app.post("/api/user/saveSavedRecipes", express.json(), async (req, res) => {
+    console.log("Recipes poseted");
+    const UID = req.body.userID;
+    const recipes = req.body.returnRecipes;
+    await dataManager.saveSavedRecipes(UID, recipes);
+    res.json({ success: true });
+});
+
+// Save dietary filter
+app.post("/api/user/saveDietFilters", async (req, res) => { // When POST request sent, run this function
+    const { userID, dietFilters } = req.body; // Contains incoming data that is requested
+    const result = await dataManager.saveDietFilters(userID, dietFilters); // Call saveDietFilters in dataManager
+    res.json(result); // Send result back 
+});
+
+//THIS IS A TEMPLATE FOR FUTURE SAVE DATA, DOES NOT DO ANYTHING
+app.post("/api/user/savedata", express.json(), async (req, res) => {
+    const id = req.query.id;
+    const data = req.query.data;
+    res.json(await dataManager.saveUserData(id));
+});
+
+// Consistently sets the port to 5000 to make testing easy
 const PORT = process.env.PORT || 5000;
 
 //Unsure if needed, but it's a relic of testing to make sure it closes correctly - DO NOT DELETE

@@ -20,7 +20,6 @@ describe("DietaryFilter frontend save test", () => { // Tests for DietaryFilter 
   });
 
   test("clicking a filter saves excluded ingredients", async () => { // check does clicking the filter trigger saving?
-    const mockSetExcludedIngredients = vi.fn(); // lets jest track what is called and what is recieved
 
     render( // creates a fake test browser
       <DietaryFilter></DietaryFilter>

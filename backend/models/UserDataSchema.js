@@ -4,12 +4,6 @@ const mongoose = require('mongoose');
 * This makes the model which user database entries will follow, I feel like it's pretty self-explanatory
 * */
 
-const plannedMealSchema = new mongoose.Schema({
-
-});
-
-
-
 const DataSchema = new mongoose.Schema({
     userID:{
         type: String,

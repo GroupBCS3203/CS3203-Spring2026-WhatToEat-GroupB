@@ -2,6 +2,14 @@ const recipeModel = require("./models/RecipeSchema.js");
 const mongoose = require("mongoose");
 const { GoogleGenAI } = require("@google/genai");
 
+
+/* Important note for entire sections:
+*
+* CWE-1060: Excessive Number of Inefficient Server-Side Data Accesses, was considered in these queries, making it so that
+* only single queries were made for recipe data.
+*
+* */
+
 //Gets a single recipe from the database, currently unused, but exists as a model function
 async function getOneRecipe()
 {
@@ -9,9 +17,10 @@ async function getOneRecipe()
     return corn;
 }
 
-// Returns a default top-ten recipes,
+// Returns the default top-ten recipes,
 async function getTopTenRecipes()
 {
+    //A way of implementing
     let tenRecipes = await recipeModel.aggregate([
         //{$match: {NER: { $all: ["onion", "bacon", "salt", "potatoes"] }}},
         { $group: { _id: "$title", doc: { $first: "$$ROOT" } } },
@@ -22,6 +31,8 @@ async function getTopTenRecipes()
     return tenRecipes;
 }
 
+//Makes a list of every unique NER element the database contains
+//Currently a relic, but could be used in the future
 async function makeIngredientMasterList()
 {
 
@@ -37,13 +48,15 @@ async function makeIngredientMasterList()
     console.log(masterNER.length);
 }
 
+//Finds recipes that meet both the criteria of having all ingredients while having zero exclusions
 async function findRecipeByIngredient(ingredients, excludedIngredients) {
 
     let array = [];
     let excludedArray = [];
 
+    // Exists to make sure ingredients and excludedIngredients are usable, then splits for query usage
     if (!ingredients) {
-        console.error('ingredient is undefined');
+        console.error('ingredients is undefined');
     }
     else
     {
@@ -51,13 +64,15 @@ async function findRecipeByIngredient(ingredients, excludedIngredients) {
     }
 
     if (!excludedIngredients) {
-        console.error('ingredient is undefined');
+        console.error('excludedIngredients is undefined');
     }
     else
     {
         excludedArray = excludedIngredients.split(",");
     }
 
+
+    //Basically a repeat of getTopTen, but now we have a match condition for the two arrays
     let tenRecipes = await recipeModel.aggregate([
         {$match: {NER: { $all: array, $nin: excludedArray }}},
         { $group: { _id: "$title", doc: { $first: "$$ROOT" } } },
