@@ -6,18 +6,18 @@ import { getUID } from './varManager.jsx';
 export function MealPlanner(){
     const today = new Date();
     const todayKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`; // YYYY-MM-DD format for consistent date keys
-    const [plannerEvents, setPlannerEvents] = useState({});
-    const [plannerDate, setPlannerDate] = useState(() => { // initialize to first day of current month
+    const [plannerEvents, setPlannerEvents] = useState({});   // events stored as an object keyed by date (YYYY-MM-DD) for easier access in the calendar, value is an array of events for that date
+    const [plannerDate, setPlannerDate] = useState(() => {  // initialize to first day of current month
         const d = new Date();
         d.setHours(0,0,0,0);
         d.setDate(1);
         return d;
     });
     //state for controlling the add/edit event modal
-    const [eventModalOpen, setEventModalOpen] = useState(false);
-    const [isEditingEvent, setIsEditingEvent] = useState(false);
-    const [editingDateKey, setEditingDateKey] = useState(todayKey);
-    const [editingEventId, setEditingEventId] = useState(null);
+    const [eventModalOpen, setEventModalOpen] = useState(false);  // whether the add/edit event modal is open
+    const [isEditingEvent, setIsEditingEvent] = useState(false);  // whether the modal is in "edit" mode (editing an existing event) or "add" mode (creating a new event)
+    const [editingDateKey, setEditingDateKey] = useState(todayKey); 
+    const [editingEventId, setEditingEventId] = useState(null);   // store the ID of the event being edited (used for identifying the event in the plannerEvents state when saving edits or deleting)
     const [modalEventDate, setModalEventDate] = useState(todayKey);
     const [modalEventName, setModalEventName] = useState('');
     const [modalEventTime, setModalEventTime] = useState('12:00');
