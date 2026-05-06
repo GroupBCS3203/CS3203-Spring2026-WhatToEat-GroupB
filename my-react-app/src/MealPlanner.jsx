@@ -80,6 +80,15 @@ export function MealPlanner(){
         return d.toISOString().split('T')[0]; // YYYY-MM-DD format for consistent date keys
     }
 
+    // convert 24-hour time to 12-hour format with AM/PM for display in the calendar
+    function formatTime12Hour(time24) {
+        const [hourStr, minute] = time24.split(':');
+        let hour = parseInt(hourStr, 10);
+        const suffix = hour >= 12 ? 'PM' : 'AM';
+        hour = hour % 12 || 12;
+        return `${hour}:${minute} ${suffix}`;
+    }
+
     //generate calendar grid for current plannerDate (always starts on Sunday and has 42 cells to cover all month lengths and starting weekdays)
     function getCalendarGrid() {
         const year = plannerDate.getFullYear();
@@ -302,6 +311,8 @@ export function MealPlanner(){
 
     const fieldInputStyle = {
         width: '100%',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
         marginTop: '6px',
         padding: '10px 12px',
         borderRadius: '8px',
@@ -370,7 +381,7 @@ export function MealPlanner(){
                         openEditEventModal(dayKey, ev);
                       }}
                     >
-                      {ev.time} {ev.name}
+                      {formatTime12Hour(ev.time)} {ev.name}
                     </div>
                   ))}
                   {events.length > 3 && (
