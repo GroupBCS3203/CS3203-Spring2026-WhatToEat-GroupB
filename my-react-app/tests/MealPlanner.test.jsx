@@ -39,8 +39,8 @@ test("opening event form and adding an event appears on day cell", async () => {
 
   fireEvent.click(screen.getByRole('button', { name: /save/i }));
 
-  // Event should appear in calendar cell (displayed as text + time)
-  const eventText = await screen.findByText(/18:30\s+Test Meal/i);
+  // Event should appear in calendar cell (displayed as text + time in 12-hour format)
+  const eventText = await screen.findByText(/6:30\s+PM\s+Test Meal/i);
   expect(eventText).toBeInTheDocument();
 });
 
