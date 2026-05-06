@@ -226,7 +226,7 @@ describe('Shopping List Feature', () => {
     fireEvent.click(screen.getByRole('button', { name: /generate/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('No ingredients found. You\'ll need to save recipes or add ingredients to get started.')).toBeInTheDocument();
+      expect(screen.getByText('No saved recipes found. Save some recipes to generate a shopping list!')).toBeInTheDocument();
     });
   });
 

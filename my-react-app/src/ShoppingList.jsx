@@ -146,7 +146,7 @@ export function ShoppingList({ recipes }) {
       <div className="shopping-items">
         {!shoppingLoaded && <p>Click the button or open this tab to load the shopping list.</p>}
         
-        {shoppingLoaded && shoppingItems.length === 0 && homeItems.length === 0 && <p>No ingredients found. You'll need to save recipes or add ingredients to get started.</p>}
+        {shoppingLoaded && shoppingItems.length === 0 && <p>No saved recipes found. Save some recipes to generate a shopping list!</p>}
 
         {/* Section: Items to Buy */}
         {shoppingLoaded && shoppingItems.length > 0 && (
